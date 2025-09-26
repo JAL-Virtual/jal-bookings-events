@@ -118,13 +118,16 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
   }, [events, searchTerm]);
 
   useEffect(() => {
-    fetchEvents();
-    fetchBookings();
+    const loadData = async () => {
+      await fetchEvents();
+      await fetchBookings();
+    };
+    
+    loadData();
     
     // Set up auto-refresh every 30 seconds
     const interval = setInterval(() => {
-      fetchEvents();
-      fetchBookings();
+      loadData();
     }, 30000);
     refreshIntervalRef.current = interval;
     
@@ -134,7 +137,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
         clearInterval(refreshIntervalRef.current);
       }
     };
-  }, [fetchBookings, fetchEvents]);
+  }, [pilotId]); // Only depend on pilotId, not the functions
 
   // Handle booking
   const handleBookEvent = async (eventId: string) => {
