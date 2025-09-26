@@ -1,16 +1,34 @@
-import { FunctionComponent, useContext } from "react";
-import { Env } from "env";
-import { ThemeContext, ThemeVariants } from "context/ThemeContext";
+import { FunctionComponent } from "react";
+import Image from 'next/image';
 
 interface LogoProps {
     sidebar?: boolean;
+    className?: string;
 }
 
-export const Logo: FunctionComponent<LogoProps> = ({ sidebar = false }) => {
-    const { themeVariant } = useContext(ThemeContext);
-    const imgUrl = Env[`LOGO${sidebar ? "_SIDEBAR_" : "_"}${themeVariant === ThemeVariants.DARK ? "DARK" : "LIGHT"}`];
+export const Logo: FunctionComponent<LogoProps> = ({ sidebar = false, className = '' }) => {
+    // Use the existing JAL logo from the public folder
+    const logoSrc = "/img/jal-logo.png";
+    const logoSrcDark = "/img/jal-logo-dark.png";
 
     return (
-        <img src={imgUrl} width="214px" height="56px" className={`w-54 h-14 ${sidebar ? "" : "-ml-5"}`} alt="Logo IVAO Brasil" />
+        <div className={`relative ${className}`}>
+            <Image
+                src={logoSrc}
+                alt="Japan Airlines Logo"
+                width={214}
+                height={56}
+                className={`w-54 h-14 ${sidebar ? "" : "-ml-5"} dark:hidden`}
+                priority
+            />
+            <Image
+                src={logoSrcDark}
+                alt="Japan Airlines Logo"
+                width={214}
+                height={56}
+                className={`w-54 h-14 ${sidebar ? "" : "-ml-5"} hidden dark:block`}
+                priority
+            />
+        </div>
     );
 }
