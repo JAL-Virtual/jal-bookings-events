@@ -181,7 +181,7 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
         clearInterval(refreshIntervalRef.current);
       }
     };
-  }, []);
+  }, [fetchEvents]);
 
   useEffect(() => {
     if (selectedEvent) {

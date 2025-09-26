@@ -55,7 +55,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
   const [errorType, setErrorType] = useState<'error' | 'warning'>('error');
 
   // Fetch events
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -79,7 +79,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch user bookings
   const fetchBookings = useCallback(async () => {
@@ -134,7 +134,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
         clearInterval(refreshIntervalRef.current);
       }
     };
-  }, []);
+  }, [fetchBookings]);
 
   // Handle booking
   const handleBookEvent = async (eventId: string) => {
