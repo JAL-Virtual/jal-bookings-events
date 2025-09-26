@@ -1,10 +1,11 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, ReactElement, ReactNode } from "react";
 
 interface InfoCardProps {
-    icon?: JSX.Element;
+    icon?: ReactElement;
     iconBackground?: string;
     header: string;
     content: string;
+    children?: ReactNode;
 }
 
 export const HorizontalInfoCard: FunctionComponent<InfoCardProps> = ({ icon, header, content, children, iconBackground = "bg-blue" }) => (

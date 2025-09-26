@@ -1,9 +1,9 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, ReactElement } from "react";
 
 type HtmlInputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 
 interface InputFieldProps extends Omit<HtmlInputProps, "className"> {
-    icon?: JSX.Element;
+    icon?: ReactElement;
 }
 
 export const InputField: FunctionComponent<InputFieldProps> = ({ icon, ...htmlInputProps }) => (

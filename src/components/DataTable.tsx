@@ -64,7 +64,7 @@ export function DataTable<T extends Record<string, unknown>>({
     if (searchTerm && searchable) {
       result = result.filter(row =>
         columns.some(column => {
-          const value = getNestedValue(row, column.key);
+          const value = getNestedValue(row, String(column.key));
           return String(value).toLowerCase().includes(searchTerm.toLowerCase());
         })
       );
@@ -74,7 +74,7 @@ export function DataTable<T extends Record<string, unknown>>({
     if (filters.length > 0) {
       result = result.filter(row =>
         filters.every(filter => {
-          const value = getNestedValue(row, filter.key);
+          const value = getNestedValue(row, String(filter.key));
           const filterValue = filter.value.toLowerCase();
           const cellValue = String(value).toLowerCase();
 
@@ -100,11 +100,14 @@ export function DataTable<T extends Record<string, unknown>>({
     if (!sortColumn || !sortDirection) return filteredData;
 
     return [...filteredData].sort((a, b) => {
-      const aValue = getNestedValue(a, sortColumn);
-      const bValue = getNestedValue(b, sortColumn);
+      const aValue = getNestedValue(a, String(sortColumn));
+      const bValue = getNestedValue(b, String(sortColumn));
 
-      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      const aStr = String(aValue || '');
+      const bStr = String(bValue || '');
+
+      if (aStr < bStr) return sortDirection === 'asc' ? -1 : 1;
+      if (aStr > bStr) return sortDirection === 'asc' ? 1 : -1;
       return 0;
     });
   }, [filteredData, sortColumn, sortDirection]);
@@ -154,7 +157,12 @@ export function DataTable<T extends Record<string, unknown>>({
   };
 
   const getNestedValue = (obj: Record<string, unknown>, path: string) => {
-    return path.split('.').reduce((current, key) => current?.[key], obj);
+    return path.split('.').reduce((current: unknown, key: string) => {
+      if (current && typeof current === 'object' && key in current) {
+        return (current as Record<string, unknown>)[key];
+      }
+      return undefined;
+    }, obj);
   };
 
   const getSortIcon = (columnKey: string) => {
@@ -276,7 +284,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   >
                     {column.render
                       ? column.render(getNestedValue(row, String(column.key)), row)
-                      : getNestedValue(row, String(column.key))
+                      : String(getNestedValue(row, String(column.key)) || '')
                     }
                   </td>
                 ))}
