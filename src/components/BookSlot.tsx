@@ -297,7 +297,7 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
                 {filteredSlots.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-6 py-12 text-center text-gray-400">
-                      {searchTerm ? 'No slots match your search criteria.' : `No ${slotType.toLowerCase()} slots available.`}
+                      {searchTerm ? 'No slots match your search criteria.' : `No ${slotType.toLowerCase()} slots available right now. Stay tuned for new events!`}
                     </td>
                   </tr>
                 ) : (

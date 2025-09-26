@@ -6,12 +6,12 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model StaffMember {
-  id          String   @id @default(cuid())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   email       String   @unique
   apiKey      String   @unique
@@ -27,7 +27,7 @@ model StaffMember {
 }
 
 model Event {
-  id          String   @id @default(cuid())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
   departure   String
@@ -56,9 +56,9 @@ model Event {
 }
 
 model Booking {
-  id        String   @id @default(cuid())
-  eventId   String
-  slotId    String?  // Optional slot ID for slot-specific bookings
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  eventId   String   @db.ObjectId
+  slotId    String?  @db.ObjectId // Optional slot ID for slot-specific bookings
   pilotId   String
   pilotName String
   pilotEmail String
@@ -74,8 +74,8 @@ model Booking {
 }
 
 model Slot {
-  id          String   @id @default(cuid())
-  eventId     String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  eventId     String   @db.ObjectId
   slotNumber  String   // Unique slot identifier (e.g., "342326", "731643")
   type        SlotType // DEPARTURE or ARRIVAL
   airline     String?  // Airline name

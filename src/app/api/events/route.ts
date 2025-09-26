@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
+import { getEventsCollection, getBookingsCollection } from "../../../lib/mongodb";
 
 const ADMIN_API_KEY = "29e2bb1d4ae031ed47b6";
 
@@ -9,19 +9,29 @@ export async function GET() {
     // Allow public access for viewing events (no authentication required for GET)
     // Admin API key is only required for POST, PUT, DELETE operations
 
-    const events = await prisma.event.findMany({
-      orderBy: { createdAt: 'desc' },
-      include: {
-        bookings: true
-      }
-    });
+    const eventsCollection = await getEventsCollection();
+    const bookingsCollection = await getBookingsCollection();
 
-    console.log('API: Found events:', events.length);
-    console.log('API: Events data:', events);
+    const events = await eventsCollection.find({}).sort({ createdAt: -1 }).toArray();
+
+    // Get bookings for each event
+    const eventsWithBookings = await Promise.all(
+      events.map(async (event) => {
+        const bookings = await bookingsCollection.find({ eventId: event._id.toString() }).toArray();
+        return {
+          ...event,
+          id: event._id.toString(),
+          bookings
+        };
+      })
+    );
+
+    console.log('API: Found events:', eventsWithBookings.length);
+    console.log('API: Events data:', eventsWithBookings);
 
     return NextResponse.json({
       success: true,
-      events: events.map(event => ({
+      events: eventsWithBookings.map(event => ({
         id: event.id,
         name: event.name,
         description: event.description,
@@ -76,10 +86,11 @@ export async function PUT(req: Request) {
       );
     }
 
+    const eventsCollection = await getEventsCollection();
+    const { ObjectId } = await import('mongodb');
+
     // Check if event exists
-    const existingEvent = await prisma.event.findUnique({
-      where: { id }
-    });
+    const existingEvent = await eventsCollection.findOne({ _id: new ObjectId(id) });
 
     if (!existingEvent) {
       return NextResponse.json(
@@ -114,11 +125,22 @@ export async function PUT(req: Request) {
     if (maxPilots !== undefined) updateData.maxPilots = maxPilots;
     if (status !== undefined) updateData.status = status;
 
+    updateData.updatedAt = new Date();
+
     // Update event
-    const updatedEvent = await prisma.event.update({
-      where: { id },
-      data: updateData
-    });
+    const result = await eventsCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updateData }
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { error: "Event not found" },
+        { status: 404 }
+      );
+    }
+
+    const updatedEvent = await eventsCollection.findOne({ _id: new ObjectId(id) });
 
     return NextResponse.json({
       success: true,
@@ -154,10 +176,12 @@ export async function DELETE(req: Request) {
       );
     }
 
+    const eventsCollection = await getEventsCollection();
+    const bookingsCollection = await getBookingsCollection();
+    const { ObjectId } = await import('mongodb');
+
     // Check if event exists
-    const existingEvent = await prisma.event.findUnique({
-      where: { id }
-    });
+    const existingEvent = await eventsCollection.findOne({ _id: new ObjectId(id) });
 
     if (!existingEvent) {
       return NextResponse.json(
@@ -166,10 +190,18 @@ export async function DELETE(req: Request) {
       );
     }
 
-    // Delete event (bookings will be deleted due to cascade)
-    await prisma.event.delete({
-      where: { id }
-    });
+    // Delete related bookings first
+    await bookingsCollection.deleteMany({ eventId: id });
+
+    // Delete event
+    const result = await eventsCollection.deleteOne({ _id: new ObjectId(id) });
+
+    if (result.deletedCount === 0) {
+      return NextResponse.json(
+        { error: "Event not found" },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
       success: true,

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
+import { getBookingsCollection, getEventsCollection, getSlotsCollection } from "../../../lib/mongodb";
 
 // Define the type for booking with event included
 type BookingWithEvent = {
@@ -49,17 +49,26 @@ export async function GET(req: Request) {
 
     // Admin access - view all bookings for an event
     if (adminApiKey === ADMIN_API_KEY && eventId) {
-      const bookings = await prisma.booking.findMany({
-        where: { eventId },
-        include: {
-          event: true
-        },
-        orderBy: { createdAt: 'desc' }
-      });
+      const bookingsCollection = await getBookingsCollection();
+      const eventsCollection = await getEventsCollection();
+      
+      const bookings = await bookingsCollection.find({ eventId }).sort({ createdAt: -1 }).toArray();
+      
+      // Get event details for each booking
+      const bookingsWithEvents = await Promise.all(
+        bookings.map(async (booking) => {
+          const event = await eventsCollection.findOne({ _id: booking.eventId });
+          return {
+            ...booking,
+            id: booking._id.toString(),
+            event
+          };
+        })
+      );
 
       return NextResponse.json({
         success: true,
-        bookings: bookings.map((booking: BookingWithEvent) => ({
+        bookings: bookingsWithEvents.map((booking) => ({
           id: booking.id,
           eventId: booking.eventId,
           pilotId: booking.pilotId,
@@ -70,15 +79,15 @@ export async function GET(req: Request) {
           createdAt: booking.createdAt,
           updatedAt: booking.updatedAt,
           // Include flight details from the booking or event
-          airline: booking.event.airline,
-          flightNumber: booking.event.flightNumber,
-          aircraft: booking.event.aircraft,
-          origin: booking.event.origin || booking.event.departure,
-          destination: booking.event.destination || booking.event.arrival,
-          eobtEta: booking.event.eobtEta,
-          stand: booking.event.stand,
-          event: {
-            id: booking.event.id,
+          airline: booking.event?.airline,
+          flightNumber: booking.event?.flightNumber,
+          aircraft: booking.event?.aircraft,
+          origin: booking.event?.origin || booking.event?.departure,
+          destination: booking.event?.destination || booking.event?.arrival,
+          eobtEta: booking.event?.eobtEta,
+          stand: booking.event?.stand,
+          event: booking.event ? {
+            id: booking.event._id.toString(),
             name: booking.event.name,
             description: booking.event.description,
             departure: booking.event.departure,
@@ -95,7 +104,7 @@ export async function GET(req: Request) {
             stand: booking.event.stand,
             currentBookings: booking.event.currentBookings,
             status: booking.event.status
-          }
+          } : null
         }))
       });
     }
@@ -108,17 +117,26 @@ export async function GET(req: Request) {
       );
     }
 
-    const bookings = await prisma.booking.findMany({
-      where: { pilotId },
-      include: {
-        event: true
-      },
-      orderBy: { createdAt: 'desc' }
-    });
+    const bookingsCollection = await getBookingsCollection();
+    const eventsCollection = await getEventsCollection();
+    
+    const bookings = await bookingsCollection.find({ pilotId }).sort({ createdAt: -1 }).toArray();
+    
+    // Get event details for each booking
+    const bookingsWithEvents = await Promise.all(
+      bookings.map(async (booking) => {
+        const event = await eventsCollection.findOne({ _id: booking.eventId });
+        return {
+          ...booking,
+          id: booking._id.toString(),
+          event
+        };
+      })
+    );
 
     return NextResponse.json({
       success: true,
-      bookings: bookings.map((booking: BookingWithEvent) => ({
+      bookings: bookingsWithEvents.map((booking) => ({
         id: booking.id,
         eventId: booking.eventId,
         pilotId: booking.pilotId,
@@ -128,8 +146,8 @@ export async function GET(req: Request) {
         status: booking.status,
         createdAt: booking.createdAt,
         updatedAt: booking.updatedAt,
-        event: {
-          id: booking.event.id,
+        event: booking.event ? {
+          id: booking.event._id.toString(),
           name: booking.event.name,
           description: booking.event.description,
           departure: booking.event.departure,
@@ -146,7 +164,7 @@ export async function GET(req: Request) {
           stand: booking.event.stand,
           currentBookings: booking.event.currentBookings,
           status: booking.event.status
-        }
+        } : null
       }))
     });
 
@@ -173,10 +191,10 @@ export async function POST(req: Request) {
     }
 
     // Check if event exists and is available
-    const event = await prisma.event.findUnique({
-      where: { id: eventId },
-      include: { bookings: true }
-    });
+    const eventsCollection = await getEventsCollection();
+    const { ObjectId } = await import('mongodb');
+    
+    const event = await eventsCollection.findOne({ _id: new ObjectId(eventId) });
 
     if (!event) {
       return NextResponse.json(
@@ -194,10 +212,10 @@ export async function POST(req: Request) {
 
     // If slotId is provided, handle slot-specific booking
     if (slotId) {
+      const slotsCollection = await getSlotsCollection();
+      
       // Check if slot exists and is available
-      const slot = await prisma.slot.findUnique({
-        where: { id: slotId }
-      });
+      const slot = await slotsCollection.findOne({ _id: new ObjectId(slotId) });
 
       if (!slot) {
         return NextResponse.json(
@@ -221,12 +239,11 @@ export async function POST(req: Request) {
       }
 
       // Check if pilot already booked this specific slot
-      const existingSlotBooking = await prisma.booking.findFirst({
-        where: {
-          eventId,
-          pilotId,
-          slotId
-        }
+      const bookingsCollection = await getBookingsCollection();
+      const existingSlotBooking = await bookingsCollection.findOne({
+        eventId,
+        pilotId,
+        slotId
       });
 
       if (existingSlotBooking) {
@@ -238,11 +255,10 @@ export async function POST(req: Request) {
     }
 
     // Check if pilot already booked this event (for non-slot bookings)
-    const existingBooking = await prisma.booking.findFirst({
-      where: {
-        eventId,
-        pilotId
-      }
+    const bookingsCollection = await getBookingsCollection();
+    const existingBooking = await bookingsCollection.findOne({
+      eventId,
+      pilotId
     });
 
     if (existingBooking) {
@@ -253,33 +269,40 @@ export async function POST(req: Request) {
     }
 
     // Create booking
-    const newBooking = await prisma.booking.create({
-      data: {
-        eventId,
-        slotId: slotId || null,
-        pilotId,
-        pilotName,
-        pilotEmail,
-        jalId,
-        status: 'PENDING'
-      }
-    });
+    const bookingData = {
+      eventId,
+      slotId: slotId || null,
+      pilotId,
+      pilotName,
+      pilotEmail,
+      jalId,
+      status: 'PENDING',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    const result = await bookingsCollection.insertOne(bookingData);
+    const newBooking = await bookingsCollection.findOne({ _id: result.insertedId });
 
     // If this is a slot booking, update the slot status to OCCUPIED
     if (slotId) {
-      await prisma.slot.update({
-        where: { id: slotId },
-        data: { status: 'OCCUPIED' }
-      });
+      const slotsCollection = await getSlotsCollection();
+      await slotsCollection.updateOne(
+        { _id: new ObjectId(slotId) },
+        { $set: { status: 'OCCUPIED', updatedAt: new Date() } }
+      );
     }
 
     // Update event booking count
-    await prisma.event.update({
-      where: { id: eventId },
-      data: {
-        currentBookings: event.currentBookings + 1
+    await eventsCollection.updateOne(
+      { _id: new ObjectId(eventId) },
+      { 
+        $set: { 
+          currentBookings: event.currentBookings + 1,
+          updatedAt: new Date()
+        } 
       }
-    });
+    );
 
     return NextResponse.json({
       success: true,
@@ -308,12 +331,13 @@ export async function DELETE(req: Request) {
     }
 
     // Check if booking exists and belongs to pilot
-    const booking = await prisma.booking.findFirst({
-      where: {
-        id: bookingId,
-        pilotId
-      },
-      include: { event: true }
+    const bookingsCollection = await getBookingsCollection();
+    const eventsCollection = await getEventsCollection();
+    const { ObjectId } = await import('mongodb');
+    
+    const booking = await bookingsCollection.findOne({
+      _id: new ObjectId(bookingId),
+      pilotId
     });
 
     if (!booking) {
@@ -323,18 +347,24 @@ export async function DELETE(req: Request) {
       );
     }
 
+    // Get event details
+    const event = await eventsCollection.findOne({ _id: new ObjectId(booking.eventId) });
+
     // Delete booking
-    await prisma.booking.delete({
-      where: { id: bookingId }
-    });
+    await bookingsCollection.deleteOne({ _id: new ObjectId(bookingId) });
 
     // Update event booking count
-    await prisma.event.update({
-      where: { id: booking.eventId },
-      data: {
-        currentBookings: Math.max(0, booking.event.currentBookings - 1)
-      }
-    });
+    if (event) {
+      await eventsCollection.updateOne(
+        { _id: new ObjectId(booking.eventId) },
+        { 
+          $set: { 
+            currentBookings: Math.max(0, event.currentBookings - 1),
+            updatedAt: new Date()
+          } 
+        }
+      );
+    }
 
     return NextResponse.json({
       success: true,

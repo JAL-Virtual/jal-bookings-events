@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../lib/prisma";
+import { getEventsCollection } from "../../../../lib/mongodb";
 
 const ADMIN_API_KEY = "29e2bb1d4ae031ed47b6";
 
@@ -25,22 +25,27 @@ export async function POST(req: Request) {
     }
 
     // Create new event
-    const newEvent = await prisma.event.create({
-      data: {
-        name,
-        description,
-        departure,
-        arrival,
-        date: new Date(date),
-        time,
-        picture,
-        route,
-        airline,
-        maxPilots: maxPilots || 10,
-        currentBookings: 0,
-        status: 'ACTIVE'
-      }
-    });
+    const eventsCollection = await getEventsCollection();
+    
+    const eventData = {
+      name,
+      description,
+      departure,
+      arrival,
+      date: new Date(date),
+      time,
+      picture,
+      route,
+      airline,
+      maxPilots: maxPilots || 10,
+      currentBookings: 0,
+      status: 'ACTIVE',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    const result = await eventsCollection.insertOne(eventData);
+    const newEvent = await eventsCollection.findOne({ _id: result.insertedId });
 
     return NextResponse.json({
       success: true,

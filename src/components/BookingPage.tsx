@@ -310,7 +310,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
         {filteredEvents.length === 0 ? (
           <div className="bg-gray-800 rounded-lg p-12 text-center">
             <div className="text-gray-400 text-lg">
-              {searchTerm ? 'No flights match your search criteria.' : 'No events available. Check back later for new flights.'}
+              {searchTerm ? 'No flights match your search criteria.' : 'No events available right now. Stay tuned for new events!'}
             </div>
           </div>
         ) : (

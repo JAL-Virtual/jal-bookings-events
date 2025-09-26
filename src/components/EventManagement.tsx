@@ -371,7 +371,7 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
               {events.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
-                    No events found. Create your first event to get started.
+                    No events available right now. Stay tuned for new events!
                   </td>
                 </tr>
               ) : (
