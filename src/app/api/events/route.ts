@@ -1,5 +1,31 @@
 import { NextResponse } from "next/server";
 import { getEventsCollection, getBookingsCollection } from "../../../lib/mongodb";
+import { ObjectId, Document } from "mongodb";
+
+interface Event {
+  _id?: ObjectId;
+  name: string;
+  description?: string;
+  departure: string;
+  arrival: string;
+  date: Date;
+  time: string;
+  picture?: string;
+  route?: string;
+  airline?: string;
+  flightNumber?: string;
+  aircraft?: string;
+  origin?: string;
+  destination?: string;
+  eobtEta?: string;
+  stand?: string;
+  maxPilots: number;
+  currentBookings: number;
+  status: 'ACTIVE' | 'INACTIVE' | 'CANCELLED';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 
 const ADMIN_API_KEY = "29e2bb1d4ae031ed47b6";
 
@@ -31,30 +57,33 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      events: eventsWithBookings.map(event => ({
-        id: event.id,
-        name: event.name,
-        description: event.description,
-        departure: event.departure,
-        arrival: event.arrival,
-        date: event.date,
-        time: event.time,
-        picture: event.picture,
-        route: event.route,
-        airline: event.airline,
-        flightNumber: event.flightNumber,
-        aircraft: event.aircraft,
-        origin: event.origin,
-        destination: event.destination,
-        eobtEta: event.eobtEta,
-        stand: event.stand,
-        maxPilots: event.maxPilots,
-        currentBookings: event.currentBookings,
-        status: event.status,
-        createdAt: event.createdAt,
-        updatedAt: event.updatedAt,
-        bookings: event.bookings
-      }))
+      events: eventsWithBookings.map(event => {
+        const eventData = event as unknown as Event & { id: string; bookings: Document[] };
+        return {
+          id: eventData.id,
+          name: eventData.name,
+          description: eventData.description,
+          departure: eventData.departure,
+          arrival: eventData.arrival,
+          date: eventData.date,
+          time: eventData.time,
+          picture: eventData.picture,
+          route: eventData.route,
+          airline: eventData.airline,
+          flightNumber: eventData.flightNumber,
+          aircraft: eventData.aircraft,
+          origin: eventData.origin,
+          destination: eventData.destination,
+          eobtEta: eventData.eobtEta,
+          stand: eventData.stand,
+          maxPilots: eventData.maxPilots,
+          currentBookings: eventData.currentBookings,
+          status: eventData.status,
+          createdAt: eventData.createdAt,
+          updatedAt: eventData.updatedAt,
+          bookings: eventData.bookings
+        };
+      })
     });
 
   } catch (error: unknown) {

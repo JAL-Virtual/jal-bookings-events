@@ -3,29 +3,6 @@ import { getSlotsCollection, getEventsCollection } from "../../../lib/mongodb";
 
 const ADMIN_API_KEY = "29e2bb1d4ae031ed47b6";
 
-// Define the type for slot with event included
-type SlotWithEvent = {
-  id: string;
-  eventId: string;
-  slotNumber: string;
-  type: string;
-  airline: string | null;
-  flightNumber: string | null;
-  aircraft: string | null;
-  origin: string | null;
-  destination: string | null;
-  eobtEta: string | null;
-  stand: string | null;
-  status: string;
-  createdAt: Date;
-  updatedAt: Date;
-  event: {
-    id: string;
-    name: string;
-    departure: string;
-    arrival: string;
-  };
-};
 
 // GET - Fetch all slots for an event
 export async function GET(req: Request) {

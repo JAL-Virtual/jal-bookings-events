@@ -1,41 +1,48 @@
 import { NextResponse } from "next/server";
 import { getBookingsCollection, getEventsCollection, getSlotsCollection } from "../../../lib/mongodb";
+import { ObjectId } from "mongodb";
 
-// Define the type for booking with event included
-type BookingWithEvent = {
-  id: string;
-  eventId: string;
+interface Booking {
+  _id?: ObjectId;
+  eventId: ObjectId;
+  slotId?: ObjectId;
   pilotId: string;
   pilotName: string;
   pilotEmail: string;
-  jalId: string | null;
-  status: string;
+  jalId?: string;
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED';
   createdAt: Date;
   updatedAt: Date;
-  event: {
-    id: string;
-    name: string;
-    description: string | null;
-    departure: string;
-    arrival: string;
-    date: Date;
-    time: string;
-    picture: string | null;
-    route: string | null;
-    airline: string | null;
-    flightNumber: string | null;
-    aircraft: string | null;
-    origin: string | null;
-    destination: string | null;
-    eobtEta: string | null;
-    stand: string | null;
-    maxPilots: number;
-    currentBookings: number;
-    status: string;
-    createdAt: Date;
-    updatedAt: Date;
-  };
-};
+}
+
+interface BookingWithEvent extends Booking {
+  id: string;
+  event: Event | null;
+}
+
+interface Event {
+  _id?: ObjectId;
+  name: string;
+  description?: string;
+  departure: string;
+  arrival: string;
+  date: Date;
+  time: string;
+  picture?: string;
+  route?: string;
+  airline?: string;
+  flightNumber?: string;
+  aircraft?: string;
+  origin?: string;
+  destination?: string;
+  eobtEta?: string;
+  stand?: string;
+  maxPilots: number;
+  currentBookings: number;
+  status: 'ACTIVE' | 'INACTIVE' | 'CANCELLED';
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 const ADMIN_API_KEY = "29e2bb1d4ae031ed47b6";
 
@@ -70,14 +77,14 @@ export async function GET(req: Request) {
         success: true,
         bookings: bookingsWithEvents.map((booking) => ({
           id: booking.id,
-          eventId: booking.eventId,
-          pilotId: booking.pilotId,
-          pilotName: booking.pilotName,
-          pilotEmail: booking.pilotEmail,
-          jalId: booking.jalId,
-          status: booking.status,
-          createdAt: booking.createdAt,
-          updatedAt: booking.updatedAt,
+          eventId: (booking as BookingWithEvent).eventId,
+          pilotId: (booking as BookingWithEvent).pilotId,
+          pilotName: (booking as BookingWithEvent).pilotName,
+          pilotEmail: (booking as BookingWithEvent).pilotEmail,
+          jalId: (booking as BookingWithEvent).jalId,
+          status: (booking as BookingWithEvent).status,
+          createdAt: (booking as BookingWithEvent).createdAt,
+          updatedAt: (booking as BookingWithEvent).updatedAt,
           // Include flight details from the booking or event
           airline: booking.event?.airline,
           flightNumber: booking.event?.flightNumber,
@@ -138,14 +145,14 @@ export async function GET(req: Request) {
       success: true,
       bookings: bookingsWithEvents.map((booking) => ({
         id: booking.id,
-        eventId: booking.eventId,
-        pilotId: booking.pilotId,
-        pilotName: booking.pilotName,
-        pilotEmail: booking.pilotEmail,
-        jalId: booking.jalId,
-        status: booking.status,
-        createdAt: booking.createdAt,
-        updatedAt: booking.updatedAt,
+        eventId: (booking as BookingWithEvent).eventId,
+        pilotId: (booking as BookingWithEvent).pilotId,
+        pilotName: (booking as BookingWithEvent).pilotName,
+        pilotEmail: (booking as BookingWithEvent).pilotEmail,
+        jalId: (booking as BookingWithEvent).jalId,
+        status: (booking as BookingWithEvent).status,
+        createdAt: (booking as BookingWithEvent).createdAt,
+        updatedAt: (booking as BookingWithEvent).updatedAt,
         event: booking.event ? {
           id: booking.event._id.toString(),
           name: booking.event.name,

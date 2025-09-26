@@ -1,5 +1,20 @@
 import { NextResponse } from "next/server";
 import { getStaffCollection } from "../../../lib/mongodb";
+import { ObjectId } from "mongodb";
+
+interface StaffMember {
+  _id?: ObjectId;
+  name: string;
+  email: string;
+  apiKey: string;
+  role: 'ADMINISTRATOR' | 'STAFF_MEMBER';
+  department?: string;
+  accessLevel: 'STAFF' | 'ADMIN' | 'SUPER_ADMIN';
+  status: 'PENDING' | 'ACTIVE' | 'INACTIVE';
+  createdAt: Date;
+  updatedAt: Date;
+  lastLogin?: Date;
+}
 
 const ADMIN_API_KEY = "29e2bb1d4ae031ed47b6";
 
@@ -17,23 +32,22 @@ export async function GET(req: Request) {
       );
     }
 
-    const staffMembers = await prisma.staffMember.findMany({
-      orderBy: { createdAt: 'desc' }
-    });
+    const staffCollection = await getStaffCollection();
+    const staffMembers = await staffCollection.find({}).sort({ createdAt: -1 }).toArray();
 
     return NextResponse.json({
       success: true,
       staffMembers: staffMembers.map((member) => ({
-        id: member.id,
-        name: member.name,
-        email: member.email,
-        role: member.role,
-        department: member.department,
-        accessLevel: member.accessLevel,
-        status: member.status,
-        createdAt: member.createdAt,
-        updatedAt: member.updatedAt,
-        lastLogin: member.lastLogin
+        id: member._id.toString(),
+        name: (member as StaffMember).name,
+        email: (member as StaffMember).email,
+        role: (member as StaffMember).role,
+        department: (member as StaffMember).department,
+        accessLevel: (member as StaffMember).accessLevel,
+        status: (member as StaffMember).status,
+        createdAt: (member as StaffMember).createdAt,
+        updatedAt: (member as StaffMember).updatedAt,
+        lastLogin: (member as StaffMember).lastLogin
       }))
     });
 
@@ -67,9 +81,8 @@ export async function PUT(req: Request) {
     }
 
     // Check if staff member exists
-    const existingStaff = await prisma.staffMember.findUnique({
-      where: { id }
-    });
+    const staffCollection = await getStaffCollection();
+    const existingStaff = await staffCollection.findOne({ _id: new ObjectId(id) });
 
     if (!existingStaff) {
       return NextResponse.json(
@@ -80,9 +93,7 @@ export async function PUT(req: Request) {
 
     // Check if email is being changed and if it already exists
     if (email && email !== existingStaff.email) {
-      const emailExists = await prisma.staffMember.findUnique({
-        where: { email }
-      });
+      const emailExists = await staffCollection.findOne({ email });
 
       if (emailExists) {
         return NextResponse.json(
@@ -94,9 +105,7 @@ export async function PUT(req: Request) {
 
     // Check if API key is being changed and if it already exists
     if (apiKey && apiKey !== existingStaff.apiKey) {
-      const apiKeyExists = await prisma.staffMember.findUnique({
-        where: { apiKey }
-      });
+      const apiKeyExists = await staffCollection.findOne({ apiKey });
 
       if (apiKeyExists) {
         return NextResponse.json(
@@ -107,30 +116,43 @@ export async function PUT(req: Request) {
     }
 
     // Update staff member
-    const updatedStaff = await prisma.staffMember.update({
-      where: { id },
-      data: {
-        ...(name && { name }),
-        ...(email && { email }),
-        ...(apiKey && { apiKey }),
-        ...(role && { role: role as 'ADMINISTRATOR' | 'STAFF_MEMBER' }),
-        ...(department && { department }),
-        ...(accessLevel && { accessLevel: accessLevel as 'STAFF' | 'ADMIN' | 'SUPER_ADMIN' })
-      }
-    });
+    const updateData: Partial<StaffMember> = {
+      updatedAt: new Date()
+    };
+    
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (apiKey) updateData.apiKey = apiKey;
+    if (role) updateData.role = role as 'ADMINISTRATOR' | 'STAFF_MEMBER';
+    if (department) updateData.department = department;
+    if (accessLevel) updateData.accessLevel = accessLevel as 'STAFF' | 'ADMIN' | 'SUPER_ADMIN';
+
+    const result = await staffCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updateData }
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json(
+        { error: "Staff member not found" },
+        { status: 404 }
+      );
+    }
+
+    const updatedStaff = await staffCollection.findOne({ _id: new ObjectId(id) });
 
     return NextResponse.json({
       success: true,
       message: "Staff member updated successfully",
       staffMember: {
-        id: updatedStaff.id,
-        name: updatedStaff.name,
-        email: updatedStaff.email,
-        role: updatedStaff.role,
-        department: updatedStaff.department,
-        accessLevel: updatedStaff.accessLevel,
-        status: updatedStaff.status,
-        updatedAt: updatedStaff.updatedAt
+        id: updatedStaff!._id.toString(),
+        name: updatedStaff!.name,
+        email: updatedStaff!.email,
+        role: updatedStaff!.role,
+        department: updatedStaff!.department,
+        accessLevel: updatedStaff!.accessLevel,
+        status: updatedStaff!.status,
+        updatedAt: updatedStaff!.updatedAt
       }
     });
 
@@ -166,9 +188,8 @@ export async function DELETE(req: Request) {
     }
 
     // Check if staff member exists
-    const existingStaff = await prisma.staffMember.findUnique({
-      where: { id }
-    });
+    const staffCollection = await getStaffCollection();
+    const existingStaff = await staffCollection.findOne({ _id: new ObjectId(id) });
 
     if (!existingStaff) {
       return NextResponse.json(
@@ -178,9 +199,7 @@ export async function DELETE(req: Request) {
     }
 
     // Delete staff member
-    await prisma.staffMember.delete({
-      where: { id }
-    });
+    await staffCollection.deleteOne({ _id: new ObjectId(id) });
 
     return NextResponse.json({
       success: true,
