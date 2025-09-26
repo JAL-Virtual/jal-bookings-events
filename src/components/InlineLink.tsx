@@ -12,4 +12,6 @@ export const InlineLink = forwardRef<HTMLAnchorElement, PropsWithChildren<Inline
 	)
 });
 
+InlineLink.displayName = 'InlineLink';
+
 export default InlineLink;

@@ -12,7 +12,7 @@ export interface Column<T> {
   label: string;
   sortable?: boolean;
   filterable?: boolean;
-  render?: (value: any, row: T) => React.ReactNode;
+  render?: (value: unknown, row: T) => React.ReactNode;
   width?: string;
   className?: string;
 }
@@ -153,7 +153,7 @@ export function DataTable<T extends Record<string, any>>({
     });
   };
 
-  const getNestedValue = (obj: any, path: string) => {
+  const getNestedValue = (obj: Record<string, unknown>, path: string) => {
     return path.split('.').reduce((current, key) => current?.[key], obj);
   };
 
