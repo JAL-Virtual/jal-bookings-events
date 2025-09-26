@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getSlotsCollection, getEventsCollection } from "../../../lib/mongodb";
 
 const ADMIN_API_KEY = "29e2bb1d4ae031ed47b6";
 
@@ -41,22 +41,43 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Event ID is required" }, { status: 400 });
     }
 
-    const whereClause: Record<string, unknown> = { eventId };
+    const slotsCollection = await getSlotsCollection();
+    const eventsCollection = await getEventsCollection();
+    
+    const query: Record<string, unknown> = { eventId };
     if (type && (type === 'DEPARTURE' || type === 'ARRIVAL')) {
-      whereClause.type = type;
+      query.type = type;
     }
 
-    const slots = await prisma.slot.findMany({
-      where: whereClause,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        event: true
-      }
-    });
+    const slots = await slotsCollection.find(query).sort({ createdAt: -1 }).toArray();
+    
+    // Get event details for each slot
+    const slotsWithEvents = await Promise.all(
+      slots.map(async (slot) => {
+        const event = await eventsCollection.findOne({ _id: slot.eventId });
+        return {
+          id: slot._id.toString(),
+          eventId: slot.eventId,
+          slotNumber: slot.slotNumber,
+          type: slot.type,
+          airline: slot.airline,
+          flightNumber: slot.flightNumber,
+          aircraft: slot.aircraft,
+          origin: slot.origin,
+          destination: slot.destination,
+          eobtEta: slot.eobtEta,
+          stand: slot.stand,
+          status: slot.status,
+          createdAt: slot.createdAt,
+          updatedAt: slot.updatedAt,
+          event
+        };
+      })
+    );
 
     return NextResponse.json({
       success: true,
-      slots: slots.map((slot: SlotWithEvent) => ({
+      slots: slotsWithEvents.map((slot) => ({
         id: slot.id,
         eventId: slot.eventId,
         slotNumber: slot.slotNumber,
@@ -71,12 +92,12 @@ export async function GET(req: Request) {
         status: slot.status,
         createdAt: slot.createdAt,
         updatedAt: slot.updatedAt,
-        event: {
-          id: slot.event.id,
+        event: slot.event ? {
+          id: slot.event._id.toString(),
           name: slot.event.name,
           departure: slot.event.departure,
           arrival: slot.event.arrival
-        }
+        } : null
       }))
     });
 
@@ -124,10 +145,12 @@ export async function POST(req: Request) {
       );
     }
 
+    const slotsCollection = await getSlotsCollection();
+    const eventsCollection = await getEventsCollection();
+    const { ObjectId } = await import('mongodb');
+
     // Check if event exists
-    const event = await prisma.event.findUnique({
-      where: { id: eventId }
-    });
+    const event = await eventsCollection.findOne({ _id: new ObjectId(eventId) });
 
     if (!event) {
       return NextResponse.json(
@@ -137,12 +160,10 @@ export async function POST(req: Request) {
     }
 
     // Check if slot number already exists for this event and type
-    const existingSlot = await prisma.slot.findFirst({
-      where: {
-        eventId,
-        slotNumber,
-        type
-      }
+    const existingSlot = await slotsCollection.findOne({
+      eventId,
+      slotNumber,
+      type
     });
 
     if (existingSlot) {
@@ -152,21 +173,24 @@ export async function POST(req: Request) {
       );
     }
 
-    const newSlot = await prisma.slot.create({
-      data: {
-        eventId,
-        slotNumber,
-        type,
-        airline,
-        flightNumber,
-        aircraft,
-        origin,
-        destination,
-        eobtEta,
-        stand,
-        status: 'AVAILABLE'
-      }
-    });
+    const slotData = {
+      eventId,
+      slotNumber,
+      type,
+      airline,
+      flightNumber,
+      aircraft,
+      origin,
+      destination,
+      eobtEta,
+      stand,
+      status: 'AVAILABLE',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    const result = await slotsCollection.insertOne(slotData);
+    const newSlot = await slotsCollection.findOne({ _id: result.insertedId });
 
     return NextResponse.json({
       success: true,
@@ -226,10 +250,11 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Slot ID is required" }, { status: 400 });
     }
 
+    const slotsCollection = await getSlotsCollection();
+    const { ObjectId } = await import('mongodb');
+
     // Check if slot exists
-    const existingSlot = await prisma.slot.findUnique({
-      where: { id }
-    });
+    const existingSlot = await slotsCollection.findOne({ _id: new ObjectId(id) });
 
     if (!existingSlot) {
       return NextResponse.json({ error: "Slot not found" }, { status: 404 });
@@ -249,10 +274,18 @@ export async function PUT(req: Request) {
     if (stand !== undefined) updateData.stand = stand;
     if (status !== undefined) updateData.status = status;
 
-    const updatedSlot = await prisma.slot.update({
-      where: { id },
-      data: updateData
-    });
+    updateData.updatedAt = new Date();
+
+    const result = await slotsCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updateData }
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json({ error: "Slot not found" }, { status: 404 });
+    }
+
+    const updatedSlot = await slotsCollection.findOne({ _id: new ObjectId(id) });
 
     return NextResponse.json({
       success: true,
@@ -281,17 +314,16 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Slot ID is required" }, { status: 400 });
     }
 
-    const slot = await prisma.slot.findUnique({
-      where: { id }
-    });
+    const slotsCollection = await getSlotsCollection();
+    const { ObjectId } = await import('mongodb');
+
+    const slot = await slotsCollection.findOne({ _id: new ObjectId(id) });
 
     if (!slot) {
       return NextResponse.json({ error: "Slot not found" }, { status: 404 });
     }
 
-    await prisma.slot.delete({
-      where: { id }
-    });
+    await slotsCollection.deleteOne({ _id: new ObjectId(id) });
 
     return NextResponse.json({
       success: true,

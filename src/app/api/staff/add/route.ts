@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../lib/prisma";
+import { getStaffCollection } from "../../../../lib/mongodb";
 
 const ADMIN_API_KEY = "29e2bb1d4ae031ed47b6";
 
@@ -32,10 +32,11 @@ export async function POST(req: Request) {
       );
     }
 
+    // Get staff collection
+    const staffCollection = await getStaffCollection();
+
     // Check if email already exists
-    const existingStaff = await prisma.staffMember.findUnique({
-      where: { email }
-    });
+    const existingStaff = await staffCollection.findOne({ email });
 
     if (existingStaff) {
       return NextResponse.json(
@@ -45,9 +46,7 @@ export async function POST(req: Request) {
     }
 
     // Check if API key already exists
-    const existingApiKey = await prisma.staffMember.findUnique({
-      where: { apiKey }
-    });
+    const existingApiKey = await staffCollection.findOne({ apiKey });
 
     if (existingApiKey) {
       return NextResponse.json(
@@ -57,17 +56,20 @@ export async function POST(req: Request) {
     }
 
     // Create staff member in database
-    const staffMember = await prisma.staffMember.create({
-      data: {
-        name,
-        email,
-        apiKey,
-        role: role as 'ADMINISTRATOR' | 'STAFF_MEMBER',
-        department: department || 'General',
-        accessLevel: (accessLevel || 'STAFF') as 'STAFF' | 'ADMIN' | 'SUPER_ADMIN',
-        status: 'PENDING'
-      }
-    });
+    const staffMemberData = {
+      name,
+      email,
+      apiKey,
+      role: role as 'ADMINISTRATOR' | 'STAFF_MEMBER',
+      department: department || 'General',
+      accessLevel: (accessLevel || 'STAFF') as 'STAFF' | 'ADMIN' | 'SUPER_ADMIN',
+      status: 'PENDING',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    const result = await staffCollection.insertOne(staffMemberData);
+    const staffMember = { ...staffMemberData, id: result.insertedId.toString() };
     
     return NextResponse.json({
       success: true,

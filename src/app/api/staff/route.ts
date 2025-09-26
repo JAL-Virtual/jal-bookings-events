@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
+import { getStaffCollection } from "../../../lib/mongodb";
 
 const ADMIN_API_KEY = "29e2bb1d4ae031ed47b6";
 
