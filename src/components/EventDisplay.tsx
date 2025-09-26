@@ -138,14 +138,19 @@ export const EventDisplay: React.FC<EventDisplayProps> = ({ className = '' }) =>
   }
 
   return (
-    <div className={`bg-gray-800 rounded-lg overflow-hidden ${className}`}>
+    <div className={`bg-gray-800 rounded-lg overflow-hidden shadow-2xl border border-gray-700 ${className}`}>
       {/* Event Header */}
-      <div className="p-6 border-b border-gray-700">
+      <div className="p-6 border-b border-gray-700 bg-gradient-to-r from-gray-800 to-gray-700">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h2 className="text-2xl font-bold text-yellow-400 mb-1">{event.name}</h2>
             {event.airline && (
               <p className="text-lg text-white font-semibold">{event.airline}</p>
+            )}
+            {event.route && (
+              <p className="text-sm text-gray-300 mt-1 font-mono">
+                Route: {event.route}
+              </p>
             )}
           </div>
           
@@ -156,22 +161,41 @@ export const EventDisplay: React.FC<EventDisplayProps> = ({ className = '' }) =>
             </div>
             <div className="text-sm text-gray-300">{formatDate(event.date)}</div>
             <div className="text-sm text-gray-300">{formatTime(event.time)}</div>
+            {event.eobtEta && (
+              <div className="text-xs text-gray-400 mt-1">{event.eobtEta}</div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Event Image */}
+      {/* Event Image - Enhanced Display */}
       {event.picture && (
-        <div className="relative h-48 w-full">
+        <div className="relative h-64 w-full overflow-hidden">
           <Image
             src={event.picture}
-            alt={event.name}
+            alt={`${event.name} - Event Image`}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-300 hover:scale-105"
             onError={(e) => {
               e.currentTarget.style.display = 'none';
             }}
+            priority
           />
+          {/* Image overlay with event details */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute bottom-4 left-4 right-4">
+            <div className="text-white">
+              <div className="text-sm font-medium text-gray-200 mb-1">
+                {event.airline && `${event.airline} • `}
+                {event.flightNumber && `Flight ${event.flightNumber}`}
+              </div>
+              {event.aircraft && (
+                <div className="text-xs text-gray-300">
+                  Aircraft: {event.aircraft}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -183,55 +207,69 @@ export const EventDisplay: React.FC<EventDisplayProps> = ({ className = '' }) =>
           </p>
         )}
 
-        {/* Flight Details Grid */}
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        {/* Flight Details Grid - Enhanced */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {event.flightNumber && (
-            <div>
-              <span className="text-gray-400">Flight:</span>
-              <span className="text-white ml-2 font-mono">{event.flightNumber}</span>
+            <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600/50">
+              <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Flight Number</div>
+              <div className="text-white font-medium font-mono">{event.flightNumber}</div>
             </div>
           )}
           
           {event.aircraft && (
-            <div>
-              <span className="text-gray-400">Aircraft:</span>
-              <span className="text-white ml-2">{event.aircraft}</span>
-            </div>
-          )}
-          
-          {event.eobtEta && (
-            <div>
-              <span className="text-gray-400">EOBT/ETA:</span>
-              <span className="text-white ml-2">{event.eobtEta}</span>
+            <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600/50">
+              <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Aircraft</div>
+              <div className="text-white font-medium">{event.aircraft}</div>
             </div>
           )}
           
           {event.stand && (
-            <div>
-              <span className="text-gray-400">Stand:</span>
-              <span className="text-white ml-2">{event.stand}</span>
+            <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600/50">
+              <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">Stand/Gate</div>
+              <div className="text-white font-medium">{event.stand}</div>
             </div>
           )}
         </div>
 
-        {/* Booking Status */}
-        <div className="mt-4 pt-4 border-t border-gray-700">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-400">Pilot Slots:</span>
-            <span className="text-white">
-              {event.currentBookings} / {event.maxPilots}
-            </span>
+        {event.eobtEta && (
+          <div className="bg-blue-500/10 rounded-lg p-3 mb-4 border border-blue-500/20">
+            <div className="text-xs text-blue-400 uppercase tracking-wide mb-1">EOBT/ETA</div>
+            <div className="text-white font-medium">{event.eobtEta}</div>
+          </div>
+        )}
+
+        {/* Booking Status - Enhanced */}
+        <div className="bg-gradient-to-r from-gray-700/50 to-gray-600/50 rounded-lg p-4 border border-gray-600/50">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-sm font-medium text-gray-300">Pilot Slots</div>
+            <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              event.status === 'ACTIVE' 
+                ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+            }`}>
+              {event.status}
+            </div>
           </div>
           
-          <div className="mt-2">
-            <div className="w-full bg-gray-700 rounded-full h-2">
-              <div 
-                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                style={{ 
-                  width: `${Math.min((event.currentBookings / event.maxPilots) * 100, 100)}%` 
-                }}
-              ></div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-2xl font-bold text-yellow-400">{event.currentBookings}</div>
+            <div className="text-gray-400 text-lg">/</div>
+            <div className="text-2xl font-bold text-white">{event.maxPilots}</div>
+            <div className="text-right">
+              <div className="text-lg font-bold text-blue-400">
+                {Math.round((event.currentBookings / event.maxPilots) * 100)}%
+              </div>
+              <div className="text-xs text-gray-400">Full</div>
             </div>
+          </div>
+          
+          <div className="w-full bg-gray-700 rounded-full h-3">
+            <div 
+              className="bg-gradient-to-r from-blue-500 to-blue-400 h-3 rounded-full transition-all duration-500"
+              style={{ 
+                width: `${Math.min((event.currentBookings / event.maxPilots) * 100, 100)}%` 
+              }}
+            ></div>
           </div>
         </div>
 
