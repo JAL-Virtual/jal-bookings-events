@@ -37,7 +37,7 @@ interface DataTableProps<T> {
   loading?: boolean;
 }
 
-export function DataTable<T extends Record<string, any>>({
+export function DataTable<T extends Record<string, unknown>>({
   data,
   columns,
   sortable = true,
