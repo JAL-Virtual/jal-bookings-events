@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface StartupPopupProps {
@@ -14,7 +14,7 @@ export default function StartupPopup({ jalId, onFinish }: StartupPopupProps) {
   const [displayedText, setDisplayedText] = useState('');
   const [currentCommand, setCurrentCommand] = useState('');
 
-  const commands = [
+  const commands = useMemo(() => [
     { 
       command: "jal-system --init", 
       output: "Initializing JAL Virtual System...",
@@ -51,7 +51,7 @@ export default function StartupPopup({ jalId, onFinish }: StartupPopupProps) {
       delay: 800,
       icon: "🎉"
     },
-  ];
+  ], []);
 
   // Typewriter effect for command output
   useEffect(() => {

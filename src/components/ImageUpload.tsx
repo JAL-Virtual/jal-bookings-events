@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import Image from 'next/image';
 
 interface ImageUploadProps {
   value?: string;
@@ -59,8 +60,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       } else {
         setError(data.error || "Upload failed");
       }
-    } catch (err: any) {
-      setError("Upload failed: " + err.message);
+    } catch (err: unknown) {
+      setError("Upload failed: " + (err instanceof Error ? err.message : 'Unknown error'));
     } finally {
       setUploading(false);
       // Reset file input
@@ -80,9 +81,11 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       {/* Current Image Preview */}
       {value && (
         <div className="relative">
-          <img
+          <Image
             src={value}
             alt="Event preview"
+            width={400}
+            height={128}
             className="w-full h-32 object-cover rounded-lg border border-gray-600"
           />
           <button

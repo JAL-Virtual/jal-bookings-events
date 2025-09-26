@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 export interface Event {
   id: string;
@@ -37,9 +38,11 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ event }) => {
       {/* Event Picture */}
       {event.picture && (
         <div className="mb-4">
-          <img 
+          <Image 
             src={event.picture} 
             alt={event.name}
+            width={800}
+            height={192}
             className="w-full max-w-2xl h-48 object-cover rounded-lg"
             onError={(e) => {
               // Hide image if it fails to load

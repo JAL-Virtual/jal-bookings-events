@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { ImageUpload } from './ImageUpload';
 import { SlotManagement } from './SlotManagement';
 
@@ -41,7 +42,7 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [showViewBookings, setShowViewBookings] = useState(false);
   const [selectedEventForBookings, setSelectedEventForBookings] = useState<Event | null>(null);
-  const [bookings, setBookings] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<unknown[]>([]);
   const [bookingsLoading, setBookingsLoading] = useState(false);
   const [addEventData, setAddEventData] = useState({
     name: '',
@@ -59,7 +60,7 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
   const [currentView, setCurrentView] = useState<'events' | 'slots'>('events');
 
   // Fetch bookings for an event
-  const fetchBookings = async (eventId: string) => {
+  const fetchBookings = useCallback(async (eventId: string) => {
     try {
       setBookingsLoading(true);
       setError(null);
@@ -79,17 +80,17 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
         setError(data.error || 'Failed to fetch bookings');
         setBookings([]);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching bookings:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
       setBookings([]);
     } finally {
       setBookingsLoading(false);
     }
-  };
+  }, [adminApiKey]);
 
   // Fetch events
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -112,17 +113,17 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
       } else {
         setError('No events have been created yet');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching events:', err);
       setError('No events have been created yet');
     } finally {
       setLoading(false);
     }
-  };
+  }, [adminApiKey]);
 
   useEffect(() => {
     fetchEvents();
-  }, [adminApiKey]);
+  }, [fetchEvents]);
 
   // Handle add event
   const handleAddEvent = async () => {
@@ -165,9 +166,9 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
       } else {
         setError(data.error || 'Failed to add event');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error adding event:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     } finally {
       setAddEventLoading(false);
     }
@@ -183,7 +184,7 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
       setError(null);
       
       // Prepare the data to send, filtering out undefined values
-      const dataToSend: any = {
+      const dataToSend: Record<string, unknown> = {
         id: editingEvent.id,
         adminApiKey,
       };
@@ -227,9 +228,9 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
       } else {
         setError(data.error || 'Failed to update event');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating event:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     }
   };
 
@@ -260,21 +261,12 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
       } else {
         setError(data.error || 'Failed to delete event');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error deleting event:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE': return 'text-green-400 bg-green-400/20';
-      case 'INACTIVE': return 'text-red-400 bg-red-400/20';
-      case 'CANCELLED': return 'text-gray-400 bg-gray-400/20';
-      case 'COMPLETED': return 'text-blue-400 bg-blue-400/20';
-      default: return 'text-gray-400 bg-gray-400/20';
-    }
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
@@ -377,9 +369,11 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-3">
                           {event.picture && (
-                            <img
+                            <Image
                               src={event.picture}
                               alt={event.name}
+                              width={48}
+                              height={48}
                               className="w-12 h-12 object-cover rounded-lg border border-gray-600"
                             />
                           )}
@@ -460,9 +454,11 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-3">
                         {event.picture && (
-                          <img
+                          <Image
                             src={event.picture}
                             alt={event.name}
+                            width={40}
+                            height={40}
                             className="w-10 h-10 object-cover rounded border border-gray-600"
                           />
                         )}

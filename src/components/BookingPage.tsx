@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ThemeToggle } from './ThemeToggle';
 
 interface Event {
@@ -79,7 +79,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
   };
 
   // Fetch user bookings
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     try {
       const response = await fetch(`/api/bookings?pilotId=${pilotId}`);
       
@@ -92,10 +92,10 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
       if (data.success) {
         setBookings(data.bookings || []);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching bookings:', err);
     }
-  };
+  }, [pilotId]);
 
   // Filter events based on search term
   useEffect(() => {
@@ -117,7 +117,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
   useEffect(() => {
     fetchEvents();
     fetchBookings();
-  }, [pilotId]);
+  }, [fetchBookings]);
 
   // Handle booking
   const handleBookEvent = async (eventId: string) => {
@@ -152,9 +152,9 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
       } else {
         setError(data.error || 'Failed to book event');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error booking event:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     } finally {
       setBookingLoading(null);
     }
@@ -188,9 +188,9 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
       } else {
         setError(data.error || 'Failed to cancel booking');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error cancelling booking:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     }
   };
 
@@ -206,15 +206,6 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
     return bookings.find(booking => booking.eventId === eventId);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE': return 'text-green-400 bg-green-400/20';
-      case 'INACTIVE': return 'text-red-400 bg-red-400/20';
-      case 'CANCELLED': return 'text-gray-400 bg-gray-400/20';
-      case 'COMPLETED': return 'text-blue-400 bg-blue-400/20';
-      default: return 'text-gray-400 bg-gray-400/20';
-    }
-  };
 
   const getBookingStatusColor = (status: string) => {
     switch (status) {
