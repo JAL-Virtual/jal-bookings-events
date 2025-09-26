@@ -29,6 +29,17 @@ interface Event {
   updatedAt: string;
 }
 
+interface Booking {
+  id: string;
+  airline?: string;
+  flightNumber?: string;
+  origin?: string;
+  destination?: string;
+  eobtEta?: string;
+  stand?: string;
+  pilotId?: string;
+}
+
 interface EventManagementProps {
   adminApiKey: string;
 }
@@ -42,7 +53,7 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [showViewBookings, setShowViewBookings] = useState(false);
   const [selectedEventForBookings, setSelectedEventForBookings] = useState<Event | null>(null);
-  const [bookings, setBookings] = useState<unknown[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [bookingsLoading, setBookingsLoading] = useState(false);
   const [addEventData, setAddEventData] = useState({
     name: '',

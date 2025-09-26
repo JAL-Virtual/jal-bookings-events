@@ -81,7 +81,7 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedEvent]);
 
   // Fetch slots for selected event
   const fetchSlots = useCallback(async () => {
