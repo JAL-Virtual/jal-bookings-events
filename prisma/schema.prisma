@@ -1,0 +1,144 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model StaffMember {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  apiKey      String   @unique
+  role        Role
+  department  String?
+  accessLevel AccessLevel @default(STAFF)
+  status      Status   @default(PENDING)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastLogin   DateTime?
+
+  @@map("staff_members")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  departure   String
+  arrival     String
+  date        DateTime
+  time        String   // Time in Zulu format
+  picture     String?  // URL or path to picture
+  route       String?  // Route information
+  airline     String?  // Airline name (e.g., Japan Airlines, ANA)
+  flightNumber String? // Flight number (e.g., MEA700, LVA701)
+  aircraft    String?  // Aircraft type
+  origin      String?  // Origin airport code (e.g., OLBA)
+  destination String?  // Destination airport code (e.g., LCLK)
+  eobtEta     String?  // EOBT/ETA time (e.g., "EOBT: 1700Z")
+  stand       String?  // Stand/gate information
+  maxPilots   Int      @default(10) // Maximum number of pilot slots
+  currentBookings Int @default(0)
+  status      EventStatus @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bookings    Booking[]
+  slots       Slot[]
+
+  @@map("events")
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  eventId   String
+  slotId    String?  // Optional slot ID for slot-specific bookings
+  pilotId   String
+  pilotName String
+  pilotEmail String
+  jalId     String?  // JAL ID for booked flights
+  status    BookingStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event     Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  slot      Slot?  @relation(fields: [slotId], references: [id], onDelete: SetNull)
+
+  @@map("bookings")
+}
+
+model Slot {
+  id          String   @id @default(cuid())
+  eventId     String
+  slotNumber  String   // Unique slot identifier (e.g., "342326", "731643")
+  type        SlotType // DEPARTURE or ARRIVAL
+  airline     String?  // Airline name
+  flightNumber String? // Flight number
+  aircraft    String?  // Aircraft type
+  origin      String?  // Origin airport code
+  destination String?  // Destination airport code
+  eobtEta     String?  // EOBT/ETA time
+  stand       String?  // Stand/gate information
+  status      SlotStatus @default(AVAILABLE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  event       Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  bookings    Booking[]
+
+  @@map("slots")
+}
+
+enum Role {
+  ADMINISTRATOR
+  STAFF_MEMBER
+  EVENT_MANAGER
+  EVENT_COORDINATOR
+  SUPPORT_STAFF
+  GENERAL_STAFF
+}
+
+enum AccessLevel {
+  STAFF
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum Status {
+  PENDING
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum EventStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+  COMPLETED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum SlotType {
+  DEPARTURE
+  ARRIVAL
+}
+
+enum SlotStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+  CANCELLED
+}
