@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { BookInfoMessage } from './BookInfoMessage';
 
 interface Event {
   id: string;
@@ -49,6 +50,9 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [jalId, setJalId] = useState('');
+  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
+  const [showError, setShowError] = useState(false);
+  const [errorType, setErrorType] = useState<'error' | 'warning'>('error');
 
   // Fetch events
   const fetchEvents = async () => {
@@ -116,10 +120,30 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
   useEffect(() => {
     fetchEvents();
     fetchBookings();
+    
+    // Set up auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchEvents();
+      fetchBookings();
+    }, 30000);
+    setRefreshInterval(interval);
+    
+    // Cleanup interval on unmount
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [fetchBookings]);
 
   // Handle booking
   const handleBookEvent = async (eventId: string) => {
+    // Check if already booked
+    if (isEventBooked(eventId)) {
+      handleError('You have already booked this event', 'warning');
+      return;
+    }
+
     try {
       setBookingLoading(eventId);
       setError(null);
@@ -149,11 +173,11 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
         await fetchBookings(); // Refresh bookings
         setJalId(''); // Clear JAL ID input
       } else {
-        setError(data.error || 'Failed to book event');
+        handleError(data.error || 'Failed to book event', 'error');
       }
     } catch (err: unknown) {
       console.error('Error booking event:', err);
-      setError(err instanceof Error ? err.message : 'Network error occurred');
+      handleError(err instanceof Error ? err.message : 'Network error occurred', 'error');
     } finally {
       setBookingLoading(null);
     }
@@ -185,11 +209,11 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
         await fetchEvents(); // Refresh events to update booking counts
         await fetchBookings(); // Refresh bookings
       } else {
-        setError(data.error || 'Failed to cancel booking');
+        handleError(data.error || 'Failed to cancel booking', 'error');
       }
     } catch (err: unknown) {
       console.error('Error cancelling booking:', err);
-      setError(err instanceof Error ? err.message : 'Network error occurred');
+      handleError(err instanceof Error ? err.message : 'Network error occurred', 'error');
     }
   };
 
@@ -214,6 +238,19 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
       case 'COMPLETED': return 'text-blue-400 bg-blue-400/20';
       default: return 'text-gray-400 bg-gray-400/20';
     }
+  };
+
+  // Handle error display
+  const handleError = (message: string, type: 'error' | 'warning' = 'error') => {
+    setError(message);
+    setErrorType(type);
+    setShowError(true);
+  };
+
+  // Handle error reset
+  const handleErrorReset = () => {
+    setShowError(false);
+    setError(null);
   };
 
   if (loading) {
@@ -299,10 +336,13 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
       </div>
 
       {/* Error Message */}
-      {error && (
-        <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4">
-          <p className="text-red-400">{error}</p>
-        </div>
+      {showError && error && (
+        <BookInfoMessage
+          header={errorType === 'error' ? 'Booking Error' : 'Booking Warning'}
+          description={error}
+          type={errorType}
+          onErrorReset={handleErrorReset}
+        />
       )}
 
       {/* Events List - Card Style */}

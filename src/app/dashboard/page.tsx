@@ -14,17 +14,6 @@ import {
 } from '../../components';
 import { isAuthenticated } from '../api';
 
-const mockEvent: Event = {
-  id: '1',
-  name: 'FIRST FLIGHT',
-  subtitle: 'Mega Slot Event',
-  description: 'IVAO Lebanon invites you to relive a milestone in Middle Eastern aviation with a nostalgic tribute flight from Beirut to Larnaca, recreating Middle East Airlines\' first commercial journey in 1946. Open to vintage propeller aircraft built before 1970—or any prop aircraft under 250 knots if unavailable—this event celebrates aviation heritage with full ATC coverage, a historic atmosphere, and eligibility for the HQ point, Aviation Celebration Award, and a special giveaway book. Jets are not permitted—this one\'s for the classics.',
-  departure: 'OLBA',
-  arrival: 'LCLK',
-  date: 'September 26',
-  time: '1700z - 1900z',
-  pilotBriefingUrl: '/briefing/pilot'
-};
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = React.useState('home');
@@ -34,6 +23,7 @@ export default function DashboardPage() {
   const [apiKey, setApiKey] = React.useState<string | null>(null);
   const [currentEvent, setCurrentEvent] = React.useState<Event | null>(null);
   const [eventLoading, setEventLoading] = React.useState(true);
+  const [refreshInterval, setRefreshInterval] = React.useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Check if user is authenticated
@@ -60,7 +50,20 @@ export default function DashboardPage() {
     // Fetch current event data
     fetchCurrentEvent();
     
+    // Set up auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchCurrentEvent();
+    }, 30000);
+    setRefreshInterval(interval);
+    
     setIsLoading(false);
+    
+    // Cleanup interval on unmount
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, []);
 
 
@@ -83,7 +86,7 @@ export default function DashboardPage() {
         setCurrentEvent({
           id: event.id,
           name: event.name,
-          subtitle: 'Mega Slot Event', // Default subtitle
+          subtitle: event.airline || 'Aviation Event', // Use airline or default
           description: event.description || '',
           departure: event.departure || event.origin || '',
           arrival: event.arrival || event.destination || '',
@@ -96,20 +99,22 @@ export default function DashboardPage() {
           picture: event.picture || undefined,
           pilotBriefingUrl: '/briefing/pilot'
         });
+      } else {
+        // No events in database - set to null to show "Stay tuned" message
+        setCurrentEvent(null);
       }
     } catch (err: unknown) {
       console.error('Error fetching current event:', err);
-      // Fallback to mock event if API fails
-      setCurrentEvent(mockEvent);
+      // Set to null to show "Stay tuned" message when API fails
+      setCurrentEvent(null);
     } finally {
       setEventLoading(false);
     }
   };
 
   const handleBriefingClick = () => {
-    const event = currentEvent || mockEvent;
-    if (event.pilotBriefingUrl) {
-      window.open(event.pilotBriefingUrl, '_blank');
+    if (currentEvent && currentEvent.pilotBriefingUrl) {
+      window.open(currentEvent.pilotBriefingUrl, '_blank');
     }
   };
 
@@ -154,15 +159,34 @@ export default function DashboardPage() {
           {/* Render content based on active tab */}
           {activeTab === 'home' ? (
             <>
-              <EventHeader event={mockEvent} />
-              
-              {/* Briefing Cards */}
-              <div className="mb-4">
-                <PilotBriefingCard 
-                  briefingUrl={mockEvent.pilotBriefingUrl}
-                  onBriefingClick={handleBriefingClick}
-                />
-              </div>
+              {eventLoading ? (
+                <div className="flex items-center justify-center h-64">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                </div>
+              ) : currentEvent ? (
+                <>
+                  <EventHeader event={currentEvent} />
+                  
+                  {/* Briefing Cards */}
+                  <div className="mb-4">
+                    <PilotBriefingCard 
+                      briefingUrl={currentEvent.pilotBriefingUrl}
+                      onBriefingClick={handleBriefingClick}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="bg-gray-800 rounded-lg p-12 text-center">
+                  <div className="text-6xl mb-4">✈️</div>
+                  <h3 className="text-2xl font-bold text-yellow-400 mb-2">Stay Tuned for New Events</h3>
+                  <p className="text-gray-400 text-lg">
+                    We're preparing exciting aviation events for you. Check back soon for updates!
+                  </p>
+                  <div className="mt-6 text-sm text-gray-500">
+                    Japan Airlines Virtual • Event Booking Portal
+                  </div>
+                </div>
+              )}
             </>
           ) : activeTab === 'booking' ? (
             <BookSlot 
@@ -190,18 +214,29 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-center h-64">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 </div>
-              ) : (
+              ) : currentEvent ? (
                 <>
-                  <EventHeader event={currentEvent || mockEvent} />
+                  <EventHeader event={currentEvent} />
                   
                   {/* Briefing Cards */}
                   <div className="mb-4">
                     <PilotBriefingCard 
-                      briefingUrl={(currentEvent || mockEvent).pilotBriefingUrl}
+                      briefingUrl={currentEvent.pilotBriefingUrl}
                       onBriefingClick={handleBriefingClick}
                     />
                   </div>
                 </>
+              ) : (
+                <div className="bg-gray-800 rounded-lg p-12 text-center">
+                  <div className="text-6xl mb-4">✈️</div>
+                  <h3 className="text-2xl font-bold text-yellow-400 mb-2">Stay Tuned for New Events</h3>
+                  <p className="text-gray-400 text-lg">
+                    We're preparing exciting aviation events for you. Check back soon for updates!
+                  </p>
+                  <div className="mt-6 text-sm text-gray-500">
+                    Japan Airlines Virtual • Event Booking Portal
+                  </div>
+                </div>
               )}
             </>
           )}

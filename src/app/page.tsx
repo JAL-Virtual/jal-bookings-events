@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { isAuthenticated } from './api';
-import { StartupPopup } from '../components';
+import { StartupPopup, EventDisplay } from '../components';
 
 type Star = { top: number; left: number; size: number; dur: number; delay: number };
 
@@ -321,6 +321,16 @@ Event Booking Portal
             >
               ✈️ Book premium aviation events and experiences ✈️
             </motion.div>
+          </motion.div>
+
+          {/* Current Event Display */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 1.5 }}
+            className="w-full max-w-4xl mt-8"
+          >
+            <EventDisplay />
           </motion.div>
 
           <motion.button

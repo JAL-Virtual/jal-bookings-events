@@ -69,6 +69,7 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
   });
   const [addEventLoading, setAddEventLoading] = useState(false);
   const [currentView, setCurrentView] = useState<'events' | 'slots'>('events');
+  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
 
   // Fetch bookings for an event
   const fetchBookings = useCallback(async (eventId: string) => {
@@ -134,6 +135,19 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
 
   useEffect(() => {
     fetchEvents();
+    
+    // Set up auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchEvents();
+    }, 30000);
+    setRefreshInterval(interval);
+    
+    // Cleanup interval on unmount
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [fetchEvents]);
 
   // Handle add event

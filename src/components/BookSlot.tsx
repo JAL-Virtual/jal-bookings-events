@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { UTCClock } from './UTCClock';
+import { FilterCard } from './FilterCard';
 
 interface Slot {
   id: string;
@@ -51,6 +52,7 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [bookingLoading, setBookingLoading] = useState<string | null>(null);
+  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
 
   // Fetch events
   const fetchEvents = useCallback(async () => {
@@ -167,6 +169,19 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
 
   useEffect(() => {
     fetchEvents();
+    
+    // Set up auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      fetchEvents();
+    }, 30000);
+    setRefreshInterval(interval);
+    
+    // Cleanup interval on unmount
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [fetchEvents]);
 
   useEffect(() => {
