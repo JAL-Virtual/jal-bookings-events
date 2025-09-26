@@ -46,3 +46,6 @@ export { Logo } from './Logo';
 export { Pagination, CompactPagination, SimplePagination } from './Pagination';
 export { StatusBadge, BookedBadge, AvailableBadge, CancelledBadge, PendingBadge, CompletedBadge, ExpiredBadge } from './StatusBadge';
 export { ToastProvider, useToast, useToastNotifications } from './Toast';
+
+// Contexts
+export { CookieConsentContext, CookieConsentProvider, ConsentAnwsers, useCookieConsent } from '../contexts/CookieConsentContext';
