@@ -1,0 +1,648 @@
+/* Progress Component Styles */
+.progress-wrapper {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.progress-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  font-size: 10px;
+}
+
+.progress-item .progress-counter {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #c0c0c0;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+.dark .progress-item .progress-counter {
+  border-color: #282828;
+  background-color: #282828;
+}
+
+.progress-item.completed {
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.progress-item.completed .progress-counter {
+  background-color: #2563eb;
+}
+
+.dark .progress-item.completed .progress-counter {
+  background-color: #F9CC2C;
+}
+
+.progress-item::after {
+  position: absolute;
+  content: "";
+  border-bottom: 3px solid #c0c0c0;
+  width: 100%;
+  right: 0%;
+  left: -50%;
+  top: 5px;
+  z-index: 3;
+}
+
+.dark .progress-item::after {
+  border-color: #282828;
+}
+
+.progress-item:first-child::after {
+  content: none;
+}
+
+.progress-item.completed::after {
+  border-bottom: 3px solid #2563eb;
+}
+
+.dark .progress-item.completed::after {
+  border-color: #F9CC2C;
+}
+
+.progress-legend {
+  max-width: 36px;
+  color: #808080;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.63rem;
+  line-height: 150%;
+}
+
+.dark .progress-legend {
+  color: rgba(128, 128, 128, 0.8);
+}
+
+/* Slot Book Button Styles */
+.slot-book-button {
+  display: block;
+  border-radius: 0.375rem;
+  width: 6rem;
+  height: 2.25rem;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.slot-book-button.bookable {
+  background-color: #16a34a;
+  color: white;
+}
+
+.slot-book-button.bookable:hover {
+  background-color: #15803d;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.slot-book-button.unbookable {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: #f87171;
+  cursor: not-allowed;
+}
+
+.slot-book-button span {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 0.875rem;
+}
+
+/* Filter Card Styles */
+.filter-card {
+  display: flex;
+  flex-direction: column;
+  width: 15rem;
+  padding: 0.75rem 1rem 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-card.inactive {
+  background-color: #f3f4f6;
+}
+
+.dark .filter-card.inactive {
+  background-color: #374151;
+}
+
+.filter-card.active {
+  background-color: #2563eb;
+}
+
+.dark .filter-card.active {
+  background-color: #F9CC2C;
+}
+
+.filter-card-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-weight: 800;
+  font-size: 1.125rem;
+}
+
+.filter-card.inactive .filter-card-header {
+  color: #2563eb;
+}
+
+.dark .filter-card.inactive .filter-card-header {
+  color: #d1d5db;
+}
+
+.filter-card.active .filter-card-header {
+  color: white;
+}
+
+.dark .filter-card.active .filter-card-header {
+  color: #2563eb;
+}
+
+.filter-card-icon {
+  margin-left: auto;
+  font-size: 1.125rem;
+  width: 1.5rem;
+}
+
+.filter-card-text {
+  width: 10rem;
+  font-size: 0.75rem;
+}
+
+.filter-card.inactive .filter-card-text {
+  color: #6b7280;
+}
+
+.dark .filter-card.inactive .filter-card-text {
+  color: #d1d5db;
+}
+
+.filter-card.active .filter-card-text {
+  color: #d1d5db;
+}
+
+.dark .filter-card.active .filter-card-text {
+  color: #3C55AC;
+}
+
+.filter-card-quantity {
+  font-weight: 800;
+  font-size: 1.125rem;
+  align-self: flex-end;
+}
+
+.filter-card.inactive .filter-card-quantity {
+  color: #2563eb;
+}
+
+.dark .filter-card.inactive .filter-card-quantity {
+  color: #d1d5db;
+}
+
+.filter-card.active .filter-card-quantity {
+  color: white;
+}
+
+.dark .filter-card.active .filter-card-quantity {
+  color: #2563eb;
+}
+
+/* Slots Table Styles */
+.slots-table {
+  border-collapse: separate;
+  text-align: center;
+  min-width: 100%;
+  border-spacing: 0 16px;
+}
+
+.slots-table thead tr {
+  font-size: 12px;
+  color: #a0a0a0;
+  text-align: center;
+  font-weight: 600;
+  line-height: 1.75rem;
+  white-space: nowrap;
+}
+
+.dark .slots-table thead tr {
+  color: #d1d5db;
+}
+
+.slots-table tbody tr {
+  height: 3.25rem;
+  padding-top: 1rem;
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.dark .slots-table tbody tr {
+  background-color: #1f2937;
+  color: white;
+}
+
+.slots-table td {
+  padding: 0.75rem;
+}
+
+.slots-table input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: white;
+  color: #111827;
+  font-size: 0.875rem;
+}
+
+.dark .slots-table input {
+  border-color: #4b5563;
+  background-color: #374151;
+  color: white;
+}
+
+.slots-table input:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* Slot Type Filter Styles */
+.slot-type-filter {
+  position: relative;
+  background-color: white;
+}
+
+.dark .slot-type-filter {
+  background-color: #111827;
+}
+
+.slot-type-filter-banner {
+  position: absolute;
+  border-radius: 0.375rem;
+  width: 100%;
+  height: 12rem;
+  opacity: 0.1;
+  display: none;
+}
+
+.dark .slot-type-filter-banner {
+  display: block;
+}
+
+.slot-type-filter-content {
+  position: relative;
+  z-index: 20;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2.25rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .slot-type-filter-content {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+}
+
+.slot-type-filter-header h2 {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+.dark .slot-type-filter-header h2 {
+  color: white;
+}
+
+.slot-type-filter-header p {
+  font-size: 1rem;
+  color: #3b82f6;
+}
+
+.dark .slot-type-filter-header p {
+  color: #d1d5db;
+}
+
+/* Slot Page Header Styles */
+.slot-page-header {
+  display: flex;
+  align-items: center;
+  padding: 2rem;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dark .slot-page-header {
+  background-color: #111827;
+  border-color: #374151;
+}
+
+.slot-page-search {
+  width: 20rem;
+}
+
+.slot-page-search input {
+  display: block;
+  width: 100%;
+  padding-left: 2.5rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: white;
+  color: #111827;
+  font-size: 0.875rem;
+}
+
+.dark .slot-page-search input {
+  border-color: #4b5563;
+  background-color: #1f2937;
+  color: white;
+}
+
+.slot-page-search input:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.slot-page-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #9ca3af;
+}
+
+.slot-page-actions {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.slot-page-filter-button {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.slot-page-filter-button.inactive {
+  background-color: #374151;
+  color: #3b82f6;
+}
+
+.slot-page-filter-button.inactive:hover {
+  background-color: #4b5563;
+}
+
+.slot-page-filter-button.active {
+  background-color: #2563eb;
+  color: white;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.slot-page-filter-button span {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.5rem;
+}
+
+.slot-page-reset-button {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(220, 38, 38, 0.1);
+  color: #f87171;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.dark .slot-page-reset-button {
+  background-color: rgba(220, 38, 38, 0.2);
+}
+
+.slot-page-reset-button:hover {
+  background-color: rgba(220, 38, 38, 0.2);
+}
+
+.dark .slot-page-reset-button:hover {
+  background-color: rgba(220, 38, 38, 0.3);
+}
+
+.slot-page-reset-button span {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.5rem;
+}
+
+/* User Slots Side Info Styles */
+.user-slots-side-info {
+  padding: 2.25rem 1.5rem;
+  background-color: white;
+  height: 100%;
+}
+
+.dark .user-slots-side-info {
+  background-color: #111827;
+}
+
+.user-slots-side-info h2 {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #2563eb;
+}
+
+.dark .user-slots-side-info h2 {
+  color: white;
+}
+
+.user-slots-side-info p {
+  font-size: 1rem;
+  color: #3b82f6;
+}
+
+.dark .user-slots-side-info p {
+  color: #d1d5db;
+}
+
+.user-slots-info-card {
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-top: 3rem;
+}
+
+.dark .user-slots-info-card {
+  background-color: #1f2937;
+}
+
+.user-slots-info-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.user-slots-info-icon {
+  flex-shrink: 0;
+}
+
+.user-slots-info-details {
+  flex: 1;
+}
+
+.user-slots-info-details h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.dark .user-slots-info-details h3 {
+  color: white;
+}
+
+.user-slots-info-details p {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin-bottom: 1rem;
+}
+
+.dark .user-slots-info-details p {
+  color: #d1d5db;
+}
+
+.user-slots-info-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #2563eb;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.user-slots-info-button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Book Info Message Styles */
+.book-info-message {
+  max-width: 42rem;
+  margin-top: 2.75rem;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.book-info-message.error {
+  background-color: rgba(220, 38, 38, 0.2);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.book-info-message.warning {
+  background-color: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.book-info-message h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.book-info-message.error h3 {
+  color: #f87171;
+}
+
+.book-info-message.warning h3 {
+  color: #fbbf24;
+}
+
+.book-info-message p {
+  margin-top: 1rem;
+  font-size: 1.125rem;
+}
+
+.book-info-message.error p {
+  color: #fca5a5;
+}
+
+.book-info-message.warning p {
+  color: #fcd34d;
+}
+
+.book-info-message-button {
+  margin-top: 4rem;
+}
+
+.book-info-message-button button {
+  width: 18rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: none;
+  cursor: pointer;
+}
+
+.book-info-message-button button:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #3b82f6;
+  ring-offset: 2px;
+  ring-offset-color: #1f2937;
+}
+
+.book-info-message-button button:hover {
+  background-color: #1d4ed8;
+}
