@@ -117,12 +117,12 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
     }
   }, [events, searchTerm]);
 
+  const loadData = useCallback(async () => {
+    await fetchEvents();
+    await fetchBookings();
+  }, [fetchEvents, fetchBookings]);
+
   useEffect(() => {
-    const loadData = async () => {
-      await fetchEvents();
-      await fetchBookings();
-    };
-    
     loadData();
     
     // Set up auto-refresh every 30 seconds
@@ -137,7 +137,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
         clearInterval(refreshIntervalRef.current);
       }
     };
-  }, [pilotId]); // Only depend on pilotId, not the functions
+  }, [loadData]);
 
   // Handle booking
   const handleBookEvent = async (eventId: string) => {
