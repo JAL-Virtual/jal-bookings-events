@@ -64,7 +64,7 @@ export default function DashboardPage() {
         clearInterval(refreshInterval);
       }
     };
-  }, []);
+  }, [refreshInterval]);
 
 
   // Fetch current event from database
