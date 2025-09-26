@@ -23,7 +23,7 @@ export default function DashboardPage() {
   const [apiKey, setApiKey] = React.useState<string | null>(null);
   const [currentEvent, setCurrentEvent] = React.useState<Event | null>(null);
   const [eventLoading, setEventLoading] = React.useState(true);
-  const [refreshInterval, setRefreshInterval] = React.useState<NodeJS.Timeout | null>(null);
+  const refreshIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Check if user is authenticated
@@ -54,17 +54,17 @@ export default function DashboardPage() {
     const interval = setInterval(() => {
       fetchCurrentEvent();
     }, 30000);
-    setRefreshInterval(interval);
+    refreshIntervalRef.current = interval;
     
     setIsLoading(false);
     
     // Cleanup interval on unmount
     return () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
       }
     };
-  }, [refreshInterval]);
+  }, []);
 
 
   // Fetch current event from database

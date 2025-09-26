@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { ImageUpload } from './ImageUpload';
 import { SlotManagement } from './SlotManagement';
@@ -69,7 +69,7 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
   });
   const [addEventLoading, setAddEventLoading] = useState(false);
   const [currentView, setCurrentView] = useState<'events' | 'slots'>('events');
-  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch bookings for an event
   const fetchBookings = useCallback(async (eventId: string) => {
@@ -140,15 +140,15 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
     const interval = setInterval(() => {
       fetchEvents();
     }, 30000);
-    setRefreshInterval(interval);
+    refreshIntervalRef.current = interval;
     
     // Cleanup interval on unmount
     return () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
       }
     };
-  }, [fetchEvents, refreshInterval]);
+  }, []);
 
   // Handle add event
   const handleAddEvent = async () => {

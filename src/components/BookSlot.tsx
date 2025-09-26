@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { UTCClock } from './UTCClock';
 
 interface Slot {
@@ -51,7 +51,7 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [bookingLoading, setBookingLoading] = useState<string | null>(null);
-  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch events
   const fetchEvents = useCallback(async () => {
@@ -173,15 +173,15 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
     const interval = setInterval(() => {
       fetchEvents();
     }, 30000);
-    setRefreshInterval(interval);
+    refreshIntervalRef.current = interval;
     
     // Cleanup interval on unmount
     return () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
       }
     };
-  }, [fetchEvents, refreshInterval]);
+  }, []);
 
   useEffect(() => {
     if (selectedEvent) {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 interface Event {
@@ -35,7 +35,7 @@ export const EventDisplay: React.FC<EventDisplayProps> = ({ className = '' }) =>
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchLatestEvent = async () => {
@@ -72,15 +72,15 @@ export const EventDisplay: React.FC<EventDisplayProps> = ({ className = '' }) =>
     const interval = setInterval(() => {
       fetchLatestEvent();
     }, 30000);
-    setRefreshInterval(interval);
+    refreshIntervalRef.current = interval;
     
     // Cleanup interval on unmount
     return () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
       }
     };
-  }, [refreshInterval]);
+  }, []);
 
   const formatDate = (dateString: string) => {
     try {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { BookInfoMessage } from './BookInfoMessage';
 
 interface Event {
@@ -50,7 +50,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [jalId, setJalId] = useState('');
-  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [showError, setShowError] = useState(false);
   const [errorType, setErrorType] = useState<'error' | 'warning'>('error');
 
@@ -126,15 +126,15 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
       fetchEvents();
       fetchBookings();
     }, 30000);
-    setRefreshInterval(interval);
+    refreshIntervalRef.current = interval;
     
     // Cleanup interval on unmount
     return () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
       }
     };
-  }, [fetchBookings, refreshInterval]);
+  }, []);
 
   // Handle booking
   const handleBookEvent = async (eventId: string) => {
