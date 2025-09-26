@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import { isAuthenticated } from './api';
-import { StartupPopup, UTCClock } from '../components';
+import { StartupPopup } from '../components';
 
 type Star = { top: number; left: number; size: number; dur: number; delay: number };
 
@@ -90,8 +91,8 @@ export default function LandingPage() {
       setApiKey(apiKey.trim());
       setShowLogin(false);
       setShowStartup(true);
-    } catch (e: any) {
-      setError(e?.message ?? "Something went wrong");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -105,9 +106,11 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
         <div className="text-center">
           <div className="flex items-center justify-center mx-auto mb-4">
-            <img 
+            <Image 
               src="/img/jal-logo.png"
               alt="Japan Airlines Logo"
+              width={96}
+              height={96}
               className="w-24 h-24 object-contain"
             />
           </div>

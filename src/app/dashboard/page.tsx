@@ -9,12 +9,10 @@ import {
   Footer,
   StaffManagement,
   EventManagement,
-  SlotManagement,
   BookSlot,
-  UTCClock,
   type Event
 } from '../../components';
-import { APIClient, isAuthenticated } from '../api';
+import { isAuthenticated } from '../api';
 
 const mockEvent: Event = {
   id: '1',
@@ -99,7 +97,7 @@ export default function DashboardPage() {
           pilotBriefingUrl: '/briefing/pilot'
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching current event:', err);
       // Fallback to mock event if API fails
       setCurrentEvent(mockEvent);

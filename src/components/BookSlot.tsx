@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { UTCClock } from './UTCClock';
 
 interface Slot {
@@ -53,7 +53,7 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
   const [bookingLoading, setBookingLoading] = useState<string | null>(null);
 
   // Fetch events
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -75,16 +75,16 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
       } else {
         setError(data.error || 'Failed to fetch events');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching events:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch slots for selected event
-  const fetchSlots = async () => {
+  const fetchSlots = useCallback(async () => {
     if (!selectedEvent) return;
 
     try {
@@ -104,11 +104,11 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
       } else {
         setError(data.error || 'Failed to fetch slots');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching slots:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     }
-  };
+  }, [selectedEvent, slotType]);
 
   // Handle slot booking
   const handleBookSlot = async (slotId: string) => {
@@ -144,9 +144,9 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
       } else {
         setError(data.error || 'Failed to book slot');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error booking slot:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     } finally {
       setBookingLoading(null);
     }
@@ -167,13 +167,13 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
   useEffect(() => {
     if (selectedEvent) {
       fetchSlots();
     }
-  }, [selectedEvent, slotType]);
+  }, [selectedEvent, slotType, fetchSlots]);
 
   if (loading) {
     return (

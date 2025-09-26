@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display, JetBrains_Mono, Orbitron } from "next/font/google";
+import { Inter, Playfair_Display, JetBrains_Mono, Orbitron, Comic_Neue } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-
-// Comic Relief font - we'll add it via CSS since it's not available on Google Fonts
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,6 +27,13 @@ const orbitron = Orbitron({
   display: "swap",
 });
 
+const comicNeue = Comic_Neue({
+  variable: "--font-comic-neue",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["300", "400", "700"],
+});
+
 export const metadata: Metadata = {
   title: "JAL Virtual Event Booking Portal",
   description: "Japan Airlines Virtual Event Booking Portal - Premium Aviation Events",
@@ -41,14 +46,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body
-        className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} ${orbitron.variable} antialiased`}
+        className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} ${orbitron.variable} ${comicNeue.variable} antialiased`}
       >
         <ThemeProvider>
           {children}

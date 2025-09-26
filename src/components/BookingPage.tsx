@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { ThemeToggle } from './ThemeToggle';
 
 interface Event {
   id: string;
@@ -70,7 +69,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
       } else {
         setError('No events available');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching events:', err);
       setError('Failed to load events');
     } finally {
