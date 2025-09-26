@@ -148,7 +148,7 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
         clearInterval(refreshInterval);
       }
     };
-  }, [fetchEvents]);
+  }, [fetchEvents, refreshInterval]);
 
   // Handle add event
   const handleAddEvent = async () => {

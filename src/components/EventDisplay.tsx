@@ -80,7 +80,7 @@ export const EventDisplay: React.FC<EventDisplayProps> = ({ className = '' }) =>
         clearInterval(refreshInterval);
       }
     };
-  }, []);
+  }, [refreshInterval]);
 
   const formatDate = (dateString: string) => {
     try {

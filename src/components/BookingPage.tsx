@@ -134,7 +134,7 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
         clearInterval(refreshInterval);
       }
     };
-  }, [fetchBookings]);
+  }, [fetchBookings, refreshInterval]);
 
   // Handle booking
   const handleBookEvent = async (eventId: string) => {
