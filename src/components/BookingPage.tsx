@@ -130,8 +130,8 @@ export const BookingPage: React.FC<BookingPageProps> = ({ pilotId, pilotName, pi
     
     // Cleanup interval on unmount
     return () => {
-      if (interval) {
-        clearInterval(interval);
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
       }
     };
   }, [fetchBookings]);

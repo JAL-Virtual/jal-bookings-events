@@ -60,8 +60,8 @@ export default function DashboardPage() {
     
     // Cleanup interval on unmount
     return () => {
-      if (interval) {
-        clearInterval(interval);
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
       }
     };
   }, []);
@@ -180,7 +180,7 @@ export default function DashboardPage() {
                   <div className="text-6xl mb-4">✈️</div>
                   <h3 className="text-2xl font-bold text-yellow-400 mb-2">Stay Tuned for New Events</h3>
                   <p className="text-gray-400 text-lg">
-                    We're preparing exciting aviation events for you. Check back soon for updates!
+                    We&apos;re preparing exciting aviation events for you. Check back soon for updates!
                   </p>
                   <div className="mt-6 text-sm text-gray-500">
                     Japan Airlines Virtual • Event Booking Portal
@@ -231,7 +231,7 @@ export default function DashboardPage() {
                   <div className="text-6xl mb-4">✈️</div>
                   <h3 className="text-2xl font-bold text-yellow-400 mb-2">Stay Tuned for New Events</h3>
                   <p className="text-gray-400 text-lg">
-                    We're preparing exciting aviation events for you. Check back soon for updates!
+                    We&apos;re preparing exciting aviation events for you. Check back soon for updates!
                   </p>
                   <div className="mt-6 text-sm text-gray-500">
                     Japan Airlines Virtual • Event Booking Portal

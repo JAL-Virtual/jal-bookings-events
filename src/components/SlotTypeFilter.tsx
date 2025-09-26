@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { PlaneIcon, ArrowUpIcon, ArrowDownIcon, ClockIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
+import { ArrowUpIcon, ArrowDownIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { FilterCard } from './FilterCard';
 
 export enum SlotTypeOptions {
@@ -50,7 +51,7 @@ export const SlotTypeFilter: React.FC<SlotTypeFilterProps> = ({
     <nav className="relative bg-white dark:bg-gray-900">
       {eventBanner && (
         <div className="hidden dark:lg:block absolute rounded-md w-full h-48 opacity-10">
-          <img 
+          <Image 
             src={eventBanner}
             alt={`${eventName} logo`}
             width={288}

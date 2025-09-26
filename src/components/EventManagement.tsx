@@ -144,8 +144,8 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
     
     // Cleanup interval on unmount
     return () => {
-      if (interval) {
-        clearInterval(interval);
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
       }
     };
   }, [fetchEvents]);

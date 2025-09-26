@@ -16,7 +16,7 @@ export const SidebarPopover: React.FC<SidebarPopoverProps> = ({
 }) => {
   const [isPopoverActive, setIsPopoverActive] = useState(false);
   const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
+  const [, setPopperElement] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     const handleMouseEnter = () => setIsPopoverActive(true);
@@ -58,9 +58,9 @@ export const SidebarPopover: React.FC<SidebarPopoverProps> = ({
         </div>
       )}
 
-      {cloneElement(children, {
+      {cloneElement(children as React.ReactElement<Record<string, unknown>>, {
         ref: setReferenceElement,
-        ...children.props
+        ...(children.props as Record<string, unknown>)
       })}
     </>
   );

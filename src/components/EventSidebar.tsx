@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useContext } from 'react';
-import { useParams, usePathname } from 'next/navigation';
+import React from 'react';
+import { useParams } from 'next/navigation';
 import { 
   ClipboardDocumentIcon, 
   HomeIcon, 
@@ -11,7 +11,7 @@ import {
   SunIcon
 } from '@heroicons/react/24/outline';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
-import { ThemeContext } from '../contexts/ThemeContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { SidebarLink } from './SidebarLink';
 import { SidebarButton } from './SidebarButton';
 
@@ -19,12 +19,9 @@ interface EventSidebarProps {
   visible?: boolean;
 }
 
-const ICON_SIZE = 28;
-
 export const EventSidebar: React.FC<EventSidebarProps> = ({ visible = true }) => {
   const params = useParams();
-  const pathname = usePathname();
-  const { theme, setTheme } = useContext(ThemeContext);
+  const { theme, setTheme } = useTheme();
 
   const eventId = params?.eventId;
 

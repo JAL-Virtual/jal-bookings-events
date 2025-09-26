@@ -8,13 +8,13 @@ import { SidebarPopover } from './SidebarPopover';
 export interface SidebarLinkProps {
   title: string;
   href: string;
-  icon: JSX.Element;
+  icon: React.ReactElement;
   indexLink?: boolean;
-  state?: any;
+  state?: Record<string, unknown>;
 }
 
 export const SidebarLink: React.FC<SidebarLinkProps> = forwardRef<HTMLAnchorElement, SidebarLinkProps>((
-  { href, icon, title, state, indexLink = false }, ref
+  { href, icon, title, indexLink = false }, ref
 ) => {
   const pathname = usePathname();
   const isActive = indexLink ? pathname === href : pathname.startsWith(href);
@@ -39,3 +39,5 @@ export const SidebarLink: React.FC<SidebarLinkProps> = forwardRef<HTMLAnchorElem
     </SidebarPopover>
   );
 });
+
+SidebarLink.displayName = 'SidebarLink';

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import Image from 'next/image';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { SlotBookButton } from './SlotBookButton';
 
@@ -169,7 +170,7 @@ export const SlotsTable: React.FC<SlotsTableProps> = ({
               >
                 <td className={`p-0 rounded-l-lg ${hasAirlineImage ? "bg-white" : ""}`}>
                   {hasAirlineImage && (
-                    <img
+                    <Image
                       className="mx-auto rounded-l-lg"
                       width={67}
                       height={16}

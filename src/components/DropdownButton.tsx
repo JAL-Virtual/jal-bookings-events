@@ -28,7 +28,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
   const [focusItemIdx, setFocusItemIdx] = useState(CLOSED_FOCUS_ITEM_IDX);
   const rootElemRef = useRef<HTMLDivElement | null>(null);
   const childRefs = useRef<Array<HTMLElement>>([]);
-  const closeTimeout = useRef<number | null>(null);
+  const closeTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const keyDownListener = useCallback((evt: KeyboardEvent) => {
     switch (evt.key) {

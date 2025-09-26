@@ -24,3 +24,5 @@ export const SidebarButton: React.FC<SidebarButtonProps> = forwardRef<HTMLButton
     </button>
   </SidebarPopover>
 ));
+
+SidebarButton.displayName = 'SidebarButton';

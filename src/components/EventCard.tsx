@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 interface EventCardProps {
@@ -25,7 +26,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   return (
     <div className={`flex flex-col w-72 font-bold ${tbd ? "cursor-not-allowed" : ""}`}>
       <div className="relative">
-        <img 
+        <Image 
           src={imageSrc}
           alt={`${eventName} logo`}
           width={288}

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { UTCClock } from './UTCClock';
-import { FilterCard } from './FilterCard';
 
 interface Slot {
   id: string;
@@ -178,8 +177,8 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
     
     // Cleanup interval on unmount
     return () => {
-      if (interval) {
-        clearInterval(interval);
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
       }
     };
   }, [fetchEvents]);
