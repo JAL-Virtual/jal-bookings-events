@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { PlaneIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { SlotBookButton } from './SlotBookButton';
 
 export enum SlotType {
@@ -249,7 +249,7 @@ export const SlotsTable: React.FC<SlotsTableProps> = ({
                   <div className="flex items-center">
                     <div className="inline-block border-b-2 border-dashed w-6 h-1 -ml-5" />
                     <div className="inline-block mx-auto w-4">
-                      <PlaneIcon className="inline-block w-4 h-4" />
+                      <PaperAirplaneIcon className="inline-block w-4 h-4" />
                     </div>
                     <div className="inline-block border-b-2 border-dashed w-6 h-1 -mr-5" />
                   </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import { QrCodeSVG } from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 
 export enum BoardingPassType {
@@ -161,7 +161,7 @@ const BoardingPassLeftSide: React.FC<BoardingPassProps> = ({
               Para participar do evento você deve estar ciente e disposto a
               cumprir todas as orientações disponíveis no briefing de piloto
             </div>
-            <QrCodeSVG value="https://br.ivao.aero" size={76} />
+            <QRCodeSVG value="https://br.ivao.aero" size={76} />
           </div>
         </div>
       </div>
