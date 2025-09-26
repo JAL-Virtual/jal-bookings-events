@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { ImageUpload } from './ImageUpload';
+import React, { useState, useEffect, useCallback } from 'react';
 import { UTCClock } from './UTCClock';
 
 interface Slot {
@@ -72,7 +71,7 @@ export const SlotManagement: React.FC<SlotManagementProps> = ({ adminApiKey }) =
   const [editSlotLoading, setEditSlotLoading] = useState(false);
 
   // Fetch events
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -94,16 +93,16 @@ export const SlotManagement: React.FC<SlotManagementProps> = ({ adminApiKey }) =
       } else {
         setError(data.error || 'Failed to fetch events');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching events:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     } finally {
       setLoading(false);
     }
-  };
+  }, [adminApiKey, selectedEvent]);
 
   // Fetch slots for selected event
-  const fetchSlots = async () => {
+  const fetchSlots = useCallback(async () => {
     if (!selectedEvent) return;
 
     try {
@@ -123,11 +122,11 @@ export const SlotManagement: React.FC<SlotManagementProps> = ({ adminApiKey }) =
       } else {
         setError(data.error || 'Failed to fetch slots');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching slots:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     }
-  };
+  }, [selectedEvent, slotType, adminApiKey]);
 
   // Handle add slot
   const handleAddSlot = async () => {
@@ -172,9 +171,9 @@ export const SlotManagement: React.FC<SlotManagementProps> = ({ adminApiKey }) =
       } else {
         setError(data.error || 'Failed to add slot');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error adding slot:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     } finally {
       setAddSlotLoading(false);
     }
@@ -212,9 +211,9 @@ export const SlotManagement: React.FC<SlotManagementProps> = ({ adminApiKey }) =
       } else {
         setError(data.error || 'Failed to update slot');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating slot:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     } finally {
       setEditSlotLoading(false);
     }
@@ -248,16 +247,12 @@ export const SlotManagement: React.FC<SlotManagementProps> = ({ adminApiKey }) =
       } else {
         setError(data.error || 'Failed to delete slot');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error deleting slot:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     }
   };
 
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
-  };
 
   // Get status color
   const getStatusColor = (status: string) => {
@@ -272,13 +267,13 @@ export const SlotManagement: React.FC<SlotManagementProps> = ({ adminApiKey }) =
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
   useEffect(() => {
     if (selectedEvent) {
       fetchSlots();
     }
-  }, [selectedEvent, slotType]);
+  }, [selectedEvent, slotType, fetchSlots]);
 
   if (loading) {
     return (
@@ -781,7 +776,7 @@ export const SlotManagement: React.FC<SlotManagementProps> = ({ adminApiKey }) =
                 <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
                 <select
                   value={editingSlot.status}
-                  onChange={(e) => setEditingSlot({...editingSlot, status: e.target.value as any})}
+                  onChange={(e) => setEditingSlot({...editingSlot, status: e.target.value as 'AVAILABLE' | 'OCCUPIED' | 'RESERVED' | 'CANCELLED'})}
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
                 >
                   <option value="AVAILABLE">Available</option>

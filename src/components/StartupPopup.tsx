@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface StartupPopupProps {
@@ -72,7 +72,7 @@ export default function StartupPopup({ jalId, onFinish }: StartupPopupProps) {
 
       return () => clearInterval(typeInterval);
     }
-  }, [currentStep]);
+  }, [currentStep, commands]);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -90,7 +90,7 @@ export default function StartupPopup({ jalId, onFinish }: StartupPopupProps) {
     }
 
     return () => clearTimeout(timeoutId);
-  }, [currentStep, onFinish]);
+  }, [currentStep, onFinish, commands]);
 
   return (
     <AnimatePresence>
@@ -154,7 +154,7 @@ export default function StartupPopup({ jalId, onFinish }: StartupPopupProps) {
                     <div className="flex items-center gap-2 text-green-500 mb-1">
                       <span>$</span>
                       <span>{cmd.command}</span>
-                      <span className="text-gray-500">// {cmd.icon}</span>
+                      <span className="text-gray-500">{/* {cmd.icon} */}</span>
                     </div>
                     <div className="text-green-300 ml-4 text-xs">
                       ✓ {cmd.output}
@@ -177,7 +177,7 @@ export default function StartupPopup({ jalId, onFinish }: StartupPopupProps) {
                         $
                       </motion.span>
                       <span>{currentCommand}</span>
-                      <span className="text-gray-500">// {commands[currentStep].icon}</span>
+                      <span className="text-gray-500">{/* {commands[currentStep].icon} */}</span>
                     </div>
                     <div className="text-green-300 ml-4 text-xs">
                       <span>{displayedText}</span>

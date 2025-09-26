@@ -4,7 +4,7 @@ import React from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 
 export const ThemeToggle: React.FC = () => {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   const themes = [
     { value: 'light', label: 'Light', icon: '☀️' },

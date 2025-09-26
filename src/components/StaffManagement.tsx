@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { ThemeToggle } from './ThemeToggle';
+import React, { useState, useEffect, useCallback } from 'react';
 
 interface StaffMember {
   id: string;
@@ -35,7 +34,7 @@ export const StaffManagement: React.FC<StaffManagementProps> = ({ adminApiKey })
   const [isValidatingApiKey, setIsValidatingApiKey] = useState(false);
 
   // Fetch staff members
-  const fetchStaffMembers = async () => {
+  const fetchStaffMembers = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -53,17 +52,17 @@ export const StaffManagement: React.FC<StaffManagementProps> = ({ adminApiKey })
       } else {
         setError('No staff members have been added yet');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching staff members:', err);
       setError('No staff members have been added yet');
     } finally {
       setLoading(false);
     }
-  };
+  }, [adminApiKey]);
 
   useEffect(() => {
     fetchStaffMembers();
-  }, [adminApiKey]);
+  }, [fetchStaffMembers]);
 
   // Validate API key and fetch staff name
   const handleValidateApiKey = async () => {
@@ -99,9 +98,9 @@ export const StaffManagement: React.FC<StaffManagementProps> = ({ adminApiKey })
         setError(data.error || 'Invalid API key');
         setValidatedStaffName(null);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error validating API key:', err);
-      setError(err.message || 'Failed to validate API key');
+      setError(err instanceof Error ? err.message : 'Failed to validate API key');
       setValidatedStaffName(null);
     } finally {
       setIsValidatingApiKey(false);
@@ -138,9 +137,9 @@ export const StaffManagement: React.FC<StaffManagementProps> = ({ adminApiKey })
       } else {
         setError(data.error || 'Failed to update staff member');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating staff member:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     }
   };
 
@@ -171,9 +170,9 @@ export const StaffManagement: React.FC<StaffManagementProps> = ({ adminApiKey })
       } else {
         setError(data.error || 'Failed to delete staff member');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error deleting staff member:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     }
   };
 
@@ -221,9 +220,9 @@ export const StaffManagement: React.FC<StaffManagementProps> = ({ adminApiKey })
       } else {
         setError(data.error || 'Failed to add staff member');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error adding staff member:', err);
-      setError(err.message || 'Network error occurred');
+      setError(err instanceof Error ? err.message : 'Network error occurred');
     } finally {
       setAddStaffLoading(false);
     }
