@@ -1,215 +1,80 @@
-'use client';
+import { useState, useCallback } from 'react';
+import { Translations } from '../types/Translations';
 
-import { useCallback } from 'react';
-
-interface Translations {
-  splash: {
-    title: string;
-    subtitle: string;
-    explore: string;
-  };
-  beta: {
-    title: string;
-    message: string;
-  };
-  flights: {
-    flightNumber: string;
-    gate: string;
-    bookFlight: string;
-    loadMore: string;
-    search: string;
-    filter: {
-      aircraft: string;
-      origin: string;
-      destination: string;
-      flightNumber: string;
-      departure: string;
-      arrival: string;
-      call: string;
-      reset: string;
-      clear: string;
-      apply: string;
-    };
-    error: {
-      unableToBook: {
-        title: string;
-        subtitle: string;
-      };
-      noFlightsFound: {
-        title: string;
-        subtitle: string;
-      };
-    };
-  };
-  myFlights: {
-    title: string;
-    subtitle: string;
-  };
-  info: {
-    pilotBriefing: {
-      title: string;
-      description: string;
-    };
-    atcBriefing: {
-      title: string;
-      description: string;
-    };
-    sceneries: {
-      title: string;
-      description: string;
-      sims: {
-        msfs: {
-          description: string;
-        };
-        xplane: {
-          description: string;
-        };
-        p3d: {
-          description: string;
-        };
-        fsx: {
-          description: string;
-        };
-      };
-    };
-  };
-  generics: {
-    see: string;
-    backToBeginning: string;
-  };
-  events: {
-    found: string;
-  };
-  errors: {
-    notFound: {
-      title: string;
-      subtitle: string;
-    };
-    generic: {
-      title: string;
-      subtitle: string;
-    };
-  };
-}
-
-const translations: Translations = {
-  splash: {
-    title: 'Experience the best that flight simulation has to offer!',
-    subtitle: 'Manage your bookings on a modern, fast and intuitive way.',
-    explore: 'Explore Flights!'
-  },
-  beta: {
-    title: 'BETA SYSTEM',
-    message: 'KRONOS is a recently launched system and is under constant development. We count on you to report any bugs you find. 🐛'
-  },
-  flights: {
-    flightNumber: 'Flight Number',
-    gate: 'Gate',
-    bookFlight: 'Book Flight',
-    loadMore: 'Load More',
-    search: 'Search flights',
-    filter: {
-      aircraft: 'Aircraft',
-      origin: 'Origin',
-      destination: 'Destination',
-      flightNumber: 'Flight Number',
-      departure: 'Departure',
-      arrival: 'Arrival',
-      call: 'Filter',
-      reset: 'Reset',
-      clear: 'Clear',
-      apply: 'Apply'
-    },
-    error: {
-      unableToBook: {
-        title: 'Unable to Book Flight',
-        subtitle: 'There was an error booking your flight. Please try again.'
-      },
-      noFlightsFound: {
-        title: 'No Flights Found',
-        subtitle: 'No flights match your current filters. Try adjusting your search criteria.'
-      }
-    }
-  },
-  myFlights: {
-    title: 'My Flights',
-    subtitle: 'Manage your booked flights and view important information'
-  },
-  info: {
-    pilotBriefing: {
-      title: 'Pilot Briefing',
-      description: 'Download the pilot briefing document for this flight'
-    },
-    atcBriefing: {
-      title: 'ATC Briefing',
-      description: 'Download the ATC briefing document for this flight'
-    },
-    sceneries: {
-      title: 'Sceneries',
-      description: 'Required sceneries for this event',
-      sims: {
-        msfs: {
-          description: 'Microsoft Flight Simulator 2020'
-        },
-        xplane: {
-          description: 'X-Plane 11/12'
-        },
-        p3d: {
-          description: 'Prepar3D'
-        },
-        fsx: {
-          description: 'Microsoft Flight Simulator X'
-        }
-      }
-    }
-  },
-  generics: {
-    see: 'View',
-    backToBeginning: 'Back to Beginning'
-  },
-  events: {
-    found: 'Found {count} events'
-  },
-  errors: {
-    notFound: {
-      title: 'Page Not Found',
-      subtitle: 'The page you are looking for does not exist or has been moved.'
-    },
-    generic: {
-      title: 'Something went wrong',
-      subtitle: 'An unexpected error occurred. Please try again later.'
-    },
-    'slot_already_booked': 'This slot is already booked by another pilot.',
-    'invalid_slot': 'The selected slot is not valid.',
-    'event_not_active': 'This event is not currently active.',
-    'pilot_not_authorized': 'You are not authorized to book this slot.'
-  }
+const mockTranslations: Translations = {
+  'events.found': 'Found {{count}} events',
+  'events.title': 'Events',
+  'events.subtitle': 'Browse available events',
+  'flights.search': 'Search flights',
+  'flights.bookFlight': 'Book Flight',
+  'flights.loadMore': 'Load More',
+  'flights.filter.call': 'Filter',
+  'flights.filter.reset': 'Reset',
+  'flights.error.unableToBook.title': 'Unable to Book',
+  'flights.error.unableToBook.subtitle': 'There was an error booking your flight',
+  'flights.error.noFlightsFound.title': 'No Flights Found',
+  'flights.error.noFlightsFound.subtitle': 'No flights match your search criteria',
+  'myFlights.title': 'My Flights',
+  'myFlights.subtitle': 'Manage your booked flights',
+  'myFlights.boardingPass.cancelFlight': 'Cancel Flight',
+  'myFlights.boardingPass.confirmFlight': 'Confirm Flight',
+  'myFlights.boardingPass.waitToConfirm': 'Wait to Confirm',
+  'myFlights.boardingPass.cancelFlightConfirmation': 'Are you sure you want to cancel this flight?',
+  'info.pilotBriefing.title': 'Pilot Briefing',
+  'info.pilotBriefing.description': 'Download the pilot briefing document',
+  'info.atcBriefing.title': 'ATC Briefing',
+  'info.atcBriefing.description': 'Download the ATC briefing document',
+  'info.sceneries.title': 'Sceneries',
+  'info.sceneries.description': 'Required sceneries for this event',
+  'info.sceneries.sims.msfs.description': 'Microsoft Flight Simulator',
+  'info.sceneries.sims.xplane.description': 'X-Plane',
+  'info.sceneries.sims.p3d.description': 'Prepar3D',
+  'info.sceneries.sims.fsx.description': 'Flight Simulator X',
+  'notification.scheduled.title': 'Flight Scheduled',
+  'notification.scheduled.subtitle': 'Your flight has been successfully scheduled',
+  'notification.booked.title': 'Flight Confirmed',
+  'notification.booked.subtitle': 'Your flight has been confirmed',
+  'notification.cancelled.title': 'Flight Cancelled',
+  'notification.cancelled.subtitle': 'Your flight has been cancelled',
+  'notification.scheduleConfirmation.title': 'Confirm Schedule',
+  'notification.scheduleConfirmation.subtitle': 'Please confirm your flight details',
+  'notification.scheduleConfirmation.alert': 'Please review your flight details before confirming',
+  'notification.scheduleConfirmation.button': 'Confirm Flight',
+  'errors.notFound.title': 'Page Not Found',
+  'errors.notFound.subtitle': 'The page you are looking for does not exist',
+  'errors.general.title': 'Something went wrong',
+  'errors.general.subtitle': 'An unexpected error occurred',
+  'generics.back': 'Back',
+  'generics.backToBeginning': 'Back to Home',
+  'generics.see': 'View'
 };
 
-export const useText = () => {
-  const t = useCallback((key: keyof Translations | string, params?: Record<string, unknown>) => {
+export function useText() {
+  const [translations] = useState<Translations>(mockTranslations);
+
+  const t = useCallback((key: string, params?: Record<string, any>): string => {
     const keys = key.split('.');
-    let value: unknown = translations;
+    let value: any = translations;
     
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
-        value = (value as Record<string, unknown>)[k];
+        value = value[k];
       } else {
-        return key;
+        return key; // Return key if translation not found
       }
     }
     
-    let result = typeof value === 'string' ? value : key;
-    
-    // Handle parameter interpolation
-    if (params && typeof result === 'string') {
-      Object.keys(params).forEach(paramKey => {
-        result = result.replace(`{${paramKey}}`, String(params[paramKey]));
-      });
+    if (typeof value === 'string') {
+      if (params) {
+        return value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
+          return params[paramKey]?.toString() || match;
+        });
+      }
+      return value;
     }
     
-    return result;
-  }, []);
+    return key;
+  }, [translations]);
 
   return { t };
-};
+}

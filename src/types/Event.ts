@@ -1,35 +1,49 @@
-export interface EventListEvent {
+export interface Event {
   id: string;
   eventName: string;
-  banner: string;
-  type: string;
+  subtitle?: string;
   description: string;
+  departure: string;
+  arrival: string;
+  date: string;
+  time: string;
+  picture?: string;
+  pilotBriefingUrl?: string;
+  banner?: string;
+  type: string;
   status: string;
+  dateStart: string;
+  dateEnd: string;
+  pilotBriefing: string;
+  atcBriefing: string;
+  airports: {
+    icao: string;
+    sceneries: Scenary[];
+  }[];
+  has_ended: boolean;
+  can_confirm_slots: boolean;
 }
 
-export interface EventListPage {
-  page: number;
-  data: EventListEvent[];
-  total: number;
+export interface Scenary {
+  id: string;
+  title: string;
+  link: string;
+  simulator: ScenarySimulators;
+  license: 'freeware' | 'payware';
 }
 
-export interface EventListResult {
-  pages: EventListPage[];
-  isLoading: boolean;
-  hasNextPage: boolean;
-  isFetchingNextPage: boolean;
-  fetchNextPage: () => void;
+export enum ScenarySimulators {
+  MSFS = "msfs",
+  XPLANE = "xplane",
+  P3D = "p3d",
+  FSX = "fsx"
 }
 
 export function getEventTypeName(type: string): string {
   const typeMap: Record<string, string> = {
     'takeoff': 'Takeoff Event',
     'landing': 'Landing Event',
-    'takeoff_landing': 'Takeoff & Landing Event',
-    'tour': 'Tour Event',
-    'training': 'Training Event',
-    'competition': 'Competition Event'
+    'takeoff_landing': 'Takeoff & Landing Event'
   };
-  
   return typeMap[type] || type;
 }

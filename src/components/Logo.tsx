@@ -1,34 +1,19 @@
-import { FunctionComponent } from "react";
 import Image from 'next/image';
 
 interface LogoProps {
-    sidebar?: boolean;
-    className?: string;
+  className?: string;
 }
 
-export const Logo: FunctionComponent<LogoProps> = ({ sidebar = false, className = '' }) => {
-    // Use the existing JAL logo from the public folder
-    const logoSrc = "/img/jal-logo.png";
-    const logoSrcDark = "/img/jal-logo-dark.png";
-
-    return (
-        <div className={`relative ${className}`}>
-            <Image
-                src={logoSrc}
-                alt="Japan Airlines Logo"
-                width={214}
-                height={56}
-                className={`w-54 h-14 ${sidebar ? "" : "-ml-5"} dark:hidden`}
-                priority
-            />
-            <Image
-                src={logoSrcDark}
-                alt="Japan Airlines Logo"
-                width={214}
-                height={56}
-                className={`w-54 h-14 ${sidebar ? "" : "-ml-5"} hidden dark:block`}
-                priority
-            />
-        </div>
-    );
+export function Logo({ className = '' }: LogoProps) {
+  return (
+    <div className={`flex items-center ${className}`}>
+      <Image
+        src="/img/jal-logo.png"
+        alt="JAL Logo"
+        width={120}
+        height={40}
+        className="h-8 w-auto"
+      />
+    </div>
+  );
 }

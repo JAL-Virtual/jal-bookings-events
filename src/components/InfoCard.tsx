@@ -1,47 +1,54 @@
-import { FunctionComponent, ReactElement, ReactNode } from "react";
+import { ReactNode } from 'react';
 
 interface InfoCardProps {
-    icon?: ReactElement;
-    iconBackground?: string;
-    header: string;
-    content: string;
-    children?: ReactNode;
+  icon: ReactNode;
+  header: string;
+  content: string;
+  iconBackground?: string;
+  children?: ReactNode;
 }
 
-export const HorizontalInfoCard: FunctionComponent<InfoCardProps> = ({ icon, header, content, children, iconBackground = "bg-blue" }) => (
-    <div className="flex items-center max-w-[396px] p-4 bg-light-gray-4 dark:bg-dark-gray-2 rounded-[3px]">
-        {icon && (
-            <div className={`relative w-12 p-6 rounded-sm ${iconBackground}`}>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white">
-                    {icon}
-                </div>
-            </div>
-        )}
-        <div className="ml-5">
-            <span className="font-text text-blue dark:text-[#E1E1E6] font-bold text-md leading-5">{header}</span>
-            <p className="font-text text-dark-gray-3 dark:text-[#A8A8B3] text-xs leading-4">{content}</p>
+export function VerticalInfoCard({ icon, header, content, iconBackground = 'bg-blue-600', children }: InfoCardProps) {
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <div className="flex items-start space-x-4">
+        <div className={`p-3 rounded-lg ${iconBackground} text-white`}>
+          {icon}
         </div>
-        {children && (
-            <div className="mt-6">
-                {children}
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            {header}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            {content}
+          </p>
+          {children && (
+            <div className="mt-4">
+              {children}
             </div>
-        )}
+          )}
+        </div>
+      </div>
     </div>
-);
+  );
+}
 
-export const VerticalInfoCard: FunctionComponent<InfoCardProps> = ({ icon, header, content, children, iconBackground = "bg-blue" }) => (
-    <div className="flex flex-col w-[238px] px-5 py-6 bg-light-gray-4 dark:bg-dark-gray-2 rounded-md">
-        <div className="flex gap-5">
-            {icon && (
-                <div className={`relative flex-initial w-12 p-6 rounded-sm ${iconBackground}`}>
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white">
-                        {icon}
-                    </div>
-                </div>
-            )}
-            <span className="font-text text-blue dark:text-[#E1E1E6] font-extrabold text-lg leading-6">{header}</span>
+export function HorizontalInfoCard({ icon, header, content, iconBackground = 'bg-blue-600' }: InfoCardProps) {
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <div className="flex items-center space-x-4">
+        <div className={`p-3 rounded-lg ${iconBackground} text-white`}>
+          {icon}
         </div>
-        <p className="font-action text-dark-gray-3 dark:text-[#A8A8B3] text-xs leading-4 my-5">{content}</p>
-        {children}
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+            {header}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            {content}
+          </p>
+        </div>
+      </div>
     </div>
-);
+  );
+}

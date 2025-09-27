@@ -1,118 +1,90 @@
-import { FunctionComponent, useState } from "react";
-import { InputField } from "./InputField";
-import { ActionButton } from "./Button";
-import { useText } from "../hooks/useText";
-
-export interface FilterState {
-  flightNumber?: string;
-  aircraft?: string;
-  departure?: string;
-  arrival?: string;
-  time?: string;
-  status?: string;
-}
+import { ReactNode } from 'react';
 
 interface FilterProps {
-  appliedFilters?: Partial<FilterState>;
-  onChange: (state: Partial<FilterState>) => void;
+  appliedFilters: Record<string, any>;
+  onChange: (filters: Record<string, any>) => void;
 }
 
-export const Filter: FunctionComponent<FilterProps> = ({ appliedFilters = {}, onChange }) => {
-  const { t } = useText();
-  const [localFilters, setLocalFilters] = useState<Partial<FilterState>>(appliedFilters);
-
-  const handleFilterChange = (key: keyof FilterState, value: string) => {
-    const newFilters = { ...localFilters, [key]: value };
-    setLocalFilters(newFilters);
-  };
-
-  const handleApply = () => {
-    onChange(localFilters);
-  };
-
-  const handleClear = () => {
-    const clearedFilters = {};
-    setLocalFilters(clearedFilters);
-    onChange(clearedFilters);
+export function Filter({ appliedFilters, onChange }: FilterProps) {
+  const handleFilterChange = (key: string, value: any) => {
+    const newFilters = { ...appliedFilters, [key]: value };
+    onChange(newFilters);
   };
 
   return (
-    <div className="w-64 p-4 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700">
-      <div className="space-y-3">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 min-w-64">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        Filters
+      </h3>
+      
+      <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {t('flights.filter.flightNumber')}
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Flight Number
           </label>
-          <InputField
+          <input
             type="text"
-            placeholder={t('flights.filter.flightNumber')}
-            value={localFilters.flightNumber || ''}
+            value={appliedFilters.flightNumber || ''}
             onChange={(e) => handleFilterChange('flightNumber', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            placeholder="Enter flight number"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {t('flights.filter.aircraft')}
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Aircraft
           </label>
-          <InputField
+          <input
             type="text"
-            placeholder={t('flights.filter.aircraft')}
-            value={localFilters.aircraft || ''}
+            value={appliedFilters.aircraft || ''}
             onChange={(e) => handleFilterChange('aircraft', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            placeholder="Enter aircraft type"
           />
         </div>
-
+        
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {t('flights.filter.departure')}
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Origin
           </label>
-          <InputField
+          <input
             type="text"
-            placeholder={t('flights.filter.departure')}
-            value={localFilters.departure || ''}
-            onChange={(e) => handleFilterChange('departure', e.target.value)}
+            value={appliedFilters.origin || ''}
+            onChange={(e) => handleFilterChange('origin', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            placeholder="Enter origin ICAO"
           />
         </div>
-
+        
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {t('flights.filter.arrival')}
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Destination
           </label>
-          <InputField
+          <input
             type="text"
-            placeholder={t('flights.filter.arrival')}
-            value={localFilters.arrival || ''}
-            onChange={(e) => handleFilterChange('arrival', e.target.value)}
-          />
-        </div>
-
-        <div className="flex space-x-2 pt-2">
-          <ActionButton
-            width="w-full"
-            height="h-8"
-            backgroundColor="bg-gray-200 dark:bg-gray-600"
-            backgroundFilled={false}
-            content={
-              <span className="text-gray-800 dark:text-gray-200 text-xs font-semibold">
-                {t('flights.filter.clear')}
-              </span>
-            }
-            onClick={handleClear}
-          />
-          <ActionButton
-            width="w-full"
-            height="h-8"
-            backgroundColor="bg-blue-600"
-            content={
-              <span className="text-white text-xs font-semibold">
-                {t('flights.filter.apply')}
-              </span>
-            }
-            onClick={handleApply}
+            value={appliedFilters.destination || ''}
+            onChange={(e) => handleFilterChange('destination', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            placeholder="Enter destination ICAO"
           />
         </div>
       </div>
+      
+      <div className="mt-6 flex space-x-2">
+        <button
+          onClick={() => onChange({})}
+          className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+        >
+          Clear All
+        </button>
+        <button
+          onClick={() => onChange(appliedFilters)}
+          className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Apply
+        </button>
+      </div>
     </div>
   );
-};
+}

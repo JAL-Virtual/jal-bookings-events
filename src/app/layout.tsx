@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display, JetBrains_Mono, Orbitron, Comic_Neue } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { IocProvider } from "@/contexts/IocContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -50,7 +52,11 @@ export default function RootLayout({
         className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} ${orbitron.variable} ${comicNeue.variable} antialiased`}
       >
         <ThemeProvider>
-          {children}
+          <IocProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </IocProvider>
         </ThemeProvider>
       </body>
     </html>

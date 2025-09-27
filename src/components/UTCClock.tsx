@@ -1,25 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState, useEffect } from 'react';
 
-export const UTCClock = () => {
-    const [currentTime, setCurrentTime] = useState(new Date());
+export function UTCClock() {
+  const [time, setTime] = useState<Date>(new Date());
 
-    useEffect(() => {
-        const timerInverval = setInterval(() => {
-            setCurrentTime(new Date());
-        }, 1000);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
 
-        return () => clearInterval(timerInverval);
-    }, []);
+    return () => clearInterval(timer);
+  }, []);
 
-    const utcTime = useMemo(() => {
-        const timeParts = [currentTime.getUTCHours(), currentTime.getUTCMinutes(), currentTime.getUTCSeconds()].map((timePart => {
-            return timePart < 10 ? "0" + timePart : timePart.toString();
-        }));
+  const utcTime = time.toISOString().substr(11, 8);
 
-        return timeParts.join(":");
-    }, [currentTime]);
-
-    return (
-        <span className="text-inherit text-[12px]">{utcTime} UTC</span>
-    );
+  return (
+    <div className="text-sm font-mono text-gray-600 dark:text-gray-400">
+      UTC: {utcTime}
+    </div>
+  );
 }

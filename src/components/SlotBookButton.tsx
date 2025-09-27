@@ -1,34 +1,28 @@
-'use client';
+import { ReactNode } from 'react';
 
-import React from 'react';
-
-type HtmlButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
-
-interface SlotBookButtonProps extends Omit<HtmlButtonProps, "className"> {
+interface SlotBookButtonProps {
+  content: ReactNode;
+  onClick?: () => void;
   canBookFlight?: boolean;
-  content: string;
+  disabled?: boolean;
 }
 
-export const SlotBookButton: React.FC<SlotBookButtonProps> = ({ 
-  content, 
-  canBookFlight = true, 
-  ...htmlButtonProps 
-}) => {
-  const background = canBookFlight 
-    ? "bg-green-600 text-white hover:bg-green-700" 
-    : "bg-red-600/10 text-red-400 cursor-not-allowed";
+export function SlotBookButton({ content, onClick, canBookFlight = true, disabled = false }: SlotBookButtonProps) {
+  const baseClasses = "px-4 py-2 rounded-lg font-medium transition-colors text-sm";
+  const enabledClasses = canBookFlight 
+    ? "bg-blue-600 text-white hover:bg-blue-700" 
+    : "bg-gray-400 text-gray-600 cursor-not-allowed";
+  const disabledClasses = disabled 
+    ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+    : "";
 
   return (
     <button
-      className={`block ${background} rounded-md w-24 h-9 transition-colors duration-200 ${
-        canBookFlight ? "hover:shadow-lg" : ""
-      }`}
-      disabled={!canBookFlight}
-      {...htmlButtonProps}
+      className={`${baseClasses} ${disabled ? disabledClasses : enabledClasses}`}
+      onClick={onClick}
+      disabled={disabled || !canBookFlight}
     >
-      <span className="block text-center font-bold truncate text-sm">
-        {content}
-      </span>
+      {content}
     </button>
   );
-};
+}

@@ -1,46 +1,39 @@
-'use client';
-
-import React from 'react';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { ReactNode } from 'react';
 
 interface BookInfoMessageProps {
   header: string;
   description: string;
   type: 'error' | 'warning' | 'success';
-  onErrorReset: () => void;
+  onErrorReset?: () => void;
 }
 
-export const BookInfoMessage: React.FC<BookInfoMessageProps> = ({ 
-  header, 
-  description, 
-  type, 
-  onErrorReset 
-}) => {
+export function BookInfoMessage({ header, description, type, onErrorReset }: BookInfoMessageProps) {
+  const typeClasses = {
+    error: 'bg-red-50 border-red-200 text-red-800',
+    warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
+    success: 'bg-green-50 border-green-200 text-green-800'
+  };
+
   return (
-    <div className="max-w-[42rem] mt-11 ml-9">
-      <h2 className={`text-2xl font-bold ${
-        type === 'error' 
-          ? 'text-red-400' 
-          : type === 'warning'
-          ? 'text-yellow-400'
-          : 'text-green-400'
-      }`}>
-        {header}
-      </h2>
-      
-      <p className="mt-4 text-[20px] text-gray-400 leading-relaxed">
-        {description}
-      </p>
-      
-      <div className="mt-16">
-        <button
-          onClick={onErrorReset}
-          className="w-72 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800"
-        >
-          <ArrowLeftIcon className="w-5 h-5" />
-          Back
-        </button>
+    <div className={`border rounded-lg p-6 ${typeClasses[type]}`}>
+      <div className="flex items-start">
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold mb-2">
+            {header}
+          </h3>
+          <p className="text-sm mb-4">
+            {description}
+          </p>
+          {onErrorReset && (
+            <button
+              onClick={onErrorReset}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+            >
+              Try Again
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
-};
+}
