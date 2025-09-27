@@ -1,6 +1,7 @@
 // API Client Service - Uses internal API routes
 import { Event } from '../../types/Event';
-import { Slot } from '../../types/Slot';
+import { Slot, SlotScheduleData } from '../../types/Slot';
+import { AirportDetails } from '../../types/AirportDetails';
 
 export interface JALUserResponse {
   id: number;
@@ -182,7 +183,7 @@ export class APIClient {
     return await response.json();
   }
 
-  async scheduleSlot(slotId: number, slotData?: Record<string, unknown>): Promise<{ success: boolean; message?: string }> {
+  async scheduleSlot(slotId: number, slotData?: SlotScheduleData): Promise<{ success: boolean; message?: string }> {
     const response = await fetch(`/api/slots/${slotId}/schedule`, {
       method: 'POST',
       headers: this.getHeaders(),
@@ -248,7 +249,7 @@ export class APIClient {
     return await response.text();
   }
 
-  async getAirportDetails(icao: string): Promise<{ name: string; city: string; country: string; icao: string }> {
+  async getAirportDetails(icao: string): Promise<AirportDetails> {
     const response = await fetch(`/api/airport/details?icao=${icao}`, {
       method: 'GET',
       headers: this.getHeaders()

@@ -22,7 +22,7 @@ export function useEventSlots(
 	const slots = useInfiniteQuery<Pagination<Slot>, AxiosError>({
 		queryKey: ['slots', eventId, (slotType ?? ""), (filterState ?? {})],
 		queryFn: async ({ pageParam = page }) => {
-			return await apiClient.getEventSlots(eventId, { page: pageParam as number, perPage }, slotType || undefined, filterState);
+			return await apiClient.getEventSlots(eventId, { page: pageParam as number, perPage }, slotType || undefined);
 		},
 		initialPageParam: page,
 		staleTime: ONE_DAY,

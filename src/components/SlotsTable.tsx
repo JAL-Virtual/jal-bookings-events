@@ -1,6 +1,9 @@
 "use client";
 
 import Image from "next/image";
+import { Slot } from '../types/Slot';
+import { AirportDetails } from '../types/AirportDetails';
+import { SlotBookButton } from './SlotBookButton';
 
 interface SlotsTableProps {
   slots: Slot[];

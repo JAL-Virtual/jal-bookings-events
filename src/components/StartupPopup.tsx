@@ -12,6 +12,7 @@ export function StartupPopup({ jalId, onFinish }: StartupPopupProps) {
   const [progress, setProgress] = useState(0);
   const [currentLine, setCurrentLine] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
 
   const consoleLines = useMemo(() => [
     "Japan Airlines Virtual Event Booking Portal",
@@ -63,7 +64,7 @@ export function StartupPopup({ jalId, onFinish }: StartupPopupProps) {
         }, 50);
       }, 1000);
     }
-  }, [currentLine, onFinish, consoleLines]);
+  }, [currentLine, onFinish, consoleLines, currentTextIndex]);
 
   if (!isVisible) return null;
 

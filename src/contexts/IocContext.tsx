@@ -3,7 +3,7 @@
 import { createContext, useContext, ReactNode } from 'react';
 import { APIClient, getStoredApiKey } from '../app/api/client';
 import { Event } from '../types/Event';
-import { Slot } from '../types/Slot';
+import { Slot, SlotScheduleData } from '../types/Slot';
 import { AirportDetails } from '../types/AirportDetails';
 
 export interface ApiClient {
@@ -12,7 +12,7 @@ export interface ApiClient {
   getEventSlots: (eventId: number, pagination: { page: number; perPage: number }, slotType?: string) => Promise<{ page: number; perPage: number; total: number; data: Slot[] }>;
   getUserSlots: (eventId: number, pagination: { page: number; perPage: number }, flightNumber?: string) => Promise<{ page: number; perPage: number; total: number; data: Slot[] }>;
   getSlotCountByType: (eventId: number) => Promise<Record<string, number>>;
-  scheduleSlot: (slotId: number, slotData?: Record<string, unknown>) => Promise<{ success: boolean; message?: string }>;
+  scheduleSlot: (slotId: number, slotData?: SlotScheduleData) => Promise<{ success: boolean; message?: string }>;
   cancelSchedule: (slotId: number) => Promise<{ success: boolean; message?: string }>;
   confirmSchedule: (slotId: number) => Promise<{ success: boolean; message?: string }>;
   getAirlineLogo: (airlineIcao: string) => Promise<string>;
@@ -31,6 +31,10 @@ const mockApiClient: ApiClient = {
       date: new Date().toISOString(),
       time: '12:00Z',
       banner: undefined,
+      type: 'takeoff_landing',
+      status: 'ACTIVE',
+      dateStart: new Date().toISOString(),
+      dateEnd: new Date().toISOString(),
       pilotBriefing: 'https://example.com/briefing.pdf',
       atcBriefing: 'https://example.com/atc-briefing.pdf',
       airports: [],
