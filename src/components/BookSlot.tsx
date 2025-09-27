@@ -242,6 +242,17 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
     );
   }
 
+  // If no events available, show the message
+  if (events.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-gray-800 rounded-lg p-12 text-center">
+          <p className="text-gray-400">No events available right now. Check back later!</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}

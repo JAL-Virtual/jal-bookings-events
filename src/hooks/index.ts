@@ -4,6 +4,7 @@ export * from './event/useEventList';
 export * from './useFlatInfiniteData';
 export * from './useOutsideClickHandler';
 export * from './useAuthData';
+export * from './useUserInfo';
 export * from './useText';
 export * from './slot/useEventSlots';
 export * from './slot/useEventUserSlots';

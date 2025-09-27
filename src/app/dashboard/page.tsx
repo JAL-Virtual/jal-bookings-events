@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Sidebar, 
   EventHeader, 
@@ -9,21 +8,34 @@ import {
   Footer,
   StaffManagement,
   EventManagement,
-  BookSlot
+  BookSlot,
+  LoadingIndicator,
+  EventCard,
+  ActionButton,
+  UTCClock
 } from '../../components';
 import { Event } from '../../types/Event';
-import { isAuthenticated } from '../api';
+import { isAuthenticated } from '../api/client';
+import { useEvents } from '../../hooks/event/useEventList';
+import { useAuthData } from '../../hooks/useAuthData';
+import { useUserInfo } from '../../hooks/useUserInfo';
+import { useText } from '../../hooks/useText';
 
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = React.useState('home');
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [isAdmin, setIsAdmin] = React.useState(false);
-  const [isStaff, setIsStaff] = React.useState(false);
-  const [apiKey, setApiKey] = React.useState<string | null>(null);
-  const [currentEvent, setCurrentEvent] = React.useState<Event | null>(null);
-  const [eventLoading, setEventLoading] = React.useState(true);
-  const refreshIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
+  const [activeTab, setActiveTab] = useState('home');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isStaff, setIsStaff] = useState(false);
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
+  const [eventLoading, setEventLoading] = useState(true);
+  
+  // Use the new hooks
+  const { data: authData, isLoading: authLoading } = useAuthData();
+  const { userInfo, isLoading: userInfoLoading } = useUserInfo();
+  const { data: eventsData, isLoading: eventsLoading, hasNextPage, fetchNextPage } = useEvents();
+  const { t } = useText();
 
   useEffect(() => {
     // Check if user is authenticated
@@ -32,95 +44,35 @@ export default function DashboardPage() {
       return;
     }
     
-    // Check if user is administrator
+    // Get stored API key
     const storedApiKey = localStorage.getItem('jal_api_key');
     setApiKey(storedApiKey);
     
+    // Check user roles
     if (storedApiKey === '29e2bb1d4ae031ed47b6') {
       setIsAdmin(true);
-    }
-    
-    // Check if user is staff member (any API key other than admin)
-    if (storedApiKey && storedApiKey !== '29e2bb1d4ae031ed47b6') {
+    } else if (storedApiKey && storedApiKey !== '29e2bb1d4ae031ed47b6') {
       setIsStaff(true);
     }
     
-    // Theme is now handled by ThemeContext
-    
-    // Fetch current event data
-    fetchCurrentEvent();
-    
-    // Set up auto-refresh every 30 seconds
-    const interval = setInterval(() => {
-      fetchCurrentEvent();
-    }, 30000);
-    refreshIntervalRef.current = interval;
-    
     setIsLoading(false);
-    
-    // Cleanup interval on unmount
-    return () => {
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-      }
-    };
   }, []);
 
-
-  // Fetch current event from database
-  const fetchCurrentEvent = async () => {
-    try {
-      setEventLoading(true);
-      const response = await fetch(`/api/events?t=${Date.now()}`, {
-        cache: 'no-store'
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.success && data.events.length > 0) {
-        const event = data.events[0]; // Get the first (most recent) event
-        setCurrentEvent({
-          id: event.id,
-          eventName: event.name,
-          subtitle: event.airline || 'Aviation Event', // Use airline or default
-          description: event.description || '',
-          departure: event.departure || event.origin || '',
-          arrival: event.arrival || event.destination || '',
-          date: new Date(event.date).toLocaleDateString('en-US', { 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          }),
-          time: event.time || event.eobtEta || '',
-          picture: event.picture || undefined,
-          pilotBriefingUrl: '/briefing/pilot',
-          banner: event.picture || undefined,
-          type: 'takeoff_landing',
-          status: event.status || 'ACTIVE',
-          dateStart: event.date,
-          dateEnd: event.date,
-          pilotBriefing: '',
-          atcBriefing: '',
-          airports: [],
-          has_ended: event.status === 'CANCELLED',
-          can_confirm_slots: event.status === 'ACTIVE'
-        });
-      } else {
-        // No events in database - set to null to show "Stay tuned" message
-        setCurrentEvent(null);
-      }
-    } catch (err: unknown) {
-      console.error('Error fetching current event:', err);
-      // Set to null to show "Stay tuned" message when API fails
+  // Update current event when events data changes
+  useEffect(() => {
+    if (eventsData?.pages?.[0]?.data && eventsData.pages[0].data.length > 0) {
+      const event = eventsData.pages[0].data[0];
+      setCurrentEvent(event);
+      setEventLoading(false);
+    } else if (!eventsLoading) {
       setCurrentEvent(null);
-    } finally {
       setEventLoading(false);
     }
-  };
+  }, [eventsData, eventsLoading]);
+
+
+  // Get all events for the events list
+  const allEvents = eventsData?.pages?.flatMap(page => page.data) || [];
 
   const handleBriefingClick = () => {
     if (currentEvent && currentEvent.pilotBriefingUrl) {
@@ -139,7 +91,7 @@ export default function DashboardPage() {
     window.location.href = '/';
   };
 
-  if (isLoading) {
+  if (isLoading || authLoading || userInfoLoading) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
         <div className="text-center">
@@ -148,7 +100,8 @@ export default function DashboardPage() {
               <span className="text-white text-sm font-bold">JL</span>
             </div>
           </div>
-          <p className="text-xl">Loading...</p>
+          <LoadingIndicator size="lg" />
+          <p className="text-xl mt-4">Loading Dashboard...</p>
         </div>
       </div>
     );
@@ -165,13 +118,31 @@ export default function DashboardPage() {
       />
       
       <div className="flex-1 bg-gray-700 p-6 flex flex-col h-screen">
-        <div className="flex-1">
+        {/* UTC Clock at the top */}
+        <div className="flex justify-end items-center mb-4">
+          <div className="bg-gray-800 rounded-lg px-4 py-2">
+            <UTCClock />
+          </div>
+        </div>
+
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-white">
+              {userInfo ? `Welcome, ${userInfo.username}` : 'Dashboard'}
+            </h1>
+            <p className="text-gray-400">Japan Airlines Virtual Event Portal</p>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
           {/* Render content based on active tab */}
           {activeTab === 'home' ? (
-            <>
+            <div className="space-y-6">
+              {/* Current Event Section */}
               {eventLoading ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                  <LoadingIndicator size="lg" />
                 </div>
               ) : currentEvent ? (
                 <>
@@ -185,27 +156,59 @@ export default function DashboardPage() {
                     />
                   </div>
                 </>
-              ) : (
-                <div className="bg-gray-800 rounded-lg p-12 text-center">
-                  <h3 className="text-2xl font-bold text-yellow-400 mb-2">No events here, check again later.</h3>
-                </div>
-              )}
-            </>
+              ) : null}
+
+              {/* All Events Section */}
+              <div className="space-y-6">
+                {eventsLoading ? (
+                  <div className="flex items-center justify-center h-64">
+                    <LoadingIndicator size="lg" />
+                  </div>
+                ) : allEvents.length > 0 ? (
+                  <>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white mb-4">{t('events.title')}</h2>
+                      <p className="text-gray-400">{t('events.subtitle')}</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {allEvents.map((event) => (
+                        <EventCard
+                          key={event.id}
+                          eventId={event.id}
+                          imageSrc={event.banner}
+                          eventName={event.eventName}
+                          eventType={event.type}
+                          description={event.description}
+                        />
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="bg-gray-800 rounded-lg p-12 text-center">
+                    <p className="text-gray-400">No events available right now. Check back later!</p>
+                  </div>
+                )}
+                
+                {hasNextPage && (
+                  <div className="flex justify-center">
+                    <ActionButton 
+                      content={t('flights.loadMore')} 
+                      backgroundFilled={false}
+                      onClick={() => fetchNextPage()}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
           ) : activeTab === 'booking' ? (
             <BookSlot 
               pilotId={apiKey || ''} 
-              pilotName="Pilot" 
-              pilotEmail="pilot@example.com" 
+              pilotName={authData?.firstName || 'Pilot'} 
+              pilotEmail={`${authData?.vid || 'pilot'}@jalvirtual.com`} 
             />
           ) : activeTab === 'my-bookings' ? (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-4">My Bookings</h2>
-                <p className="text-gray-400">View and manage your event bookings</p>
-              </div>
-              <div className="bg-gray-800 rounded-lg p-6">
-                <p className="text-gray-400 text-center">No bookings found. Book an event to see them here.</p>
-              </div>
+            <div className="bg-gray-800 rounded-lg p-12 text-center">
+              <p className="text-gray-400">This tab only work if u book a event</p>
             </div>
           ) : activeTab === 'staff' && isAdmin ? (
             <StaffManagement adminApiKey="29e2bb1d4ae031ed47b6" />
@@ -215,7 +218,7 @@ export default function DashboardPage() {
             <>
               {eventLoading ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                  <LoadingIndicator size="lg" />
                 </div>
               ) : currentEvent ? (
                 <>
@@ -231,7 +234,10 @@ export default function DashboardPage() {
                 </>
               ) : (
                 <div className="bg-gray-800 rounded-lg p-12 text-center">
-                  <h3 className="text-2xl font-bold text-yellow-400 mb-2">No events here, check again later.</h3>
+                  <h3 className="text-2xl font-bold text-yellow-400 mb-2">
+                    {t('events.title')} - {t('events.subtitle')}
+                  </h3>
+                  <p className="text-gray-400">No events available right now. Check back later!</p>
                 </div>
               )}
             </>
