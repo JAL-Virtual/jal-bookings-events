@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode, FormEvent, useRef, useState, useEffect, useMemo } from 'react';
 import { ActionButton } from './buttons/ActionButton';
 import { Filter } from './Filter';

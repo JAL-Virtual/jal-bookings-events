@@ -1,3 +1,5 @@
+"use client";
+
 import { useTheme } from '../../contexts/ThemeContext';
 import { FiSun, FiMoon } from 'react-icons/fi';
 
