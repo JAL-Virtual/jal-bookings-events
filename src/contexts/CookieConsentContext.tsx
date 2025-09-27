@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, FunctionComponent, useCallback, useLayoutEffect, useState, ReactNode, useContext } from "react";
 
 export enum ConsentAnwsers {
