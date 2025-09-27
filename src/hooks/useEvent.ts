@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback, useContext, RefObject, MutableRefObject } from "react";
+import { useState, useEffect, useCallback, useContext, MutableRefObject } from "react";
 import { Event } from "../components/EventHeader";
 import { ConsentAnwsers, CookieConsentContext } from "../contexts/CookieConsentContext";
 
 // Extend Window interface for gtag
 declare global {
   interface Window {
-    gtag?: (...args: any[]) => void;
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
@@ -21,7 +21,7 @@ export function useEvent(id: string): UseEventResult {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchEvent = async () => {
+  const fetchEvent = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -50,7 +50,7 @@ export function useEvent(id: string): UseEventResult {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     if (id) {
@@ -58,7 +58,7 @@ export function useEvent(id: string): UseEventResult {
     } else {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, fetchEvent]);
 
   return {
     data,
@@ -68,7 +68,8 @@ export function useEvent(id: string): UseEventResult {
   };
 }
 
-// Pagination interface
+// Pagination interface (for future use)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Pagination<T> {
   data: T[];
   page: number;
@@ -95,7 +96,7 @@ export function useEvents(page = 1, perPage = 6): UseEventsResult {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(page);
   const [totalPages, setTotalPages] = useState(0);
-  const [total, setTotal] = useState(0);
+  const [, setTotal] = useState(0);
 
   const fetchEvents = useCallback(async (pageNum: number) => {
     try {
@@ -291,7 +292,7 @@ type NestedKeyOf<ObjectType extends object> =
   }[keyof ObjectType & (string | number)];
 
 // Mock translation function (replace with actual i18n implementation)
-const mockTranslation = (key: string, ...args: any[]): string => {
+const mockTranslation = (key: string, ...args: unknown[]): string => {
   // In a real implementation, this would use react-i18next or similar
   // For now, return the key as a fallback
   console.log('Translation requested:', key, args);
@@ -303,7 +304,7 @@ export function useText() {
   const t = mockTranslation;
 
   return {
-    t: (translationPath: NestedKeyOf<Translations> | Array<NestedKeyOf<Translations>>, ...args: any) => {
+    t: (translationPath: NestedKeyOf<Translations> | Array<NestedKeyOf<Translations>>, ...args: unknown[]) => {
       const path = Array.isArray(translationPath) ? translationPath.join('.') : translationPath;
       return t(path, ...args);
     }

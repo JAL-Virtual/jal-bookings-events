@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { BookInfoMessage } from './BookInfoMessage';
 import { UTCClock } from './UTCClock';
 
 interface Slot {
@@ -48,10 +49,14 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
   const [slots, setSlots] = useState<Slot[]>([]);
   const [slotType, setSlotType] = useState<'DEPARTURE' | 'ARRIVAL'>('DEPARTURE');
   const [loading, setLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [errorType, setErrorType] = useState<'error' | 'warning' | 'success'>('error');
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [bookingLoading, setBookingLoading] = useState<string | null>(null);
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationSlot, setConfirmationSlot] = useState<Slot | null>(null);
 
   // Fetch events
   const fetchEvents = useCallback(async () => {
@@ -111,12 +116,28 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
     }
   }, [selectedEvent, slotType]);
 
-  // Handle slot booking
+  // Handle slot booking confirmation
   const handleBookSlot = async (slotId: string) => {
     if (!selectedEvent) return;
 
+    // Find the slot details for confirmation
+    const slot = slots.find(s => s.id === slotId);
+    if (!slot) {
+      setError('Slot not found');
+      return;
+    }
+
+    // Show confirmation popup
+    setConfirmationSlot(slot);
+    setShowConfirmation(true);
+  };
+
+  // Confirm slot booking after user confirms
+  const confirmSlotBooking = async () => {
+    if (!confirmationSlot || !selectedEvent) return;
+
     try {
-      setBookingLoading(slotId);
+      setBookingLoading(confirmationSlot.id);
       setError(null);
       
       const response = await fetch('/api/bookings', {
@@ -129,7 +150,7 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
           pilotId,
           pilotName,
           pilotEmail,
-          slotId // Include slot ID for slot-specific booking
+          slotId: confirmationSlot.id // Include slot ID for slot-specific booking
         }),
       });
 
@@ -140,20 +161,44 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
       const data = await response.json();
       
       if (data.success) {
+        // Small delay to ensure database is updated
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         // Refresh slots to update status
         await fetchSlots();
+        handleError('Slot booked successfully!', 'success');
       } else {
-        setError(data.error || 'Failed to book slot');
+        handleError(data.error || 'Failed to book slot', 'error');
       }
     } catch (err: unknown) {
       console.error('Error booking slot:', err);
-      setError(err instanceof Error ? err.message : 'Network error occurred');
+      handleError(err instanceof Error ? err.message : 'Network error occurred', 'error');
     } finally {
       setBookingLoading(null);
+      setShowConfirmation(false);
+      setConfirmationSlot(null);
     }
   };
 
-  // Filter slots based on search term
+  // Handle error display
+  const handleError = (message: string, type: 'error' | 'warning' | 'success' = 'error') => {
+    setError(message);
+    setErrorType(type);
+    setShowError(true);
+    
+    // Auto-hide success messages after 5 seconds
+    if (type === 'success') {
+      setTimeout(() => {
+        setShowError(false);
+      }, 5000);
+    }
+  };
+
+  // Handle error reset
+  const handleErrorReset = () => {
+    setShowError(false);
+    setError(null);
+  };
   const filteredSlots = slots.filter(slot => 
     slot.flightNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     slot.airline?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -225,6 +270,16 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
           </select>
         </div>
       </div>
+
+      {/* Error/Success Message */}
+      {showError && error && (
+        <BookInfoMessage
+          header={errorType === 'error' ? 'Booking Error' : errorType === 'warning' ? 'Booking Warning' : 'Booking Success'}
+          description={error}
+          type={errorType}
+          onErrorReset={handleErrorReset}
+        />
+      )}
 
       {/* Search and Filter */}
       {selectedEvent && (
@@ -386,6 +441,74 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
       ) : (
         <div className="bg-gray-800 rounded-lg p-12 text-center">
           <p className="text-gray-400">Please select an event to view available slots</p>
+        </div>
+      )}
+
+      {/* Slot Booking Confirmation Modal */}
+      {showConfirmation && confirmationSlot && selectedEvent && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-800 rounded-2xl border border-gray-700 shadow-2xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
+                  <span className="text-blue-400 text-lg">✈️</span>
+                </div>
+                <h3 className="text-xl font-bold text-white">Confirm Slot Booking</h3>
+              </div>
+              
+              <div className="mb-6">
+                <p className="text-gray-300 mb-4">
+                  Are you sure you want to book this slot?
+                </p>
+                
+                <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600/50">
+                  <div className="text-white font-medium mb-2">{selectedEvent.name}</div>
+                  <div className="text-gray-300 text-sm mb-1">
+                    Slot: {confirmationSlot.flightNumber || 'N/A'}
+                  </div>
+                  <div className="text-gray-300 text-sm mb-1">
+                    Type: {confirmationSlot.type}
+                  </div>
+                  <div className="text-gray-300 text-sm mb-1">
+                    Aircraft: {confirmationSlot.aircraft || 'N/A'}
+                  </div>
+                  <div className="text-gray-300 text-sm mb-1">
+                    Time: {selectedEvent.time || 'N/A'}
+                  </div>
+                  {confirmationSlot.airline && (
+                    <div className="text-gray-300 text-sm">
+                      Airline: {confirmationSlot.airline}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowConfirmation(false);
+                    setConfirmationSlot(null);
+                  }}
+                  className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmSlotBooking}
+                  disabled={bookingLoading === confirmationSlot.id}
+                  className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  {bookingLoading === confirmationSlot.id && (
+                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                  )}
+                  {bookingLoading === confirmationSlot.id ? 'Booking...' : 'Confirm Booking'}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

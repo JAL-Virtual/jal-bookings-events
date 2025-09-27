@@ -1,35 +1,43 @@
-import { FunctionComponent, ReactNode } from "react";
+'use client';
+
+import React from 'react';
 
 interface AlertProps {
-    icon: ReactNode;
+  title: string;
+  content: string;
+  icon: React.ReactNode;
+  backgroundColors: {
+    icon: string;
     title: string;
-    content: ReactNode;
-    contentTextColor: string;
-    backgroundColors: {
-        icon: string;
-        title: string;
-        content: string;
-    };
+    content: string;
+  };
+  contentTextColor: string;
+  className?: string;
 }
 
-export const Alert: FunctionComponent<AlertProps> = ({ title, icon, backgroundColors, contentTextColor, content }) => {
-    return (
-        <div className="flex flex-col">
-            <div className="flex items-stretch text-white self-end">
-                <div className={`${backgroundColors.icon} p-3 rounded-tl`}>
-                    {icon}
-                </div>
-                <div className={`${backgroundColors.title} py-2 px-6 md:px-13 rounded-tr`}>
-                    <strong className="relative top-[2px] font-black font-header">
-                        {title}
-                    </strong>
-                </div>
-            </div>
-            <p
-                className={`${backgroundColors.content} p-2 rounded-b rounded-tl lg:max-w-[30.7rem] text-[0.87rem] font-header ${contentTextColor}`}
-            >
-                {content}
-            </p>
+export const Alert: React.FC<AlertProps> = ({ 
+  title, 
+  content, 
+  icon, 
+  backgroundColors, 
+  contentTextColor,
+  className = '' 
+}) => {
+  return (
+    <div className={`rounded-lg p-4 border border-orange-500/20 ${className}`}>
+      <div className="flex items-start gap-3">
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${backgroundColors.icon}`}>
+          {icon}
         </div>
-    )
-}
+        <div className="flex-1">
+          <div className={`px-3 py-1 rounded-md text-sm font-semibold text-white mb-2 ${backgroundColors.title}`}>
+            {title}
+          </div>
+          <div className={`px-3 py-2 rounded-md text-sm ${backgroundColors.content} ${contentTextColor}`}>
+            {content}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

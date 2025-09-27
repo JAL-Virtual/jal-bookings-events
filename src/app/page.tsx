@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { isAuthenticated } from './api';
-import { StartupPopup, EventDisplay } from '../components';
+import { StartupPopup } from '../components';
 
 type Star = { top: number; left: number; size: number; dur: number; delay: number };
 
@@ -46,7 +46,7 @@ export default function LandingPage() {
   useEffect(() => {
     // Check if user is already authenticated
     if (isAuthenticated()) {
-      window.location.href = '/dashboard';
+      window.location.href = '/events';
     }
     
     const saved = localStorage.getItem("jal_api_key");
@@ -75,7 +75,7 @@ export default function LandingPage() {
     setError("");
     try {
       if (!apiKey || apiKey.trim().length < 8) {
-        throw new Error("Please enter a valid JAL pilot API key.");
+        throw new Error("Please enter a valid Japan Airlines Virtual pilot API key.");
       }
 
       const res = await fetch("/api/auth/verify", {
@@ -256,7 +256,7 @@ export default function LandingPage() {
                 : "text-gradient-red"
             }`}
           >
-Event Booking Portal
+Japan Airlines Virtual
           </motion.h1>
           
           <motion.div
@@ -281,7 +281,7 @@ Event Booking Portal
                 whileHover={{ scale: 1.1 }}
                 transition={{ duration: 0.2 }}
               >
-                JAPAN
+                EXPERIENCE
               </motion.span>
               <motion.span 
                 className={`text-2xl ${isDark ? "text-red-400" : "text-red-600"}`}
@@ -295,7 +295,7 @@ Event Booking Portal
                 whileHover={{ scale: 1.1 }}
                 transition={{ duration: 0.2 }}
               >
-                AIRLINES
+                THE BEST
               </motion.span>
             </motion.h2>
             
@@ -307,7 +307,7 @@ Event Booking Portal
                 isDark ? "text-gray-300" : "text-gray-600"
               }`}
             >
-              Event Booking & Management System
+              Manage your bookings on a modern, fast and intuitive way.
             </motion.p>
             
             <motion.div
@@ -320,16 +320,6 @@ Event Booking Portal
             >
               ✈️ Book premium aviation events and experiences ✈️
             </motion.div>
-          </motion.div>
-
-          {/* Current Event Display */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1.5 }}
-            className="w-full max-w-6xl mt-8"
-          >
-            <EventDisplay />
           </motion.div>
 
           <motion.button
@@ -363,7 +353,7 @@ Event Booking Portal
             >
               ✈️
             </motion.span>
-            <span className="font-comic">イベント予約 / BOOK EVENT</span>
+            <span className="font-comic">Explore Flights!</span>
             <motion.span 
               className="text-lg"
               animate={{ x: [0, 5, 0] }}
@@ -393,7 +383,7 @@ Event Booking Portal
             >
               ✈️
             </motion.span>
-            <span className="font-comic">Japan Airlines Virtual • Event Booking Portal</span>
+            <span className="font-comic">Powered by: Japan Airlines Virtual</span>
             <motion.span
               animate={{ rotate: [0, 360] }}
               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
@@ -401,6 +391,21 @@ Event Booking Portal
             >
               ✈️
             </motion.span>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2.0 }}
+          className={`text-sm font-medium mt-4 backdrop-blur-xl rounded-2xl px-4 py-2 border shadow-lg ${
+            isDark 
+              ? "bg-white/5 border-white/10 text-gray-400 shadow-white/5" 
+              : "bg-white/40 border-white/20 text-gray-500 shadow-white/20"
+          }`}
+        >
+          <div className="flex items-center justify-center gap-2">
+            <span className="font-comic">Japan Airlines Virtual Event Booking Portal</span>
           </div>
         </motion.div>
       </div>
@@ -441,7 +446,7 @@ Event Booking Portal
                   }`}>
                     <span className="text-lg">🔑</span>
                   </div>
-                  <span className="font-display">JAL Event Booking Portal Login</span>
+                  <span className="font-display">Japan Airlines Virtual Login</span>
                 </h3>
 
                 <div className="relative mb-6">
@@ -449,7 +454,7 @@ Event Booking Portal
                     type={showKey ? "text" : "password"}
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
-                    placeholder="Enter your JAL Virtual Pilot API key"
+                    placeholder="Enter your Japan Airlines Virtual Pilot API key"
                     autoFocus
                     onKeyDown={(e) => e.key === "Enter" && handleVerifyKey()}
                     className={`w-full px-4 py-3 rounded-2xl border transition-all duration-200 focus:outline-none focus:ring-2 tracking-widest pr-12 font-mono ${
@@ -476,7 +481,7 @@ Event Booking Portal
                 <p id="apiKeyHelp" className={`text-base mb-6 ${
                   isDark ? "text-gray-300" : "text-gray-600"
                 }`}>
-                  Your pilot API key is validated via JAL Virtual system using <code className={`px-2 py-1 rounded ${
+                  Your pilot API key is validated via Japan Airlines Virtual system using <code className={`px-2 py-1 rounded ${
                     isDark ? "bg-white/10 text-blue-300" : "bg-white/60 text-blue-600"
                   }`}>X-API-Key</code> authentication for event booking access.
                 </p>
@@ -536,7 +541,7 @@ Event Booking Portal
           jalId={maskedKey}
           onFinish={() => {
             setShowStartup(false);
-            window.location.href = '/dashboard';
+            window.location.href = '/events';
           }}
         />
       )}

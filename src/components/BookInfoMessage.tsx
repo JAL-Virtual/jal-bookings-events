@@ -6,7 +6,7 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 interface BookInfoMessageProps {
   header: string;
   description: string;
-  type: 'error' | 'warning';
+  type: 'error' | 'warning' | 'success';
   onErrorReset: () => void;
 }
 
@@ -21,7 +21,9 @@ export const BookInfoMessage: React.FC<BookInfoMessageProps> = ({
       <h2 className={`text-2xl font-bold ${
         type === 'error' 
           ? 'text-red-400' 
-          : 'text-yellow-400'
+          : type === 'warning'
+          ? 'text-yellow-400'
+          : 'text-green-400'
       }`}>
         {header}
       </h2>

@@ -1,0 +1,56 @@
+<svg width="473" height="420" viewBox="0 0 473 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="473" height="420" fill="#F9FAFB"/>
+  
+  <!-- Airport windows grid -->
+  <g transform="translate(200, 50)">
+    <!-- Top row -->
+    <rect x="0" y="0" width="80" height="60" rx="8" fill="#E5E7EB"/>
+    <rect x="90" y="0" width="80" height="60" rx="8" fill="#E5E7EB"/>
+    
+    <!-- Middle row -->
+    <rect x="0" y="70" width="80" height="60" rx="8" fill="#E5E7EB"/>
+    <rect x="90" y="70" width="80" height="60" rx="8" fill="#E5E7EB"/>
+    
+    <!-- Bottom row -->
+    <rect x="0" y="140" width="80" height="60" rx="8" fill="#E5E7EB"/>
+    <rect x="90" y="140" width="80" height="60" rx="8" fill="#E5E7EB"/>
+    
+    <!-- Clouds in windows -->
+    <ellipse cx="25" cy="25" rx="15" ry="8" fill="#D1D5DB"/>
+    <ellipse cx="35" cy="20" rx="12" ry="6" fill="#D1D5DB"/>
+    
+    <ellipse cx="115" cy="25" rx="12" ry="6" fill="#D1D5DB"/>
+    
+    <ellipse cx="25" cy="95" rx="15" ry="8" fill="#D1D5DB"/>
+    
+    <!-- Airplane in bottom right window -->
+    <path d="M140 180 L160 170 L170 175 L160 180 L140 190 Z" fill="#3B82F6"/>
+  </g>
+  
+  <!-- Person -->
+  <g transform="translate(100, 200)">
+    <!-- Bench -->
+    <rect x="0" y="40" width="120" height="20" rx="4" fill="#9CA3AF"/>
+    
+    <!-- Person body -->
+    <rect x="50" y="20" width="30" height="40" rx="4" fill="#3B82F6"/>
+    
+    <!-- Person head -->
+    <circle cx="65" cy="15" r="12" fill="#FDE68A"/>
+    
+    <!-- Hair -->
+    <ellipse cx="65" cy="8" rx="10" ry="6" fill="#F59E0B"/>
+    
+    <!-- Coffee cup -->
+    <rect x="75" y="25" width="8" height="12" rx="2" fill="#92400E"/>
+    <rect x="76" y="26" width="6" height="10" rx="1" fill="#A16207"/>
+  </g>
+  
+  <!-- Suitcase -->
+  <g transform="translate(50, 250)">
+    <rect x="0" y="0" width="40" height="25" rx="2" fill="#9CA3AF"/>
+    <rect x="5" y="5" width="30" height="15" rx="1" fill="#D1D5DB"/>
+    <rect x="15" y="2" width="10" height="3" rx="1" fill="#F3F4F6"/>
+  </g>
+</svg>

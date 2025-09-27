@@ -19,7 +19,7 @@ export { LoadingIndicator } from './LoadingIndicator';
 export { ActionButton, ButtonText, ButtonIcon, LinkButton } from './Button';
 export { DropdownButton } from './DropdownButton';
 export { Checkbox } from './Checkbox';
-export { Header, MutedText, FooterText, Subheader } from './Typography';
+export { Header, MutedText } from './Typography';
 export { AppTracking } from './AppTracking';
 export { ActiveEventGuard } from './ActiveEventGuard';
 export { RequireAuthGuard } from './RequireAuthGuard';
