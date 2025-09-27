@@ -70,32 +70,32 @@ export function StartupPopup({ jalId, onFinish, children }: StartupPopupProps) {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-gray-900 border border-gray-700 rounded-lg shadow-2xl max-w-2xl w-full mx-4 font-mono">
+    <div className="fixed inset-0 bg-white bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white border border-gray-200 rounded-lg shadow-xl max-w-2xl w-full mx-4 font-mono">
         {/* Terminal Header */}
-        <div className="bg-gray-800 px-4 py-2 rounded-t-lg border-b border-gray-700">
+        <div className="bg-gray-100 px-4 py-2 rounded-t-lg border-b border-gray-200">
           <div className="flex items-center space-x-2">
             <div className="flex space-x-1">
               <div className="w-3 h-3 bg-red-500 rounded-full"></div>
               <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
               <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             </div>
-            <span className="text-sm text-gray-300 ml-2">
+            <span className="text-sm text-gray-600 ml-2">
               JAL Event Portal Terminal
             </span>
           </div>
         </div>
 
         {/* Terminal Content */}
-        <div className="p-6 bg-gray-900">
+        <div className="p-6 bg-white">
           <div className="space-y-2 text-sm">
             {/* Completed Lines */}
             {consoleLines.slice(0, currentLine).map((line, index) => (
               <div key={index} className="flex items-center">
-                <span className="text-green-500 mr-2">
+                <span className="text-green-600 mr-2">
                   {jalId ? `[${jalId}]` : '[SYSTEM]'}
                 </span>
-                <span className="text-gray-200">
+                <span className="text-gray-800">
                   {line}
                 </span>
               </div>
@@ -104,13 +104,13 @@ export function StartupPopup({ jalId, onFinish, children }: StartupPopupProps) {
             {/* Current Line with Typing Effect */}
             {currentLine < consoleLines.length && (
               <div className="flex items-center">
-                <span className="text-green-500 mr-2">
+                <span className="text-green-600 mr-2">
                   {jalId ? `[${jalId}]` : '[SYSTEM]'}
                 </span>
-                <span className="text-gray-200">
+                <span className="text-gray-800">
                   {displayedText}
                 </span>
-                <span className="ml-1 text-green-500 animate-pulse">
+                <span className="ml-1 text-green-600 animate-pulse">
                   ▊
                 </span>
               </div>
@@ -120,14 +120,14 @@ export function StartupPopup({ jalId, onFinish, children }: StartupPopupProps) {
             {currentLine >= consoleLines.length && (
               <div className="mt-4">
                 <div className="flex items-center mb-2">
-                  <span className="text-green-500 mr-2">
+                  <span className="text-green-600 mr-2">
                     {jalId ? `[${jalId}]` : '[SYSTEM]'}
                   </span>
-                  <span className="text-gray-200">
+                  <span className="text-gray-800">
                     Progress: {progress}%
                   </span>
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
                     className="bg-green-500 h-2 rounded-full transition-all duration-100"
                     style={{ width: `${progress}%` }}
