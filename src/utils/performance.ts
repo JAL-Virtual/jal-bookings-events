@@ -82,7 +82,13 @@ export async function measureDbOperation<T>(
 }
 
 // Web Vitals monitoring
-export function reportWebVitals(metric: any) {
+export function reportWebVitals(metric: {
+  name: string;
+  value: number;
+  delta: number;
+  id: string;
+  label: string;
+}) {
   if (metric.label === 'web-vital') {
     console.log('Web Vital:', metric.name, metric.value);
     
@@ -97,9 +103,9 @@ export function reportWebVitals(metric: any) {
 }
 
 // Memory usage monitoring
-export function getMemoryUsage() {
+export function getMemoryUsage(): { used: number; total: number; limit: number } | null {
   if ('memory' in performance) {
-    const memory = (performance as any).memory;
+    const memory = (performance as { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
     return {
       used: Math.round(memory.usedJSHeapSize / 1048576), // MB
       total: Math.round(memory.totalJSHeapSize / 1048576), // MB

@@ -1,9 +1,7 @@
 "use client";
 
-import { useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { IocContext } from '../contexts/IocContext';
 
 interface Booking {
   id: string;
@@ -35,8 +33,6 @@ interface BookingsResponse {
 }
 
 export function useUserBookings(pilotId?: string) {
-  const { apiClient } = useContext(IocContext);
-
   const { data: bookingsData, isLoading, error } = useQuery<BookingsResponse, AxiosError>({
     queryKey: ['userBookings', pilotId],
     queryFn: async () => {

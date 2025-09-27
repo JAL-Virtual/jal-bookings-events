@@ -1,3 +1,29 @@
+// MongoDB aggregation pipeline types
+interface LookupStage {
+  from: string;
+  localField?: string;
+  foreignField?: string;
+  as: string;
+  pipeline?: Array<Record<string, unknown>>;
+}
+
+interface AggregationStage {
+  $match?: Record<string, unknown>;
+  $lookup?: LookupStage;
+  [key: string]: unknown;
+}
+
+// MongoDB collection interface
+interface MongoCollection {
+  find(query: Record<string, unknown>, options?: Record<string, unknown>): {
+    limit(count: number): {
+      toArray(): Promise<unknown[]>;
+    };
+  };
+  findOne(query: Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown>;
+  insertMany(docs: Record<string, unknown>[], options?: Record<string, unknown>): Promise<unknown>;
+}
+
 // Database optimization utilities
 export class DatabaseOptimizer {
   // Connection pooling configuration
@@ -5,7 +31,12 @@ export class DatabaseOptimizer {
   static readonly MAX_IDLE_TIME = 30000; // 30 seconds
   
   // Query optimization helpers
-  static optimizeQuery(query: any, options: any = {}) {
+  static optimizeQuery(query: Record<string, unknown>, options: {
+    hint?: Record<string, unknown>;
+    projection?: Record<string, unknown>;
+    sort?: Record<string, unknown>;
+    limit?: number;
+  } = {}) {
     return {
       ...query,
       // Add indexes hints if needed
@@ -20,7 +51,7 @@ export class DatabaseOptimizer {
   }
 
   // Batch operations for better performance
-  static async batchInsert(collection: any, documents: any[], batchSize = 100) {
+  static async batchInsert(collection: MongoCollection, documents: Record<string, unknown>[], batchSize = 100) {
     const batches = [];
     for (let i = 0; i < documents.length; i += batchSize) {
       batches.push(documents.slice(i, i + batchSize));
@@ -35,7 +66,7 @@ export class DatabaseOptimizer {
   }
 
   // Optimized aggregation pipeline
-  static createOptimizedPipeline(stages: any[]) {
+  static createOptimizedPipeline(stages: AggregationStage[]) {
     return stages.map(stage => {
       // Optimize $match stages
       if (stage.$match) {
@@ -63,7 +94,7 @@ export class DatabaseOptimizer {
   }
 
   // Index recommendations
-  static getIndexRecommendations(collectionName: string, queries: any[]) {
+  static getIndexRecommendations(collectionName: string, queries: Array<Record<string, unknown>>) {
     const recommendations = [];
     
     // Analyze common query patterns
@@ -92,7 +123,7 @@ export class DatabaseOptimizer {
   }
 
   // Cache warming strategies
-  static async warmCache(collection: any, commonQueries: any[]) {
+  static async warmCache(collection: MongoCollection, commonQueries: Array<Record<string, unknown>>) {
     const cachePromises = commonQueries.map(async (query) => {
       try {
         await collection.find(query).limit(1).toArray();
@@ -105,7 +136,7 @@ export class DatabaseOptimizer {
   }
 
   // Connection health check
-  static async checkConnectionHealth(collection: any) {
+  static async checkConnectionHealth(collection: MongoCollection) {
     try {
       const start = Date.now();
       await collection.findOne({}, { projection: { _id: 1 } });
@@ -128,10 +159,10 @@ export class DatabaseOptimizer {
 
 // Query result caching
 export class QueryCache {
-  private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+  private cache = new Map<string, { data: unknown; timestamp: number; ttl: number }>();
   private readonly DEFAULT_TTL = 300000; // 5 minutes
 
-  set(key: string, data: any, ttl = this.DEFAULT_TTL) {
+  set(key: string, data: unknown, ttl = this.DEFAULT_TTL) {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
@@ -157,7 +188,7 @@ export class QueryCache {
   }
 
   // Generate cache key from query parameters
-  static generateKey(query: any, collection: string): string {
+  static generateKey(query: Record<string, unknown>, collection: string): string {
     return `${collection}:${JSON.stringify(query)}`;
   }
 }
