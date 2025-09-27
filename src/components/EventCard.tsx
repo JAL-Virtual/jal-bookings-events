@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 interface EventCardProps {
-  eventId: number;
+  eventId: string;
   imageSrc: string;
   eventName: string;
   eventType: string;
