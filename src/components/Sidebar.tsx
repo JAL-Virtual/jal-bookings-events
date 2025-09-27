@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { 
   HomeIcon, 
   CalendarIcon,
@@ -32,27 +33,40 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className="w-16 bg-gray-800 flex flex-col items-center py-6 space-y-6 transition-colors duration-200">
+    <div className="w-64 bg-gray-800 flex flex-col pt-2 pb-6 space-y-2 transition-all duration-200">
       {/* Logo */}
-      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-        <div className="w-6 h-6 bg-red-600 rounded-sm flex items-center justify-center relative">
-          <div className="absolute inset-0 bg-green-600 rounded-sm" style={{clipPath: 'polygon(0 0, 100% 0, 0 100%)'}}></div>
-          <span className="text-white text-xs font-bold relative z-10">IV</span>
-        </div>
+      <div className="px-6 flex justify-center -mt-40">
+        <Image 
+          src={`/img/jal-logo-dark-large.png?v=${Date.now()}`}
+          alt="Japan Airlines Logo"
+          width={400}
+          height={400}
+          className="object-contain"
+          priority
+          unoptimized
+          style={{
+            width: '400px',
+            height: '400px',
+            objectFit: 'contain'
+          }}
+        />
       </div>
 
-      {/* Navigation Icons */}
-      <div className="flex flex-col space-y-4">
+      {/* Navigation Items */}
+      <div className="flex flex-col space-y-1 -mt-42">
         {/* 1. Home Page */}
         <div className="relative">
           <button 
             onClick={() => handleTabClick('home')}
-            className="p-1"
+            className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors ${
+              activeTab === 'home' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+            }`}
           >
-            <HomeIcon className={`w-6 h-6 ${activeTab === 'home' ? 'text-white' : 'text-gray-400 hover:text-white'} cursor-pointer transition-colors`} />
+            <HomeIcon className="w-5 h-5 mr-3" />
+            <span className="text-sm font-medium">Home</span>
           </button>
           {activeTab === 'home' && (
-            <div className="absolute left-0 top-0 w-1 h-6 bg-white rounded-r"></div>
+            <div className="absolute left-0 top-0 w-1 h-full bg-white rounded-r"></div>
           )}
         </div>
 
@@ -60,12 +74,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="relative">
           <button 
             onClick={() => handleTabClick('booking')}
-            className="p-1"
+            className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors ${
+              activeTab === 'booking' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+            }`}
           >
-            <CalendarIcon className={`w-6 h-6 ${activeTab === 'booking' ? 'text-white' : 'text-gray-400 hover:text-white'} cursor-pointer transition-colors`} />
+            <CalendarIcon className="w-5 h-5 mr-3" />
+            <span className="text-sm font-medium">Booking</span>
           </button>
           {activeTab === 'booking' && (
-            <div className="absolute left-0 top-0 w-1 h-6 bg-white rounded-r"></div>
+            <div className="absolute left-0 top-0 w-1 h-full bg-white rounded-r"></div>
           )}
         </div>
 
@@ -73,12 +90,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="relative">
           <button 
             onClick={() => handleTabClick('my-bookings')}
-            className="p-1"
+            className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors ${
+              activeTab === 'my-bookings' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+            }`}
           >
-            <ClipboardListIcon className={`w-6 h-6 ${activeTab === 'my-bookings' ? 'text-white' : 'text-gray-400 hover:text-white'} cursor-pointer transition-colors`} />
+            <ClipboardListIcon className="w-5 h-5 mr-3" />
+            <span className="text-sm font-medium">My Bookings</span>
           </button>
           {activeTab === 'my-bookings' && (
-            <div className="absolute left-0 top-0 w-1 h-6 bg-white rounded-r"></div>
+            <div className="absolute left-0 top-0 w-1 h-full bg-white rounded-r"></div>
           )}
         </div>
 
@@ -87,12 +107,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="relative">
             <button 
               onClick={() => handleTabClick('staff')}
-              className="p-1"
+              className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors ${
+                activeTab === 'staff' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+              }`}
             >
-              <UsersIcon className={`w-6 h-6 ${activeTab === 'staff' ? 'text-white' : 'text-gray-400 hover:text-white'} cursor-pointer transition-colors`} />
+              <UsersIcon className="w-5 h-5 mr-3" />
+              <span className="text-sm font-medium">Manage Staff</span>
             </button>
             {activeTab === 'staff' && (
-              <div className="absolute left-0 top-0 w-1 h-6 bg-white rounded-r"></div>
+              <div className="absolute left-0 top-0 w-1 h-full bg-white rounded-r"></div>
             )}
           </div>
         )}
@@ -102,24 +125,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="relative">
             <button 
               onClick={() => handleTabClick('events')}
-              className="p-1"
+              className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors ${
+                activeTab === 'events' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+              }`}
             >
-              <CogIcon className={`w-6 h-6 ${activeTab === 'events' ? 'text-white' : 'text-gray-400 hover:text-white'} cursor-pointer transition-colors`} />
+              <CogIcon className="w-5 h-5 mr-3" />
+              <span className="text-sm font-medium">Manage Events</span>
             </button>
             {activeTab === 'events' && (
-              <div className="absolute left-0 top-0 w-1 h-6 bg-white rounded-r"></div>
+              <div className="absolute left-0 top-0 w-1 h-full bg-white rounded-r"></div>
             )}
           </div>
         )}
 
       </div>
 
-      {/* Bottom Icons */}
-      <div className="mt-auto flex flex-col space-y-4">
+      {/* Bottom Section */}
+      <div className="mt-auto">
         {/* Logout */}
-        <button className="p-1" onClick={onLogout} title="Logout">
-          <ArrowRightOnRectangleIcon className="w-6 h-6 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-        </button>
+        <div className="relative">
+          <button 
+            className="w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors text-gray-400 hover:text-white"
+            onClick={onLogout} 
+            title="Logout"
+          >
+            <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3" />
+            <span className="text-sm font-medium">Logout</span>
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -125,14 +125,7 @@ export const EventDisplay: React.FC<EventDisplayProps> = ({ className = '' }) =>
   if (!event) {
     return (
       <div className={`bg-gray-800 rounded-lg p-8 text-center ${className}`}>
-        <div className="text-6xl mb-4">✈️</div>
-        <h3 className="text-2xl font-bold text-yellow-400 mb-2">Stay Tuned for New Events</h3>
-        <p className="text-gray-400 text-lg">
-          We&apos;re preparing exciting aviation events for you. Check back soon for updates!
-        </p>
-        <div className="mt-6 text-sm text-gray-500">
-          Japan Airlines Virtual • Event Booking Portal
-        </div>
+        <h3 className="text-2xl font-bold text-yellow-400 mb-2">No events here, check again later.</h3>
       </div>
     );
   }
