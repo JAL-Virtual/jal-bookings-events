@@ -1,21 +1,21 @@
-import {FilterState} from "../components/Filter";
-import {LoadingIndicator} from "../components/LoadingIndicator";
-import {BookInfoMessage} from "../components/BookInfoMessage";
-import {SlotPageHeader} from "../components/SlotPageHeader";
-import {SlotsTable} from "../components/SlotsTable";
-import {SlotTypeFilter} from "../components/SlotTypeFilter";
-import {useAirlineLogosFromSlots} from "../hooks/useAirlineLogosFromSlots";
-import {useAirportInfoFromSlots} from "../hooks/useAirportInfoFromSlots";
-import {useEventSlots} from "../hooks/useEventSlots";
-import {useSlotCountByType} from "../hooks/useSlotCountByType";
-import {useEventDetail} from "../hooks/useEventDetail";
-import {useFlatInfiniteData} from "../hooks/useFlatInfiniteData";
-import {useText} from "../hooks/useText";
+import {FilterState} from "../../../../components/Filter";
+import {LoadingIndicator} from "../../../../components/LoadingIndicator";
+import {BookInfoMessage} from "../../../../components/BookInfoMessage";
+import {SlotPageHeader} from "../../../../components/SlotPageHeader";
+import {SlotsTable} from "../../../../components/SlotsTable";
+import {SlotTypeFilter} from "../../../../components/SlotTypeFilter";
+import {useAirlineLogosFromSlots} from "../../../../hooks/useAirlineLogosFromSlots";
+import {useAirportInfoFromSlots} from "../../../../hooks/useAirportInfoFromSlots";
+import {useEventSlots} from "../../../../hooks/useEventSlots";
+import {useSlotCountByType} from "../../../../hooks/useSlotCountByType";
+import {useEventDetail} from "../../../../hooks/useEventDetail";
+import {useFlatInfiniteData} from "../../../../hooks/useFlatInfiniteData";
+import {useText} from "../../../../hooks/useText";
 import {useEffect, useMemo, useState} from "react";
 import {useParams, useRouter, useSearchParams} from "next/navigation";
-import {AirportDetails} from "../components/SlotsTable";
-import {SlotScheduleData, Slot} from "../components/SlotsTable";
-import {SlotTypeOptions} from "../types/SlotFilter";
+import {AirportDetails} from "../../../../types/AirportDetails";
+import {SlotScheduleData, Slot} from "../../../../types/Slot";
+import {SlotTypeOptions} from "../../../../types/SlotFilter";
 
 export interface SlotsPageLocationState {
   hasError?: boolean;

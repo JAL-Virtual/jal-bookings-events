@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { Slot } from "../components/SlotsTable";
-import { AirportDetails } from "../components/SlotsTable";
+import { Slot } from "../types/Slot";
+import { AirportDetails } from "../types/AirportDetails";
 
 export function useAirportInfoFromSlots(slots: Slot[]) {
   const [airportDetails, setAirportDetails] = useState<Array<AirportDetails | null>>([]);

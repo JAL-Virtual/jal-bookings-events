@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext, MutableRefObject } from "react";
-import { Event } from "../components/EventHeader";
+import { Event } from "../types/Event";
 import { ConsentAnwsers, CookieConsentContext } from "../contexts/CookieConsentContext";
 
 // Extend Window interface for gtag

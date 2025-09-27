@@ -1,7 +1,7 @@
-import {LinkButton} from "../components/Button";
-import {MutedText} from "../components/Typography";
-import {useText} from "../hooks/useText";
-import {SlotInformationLayout} from "../layouts/SlotInformationLayout";
+import {LinkButton} from "../../../components/buttons/LinkButton";
+import {MutedText} from "../../../components/typography/Typography";
+import {useText} from "../../../hooks/useText";
+import {SlotInformationLayout} from "../../../layouts/SlotInformationLayout";
 import {useEffect, useState} from "react";
 import {useParams, useRouter, useSearchParams} from "next/navigation";
 

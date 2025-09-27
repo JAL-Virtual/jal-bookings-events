@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { IocProvider } from "@/contexts/IocContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { QueryProvider } from "@/contexts/QueryProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -51,13 +52,15 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} ${orbitron.variable} ${comicNeue.variable} antialiased`}
       >
-        <ThemeProvider>
-          <IocProvider>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
-          </IocProvider>
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider>
+            <IocProvider>
+              <AuthProvider>
+                {children}
+              </AuthProvider>
+            </IocProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

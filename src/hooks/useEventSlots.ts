@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Slot } from "../components/SlotsTable";
+import { Slot } from "../types/Slot";
 
 export function useEventSlots(eventId: number, selectedSlotType: string | null, appliedFilters: Record<string, unknown>) {
   const [pages, setPages] = useState<any[]>([]);

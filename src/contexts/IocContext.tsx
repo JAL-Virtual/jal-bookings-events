@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, ReactNode } from 'react';
+import { APIClient, getStoredApiKey } from '../app/api/client';
 
 export interface ApiClient {
   getEvent: (id: number) => Promise<any>;
@@ -101,8 +102,11 @@ interface IocProviderProps {
 }
 
 export function IocProvider({ children }: IocProviderProps) {
+  const apiKey = getStoredApiKey();
+  const apiClient = apiKey ? new APIClient(apiKey) : mockApiClient;
+  
   return (
-    <IocContext.Provider value={{ apiClient: mockApiClient }}>
+    <IocContext.Provider value={{ apiClient }}>
       {children}
     </IocContext.Provider>
   );

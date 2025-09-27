@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Slot } from "../components/SlotsTable";
+import { Slot } from "../types/Slot";
 
 export enum SlotBookActions {
   BOOK = "book",

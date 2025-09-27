@@ -1,7 +1,7 @@
 import { FunctionComponent, isValidElement, ReactNode } from "react";
 import { Footer } from "../components/Footer";
 import { Logo } from "../components/Logo";
-import { Header, MutedText } from "../components/Typography";
+import { Header, MutedText } from "../components/typography/Typography";
 
 interface SlotInformationLayoutProps {
     header?: ReactNode;

@@ -1,7 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { EventListEvent, EventListPage, EventListResult } from "../types/Event";
 
-export function useEventList(): EventListResult {
+export function useEventList(): {
+  pages: EventListPage[];
+  isLoading: boolean;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  fetchNextPage: () => void;
+} {
   const [pages, setPages] = useState<EventListPage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
@@ -29,6 +35,7 @@ export function useEventList(): EventListResult {
       if (result.success && result.events) {
         const newPage: EventListPage = {
           page: page,
+          perPage: 6,
           data: result.events,
           total: result.total || 0
         };

@@ -15,7 +15,8 @@ export {
   FiClipboard,
   FiLogOut,
   FiUsers,
-  FiSettings
+  FiSettings,
+  FiBookOpen
 } from 'react-icons/fi';
 
 // Export with alternative names for compatibility
@@ -25,5 +26,6 @@ export {
   FiClipboard as ClipboardListIcon,
   FiLogOut as ArrowRightOnRectangleIcon,
   FiUsers as UsersIcon,
-  FiSettings as CogIcon
+  FiSettings as CogIcon,
+  FiBookOpen as BookOpenIcon
 } from 'react-icons/fi';

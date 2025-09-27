@@ -1,10 +1,17 @@
+"use client";
+
 import { FunctionComponent } from "react";
+import { usePathname } from "next/navigation";
 import { EventSidebar } from "../components/EventSidebar";
-import { Outlet, useMatch } from "react-router-dom";
 import { Footer } from "../components/Footer";
 
-export const SidebarLayout: FunctionComponent = () => {
-    const isAtEventDetailsPage = useMatch("/event/:eventId") !== null;
+interface SidebarLayoutProps {
+  children: React.ReactNode;
+}
+
+export const SidebarLayout: FunctionComponent<SidebarLayoutProps> = ({ children }) => {
+    const pathname = usePathname();
+    const isAtEventDetailsPage = pathname?.includes("/event/") || false;
 
     return (
         <div className="flex flex-col lg:flex-row">
@@ -13,7 +20,7 @@ export const SidebarLayout: FunctionComponent = () => {
             </div>
             <div className={`flex flex-col min-h-screen ${isAtEventDetailsPage ? "container lg:ml-32 2xl:ml-auto" : "lg:ml-28 w-full"}`}>
                 <main className="h-full">
-                    <Outlet />
+                    {children}
                 </main>
                 {isAtEventDetailsPage && <Footer />}
             </div>

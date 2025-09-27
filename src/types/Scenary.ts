@@ -1,30 +1,26 @@
-export interface Scenary {
-  id: string;
-  title: string;
-  link: string;
-  simulator: ScenarySimulators;
-  license: "freeware" | "payware";
-}
-
-export enum ScenarySimulators {
-  MSFS = "msfs",
-  XPLANE = "xplane",
-  P3D = "p3d",
-  FSX = "fsx"
-}
-
 export interface EventDetailEvent {
-  id: string;
-  eventName: string;
-  type: string;
+  id: number;
+  name: string;
   description: string;
   dateStart: string;
   dateEnd: string;
+  has_ended: boolean;
+  can_confirm_slots: boolean;
   pilotBriefing: string;
-  atcBriefing: string;
-  banner: string;
-  airports: {
-    icao: string;
-    sceneries: Scenary[];
-  }[];
+  banner?: string;
+  type: string;
+}
+
+export interface Scenary {
+  id: number;
+  name: string;
+  description: string;
+  simulators: ScenarySimulators[];
+}
+
+export interface ScenarySimulators {
+  id: number;
+  name: string;
+  description: string;
+  capacity: number;
 }

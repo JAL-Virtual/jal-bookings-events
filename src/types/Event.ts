@@ -39,6 +39,30 @@ export enum ScenarySimulators {
   FSX = "fsx"
 }
 
+export interface EventListEvent {
+  id: number;
+  name: string;
+  description: string;
+  dateStart: string;
+  dateEnd: string;
+  banner?: string;
+  type: string;
+  has_ended: boolean;
+  can_confirm_slots: boolean;
+}
+
+export interface EventListPage {
+  page: number;
+  perPage: number;
+  total: number;
+  data: EventListEvent[];
+}
+
+export interface EventListResult {
+  success: boolean;
+  data: EventListPage;
+}
+
 export function getEventTypeName(type: string): string {
   const typeMap: Record<string, string> = {
     'takeoff': 'Takeoff Event',

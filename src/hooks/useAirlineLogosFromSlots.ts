@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Slot } from "../components/SlotsTable";
+import { Slot } from "../types/Slot";
 
 export function useAirlineLogosFromSlots(slots: Slot[]) {
   const [logos, setLogos] = useState<Array<Blob | null>>([]);
