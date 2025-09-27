@@ -1,102 +1,91 @@
-'use client';
-
-import React from 'react';
-import Image from 'next/image';
-import { ArrowUpIcon, ArrowDownIcon, ClockIcon } from '@heroicons/react/24/outline';
-import { FilterCard } from './FilterCard';
-
-export enum SlotTypeOptions {
-  LANDING = 'landing',
-  TAKEOFF = 'takeoff',
-  TAKEOFF_LANDING = 'takeoff_landing'
-}
-
-interface SlotsQtdData {
-  departure?: number;
-  landing?: number;
-  departureLanding?: number;
-}
+import { ReactNode } from 'react';
+import { SlotTypeOptions } from '../../types/SlotFilter';
 
 interface SlotTypeFilterProps {
   eventName: string;
-  eventType: string;
   eventBanner?: string;
-  slotsQtdData?: SlotsQtdData;
-  selectedSlotType?: SlotTypeOptions | null;
-  onSlotTypeChange: (newType: SlotTypeOptions) => void;
+  eventType: string;
+  selectedSlotType: SlotTypeOptions | null;
+  slotsQtdData: {
+    departure?: number;
+    landing?: number;
+    departureLanding?: number;
+  };
+  onSlotTypeChange: (type: SlotTypeOptions) => void;
 }
 
-const getEventTypeName = (eventType: string): string => {
-  switch (eventType.toLowerCase()) {
-    case 'departure':
-      return 'Departure Event';
-    case 'arrival':
-      return 'Arrival Event';
-    case 'mixed':
-      return 'Mixed Event';
-    default:
-      return 'Aviation Event';
-  }
-};
-
-export const SlotTypeFilter: React.FC<SlotTypeFilterProps> = ({
+export function SlotTypeFilter({
   eventName,
-  eventType,
   eventBanner,
-  slotsQtdData,
+  eventType,
   selectedSlotType,
+  slotsQtdData,
   onSlotTypeChange
-}) => {
+}: SlotTypeFilterProps) {
   return (
-    <nav className="relative bg-white dark:bg-gray-900">
-      {eventBanner && (
-        <div className="hidden dark:lg:block absolute rounded-md w-full h-48 opacity-10">
-          <Image 
-            src={eventBanner}
-            alt={`${eventName} logo`}
-            width={288}
-            height={285}
-            className="w-full h-full object-cover rounded-md"
-          />
-        </div>
-      )}
-
-      <div className="relative z-20 h-full flex flex-row md:flex-col justify-between md:justify-start items-center flex-wrap gap-8 px-6 pt-9">
-        <div className="self-start">
-          <h2 className="text-lg font-bold text-blue-600 dark:text-white">{eventName}</h2>
-          <p className="text-md text-blue-500 dark:text-gray-300">{getEventTypeName(eventType)}</p>
-        </div>
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <div className="mb-6">
+        {eventBanner && (
+          <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg mb-4">
+            <img 
+              src={eventBanner} 
+              alt={eventName}
+              className="w-full h-full object-cover rounded-lg"
+            />
+          </div>
+        )}
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          {eventName}
+        </h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {eventType}
+        </p>
+      </div>
+      
+      <div className="space-y-2">
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+          Slot Types
+        </h3>
         
-        {slotsQtdData?.landing && slotsQtdData.landing > 0 && (
-          <FilterCard
-            title="Arrivals"
-            icon={<ArrowDownIcon className="w-6 h-6" />}
-            quantity={slotsQtdData.landing}
-            onClick={() => onSlotTypeChange(SlotTypeOptions.LANDING)}
-            active={selectedSlotType === SlotTypeOptions.LANDING}
-          />
-        )}
-
-        {slotsQtdData?.departure && slotsQtdData.departure > 0 && (
-          <FilterCard
-            title="Departures"
-            icon={<ArrowUpIcon className="w-6 h-6" />}
-            quantity={slotsQtdData.departure}
+        {slotsQtdData.departure && slotsQtdData.departure > 0 && (
+          <button
             onClick={() => onSlotTypeChange(SlotTypeOptions.TAKEOFF)}
-            active={selectedSlotType === SlotTypeOptions.TAKEOFF}
-          />
+            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+              selectedSlotType === SlotTypeOptions.TAKEOFF
+                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+            }`}
+          >
+            Departures ({slotsQtdData.departure})
+          </button>
         )}
-
-        {slotsQtdData?.departureLanding && slotsQtdData.departureLanding > 0 && (
-          <FilterCard
-            title="Departure & Arrival"
-            icon={<ClockIcon className="w-6 h-6" />}
-            quantity={slotsQtdData.departureLanding}
+        
+        {slotsQtdData.landing && slotsQtdData.landing > 0 && (
+          <button
+            onClick={() => onSlotTypeChange(SlotTypeOptions.LANDING)}
+            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+              selectedSlotType === SlotTypeOptions.LANDING
+                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+            }`}
+          >
+            Arrivals ({slotsQtdData.landing})
+          </button>
+        )}
+        
+        {slotsQtdData.departureLanding && slotsQtdData.departureLanding > 0 && (
+          <button
             onClick={() => onSlotTypeChange(SlotTypeOptions.TAKEOFF_LANDING)}
-            active={selectedSlotType === SlotTypeOptions.TAKEOFF_LANDING}
-          />
+            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+              selectedSlotType === SlotTypeOptions.TAKEOFF_LANDING
+                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+            }`}
+          >
+            Round Trip ({slotsQtdData.departureLanding})
+          </button>
         )}
       </div>
-    </nav>
+    </div>
   );
-};
+}
