@@ -1,6 +1,7 @@
-import { useContext, useMemo, useEffect, useState } from "react";
+import { IocContext } from "../../contexts/IocContext";
+import { useContext, useMemo } from "react";
+import { useQueries } from "@tanstack/react-query";
 import { Slot } from "../../types/Slot";
-import { AirportDetails } from "../../types/AirportDetails";
 
 // Mock API client for now - replace with actual implementation
 const mockApiClient = {
