@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState, useRef, useEffect } from 'react';
+import { ReactNode, useState, useRef } from 'react';
 import { useOutsideClickHandler } from '../hooks/useOutsideClickHandler';
 
 interface DropdownButtonProps {

@@ -1,14 +1,11 @@
 "use client";
 
-import { ReactNode } from 'react';
-import { Slot } from '../types/Slot';
-import { AirportDetails } from '../types/AirportDetails';
-import { SlotBookButton } from './SlotBookButton';
+import Image from "next/image";
 
 interface SlotsTableProps {
   slots: Slot[];
   airlineImages: (string | null)[];
-  onSlotBook: (slotId: number, slotData?: any) => void;
+  onSlotBook: (slotId: number, slotData?: unknown) => void;
   hasMoreFlights: boolean;
   isFecthingMoreFlights: boolean;
   airportDetailsMap: Record<string, AirportDetails>;
@@ -64,9 +61,11 @@ export function SlotsTable({
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     {airlineImages[index] && (
-                      <img 
+                      <Image 
                         src={airlineImages[index]!} 
                         alt="Airline" 
+                        width={24}
+                        height={24}
                         className="h-6 w-6 mr-3"
                       />
                     )}

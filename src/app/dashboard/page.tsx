@@ -9,9 +9,9 @@ import {
   Footer,
   StaffManagement,
   EventManagement,
-  BookSlot,
-  type Event
+  BookSlot
 } from '../../components';
+import { Event } from '../../types/Event';
 import { isAuthenticated } from '../api';
 
 
@@ -85,7 +85,7 @@ export default function DashboardPage() {
         const event = data.events[0]; // Get the first (most recent) event
         setCurrentEvent({
           id: event.id,
-          name: event.name,
+          eventName: event.name,
           subtitle: event.airline || 'Aviation Event', // Use airline or default
           description: event.description || '',
           departure: event.departure || event.origin || '',
@@ -97,7 +97,17 @@ export default function DashboardPage() {
           }),
           time: event.time || event.eobtEta || '',
           picture: event.picture || undefined,
-          pilotBriefingUrl: '/briefing/pilot'
+          pilotBriefingUrl: '/briefing/pilot',
+          banner: event.picture || undefined,
+          type: 'takeoff_landing',
+          status: event.status || 'ACTIVE',
+          dateStart: event.date,
+          dateEnd: event.date,
+          pilotBriefing: '',
+          atcBriefing: '',
+          airports: [],
+          has_ended: event.status === 'CANCELLED',
+          can_confirm_slots: event.status === 'ACTIVE'
         });
       } else {
         // No events in database - set to null to show "Stay tuned" message

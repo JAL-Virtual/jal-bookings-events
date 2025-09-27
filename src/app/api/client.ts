@@ -1,4 +1,7 @@
 // API Client Service - Uses internal API routes
+import { Event } from '../../types/Event';
+import { Slot } from '../../types/Slot';
+
 export interface JALUserResponse {
   id: number;
   username: string;
@@ -57,42 +60,6 @@ export class APIClient {
     return await response.json();
   }
 
-  async getEvents(): Promise<{ success: boolean; events: Array<{
-    id: string;
-    name: string;
-    description: string | null;
-    departure: string | null;
-    arrival: string | null;
-    date: Date;
-    time: string | null;
-    picture: string | null;
-    route: string | null;
-    airline: string | null;
-    flightNumber: string | null;
-    aircraft: string | null;
-    origin: string | null;
-    destination: string | null;
-    eobtEta: string | null;
-    stand: string | null;
-    maxPilots: number;
-    currentBookings: number;
-    status: string;
-    createdAt: Date;
-    updatedAt: Date;
-    bookings: Array<unknown>;
-  }> }> {
-    const response = await fetch('/api/events', {
-      method: 'GET',
-      headers: this.getHeaders()
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch events: ${response.status}`);
-    }
-
-    return await response.json();
-  }
-
   async submitBooking(bookingData: {
     eventId: string;
     pilotName: string;
@@ -114,7 +81,7 @@ export class APIClient {
   }
 
   // Additional methods expected by hooks
-  async getEvent(id: number): Promise<any> {
+  async getEvent(id: number): Promise<Event> {
     const response = await fetch(`/api/events/${id}`, {
       method: 'GET',
       headers: this.getHeaders()
@@ -127,7 +94,7 @@ export class APIClient {
     return await response.json();
   }
 
-  async getEvents(params?: { page?: number; perPage?: number }): Promise<any> {
+  async getEvents(params?: { page?: number; perPage?: number }): Promise<{ page: number; perPage: number; total: number; data: Event[] }> {
     const searchParams = new URLSearchParams();
     if (params?.page) searchParams.append('page', params.page.toString());
     if (params?.perPage) searchParams.append('perPage', params.perPage.toString());
@@ -149,7 +116,7 @@ export class APIClient {
         page: params?.page || 1,
         perPage: params?.perPage || 6,
         total: result.events.length,
-        data: result.events.map((event: any) => ({
+        data: result.events.map((event: { id: number; name: string; description?: string; departure: string; arrival: string; date: string; time: string; picture: string; status: string }) => ({
           id: event.id,
           eventName: event.name,
           description: event.description || '',
@@ -179,7 +146,7 @@ export class APIClient {
     };
   }
 
-  async getEventSlots(eventId: number, params?: { page?: number; perPage?: number }, slotType?: string, filterState?: any): Promise<any> {
+  async getEventSlots(eventId: number, params?: { page?: number; perPage?: number }, slotType?: string): Promise<{ page: number; perPage: number; total: number; data: Slot[] }> {
     const searchParams = new URLSearchParams();
     if (params?.page) searchParams.append('page', params.page.toString());
     if (params?.perPage) searchParams.append('perPage', params.perPage.toString());
@@ -197,7 +164,7 @@ export class APIClient {
     return await response.json();
   }
 
-  async getUserSlots(eventId: number, params?: { page?: number; perPage?: number }, flightNumber?: string): Promise<any> {
+  async getUserSlots(eventId: number, params?: { page?: number; perPage?: number }, flightNumber?: string): Promise<{ page: number; perPage: number; total: number; data: Slot[] }> {
     const searchParams = new URLSearchParams();
     if (params?.page) searchParams.append('page', params.page.toString());
     if (params?.perPage) searchParams.append('perPage', params.perPage.toString());
@@ -215,7 +182,7 @@ export class APIClient {
     return await response.json();
   }
 
-  async scheduleSlot(slotId: number, slotData?: any): Promise<any> {
+  async scheduleSlot(slotId: number, slotData?: Record<string, unknown>): Promise<{ success: boolean; message?: string }> {
     const response = await fetch(`/api/slots/${slotId}/schedule`, {
       method: 'POST',
       headers: this.getHeaders(),
@@ -229,7 +196,7 @@ export class APIClient {
     return await response.json();
   }
 
-  async cancelSchedule(slotId: number): Promise<any> {
+  async cancelSchedule(slotId: number): Promise<{ success: boolean; message?: string }> {
     const response = await fetch(`/api/slots/${slotId}/cancel`, {
       method: 'POST',
       headers: this.getHeaders()
@@ -242,7 +209,7 @@ export class APIClient {
     return await response.json();
   }
 
-  async confirmSchedule(slotId: number): Promise<any> {
+  async confirmSchedule(slotId: number): Promise<{ success: boolean; message?: string }> {
     const response = await fetch(`/api/slots/${slotId}/confirm`, {
       method: 'POST',
       headers: this.getHeaders()
@@ -255,7 +222,7 @@ export class APIClient {
     return await response.json();
   }
 
-  async getSlotCountByType(eventId: number): Promise<any> {
+  async getSlotCountByType(eventId: number): Promise<Record<string, number>> {
     const response = await fetch(`/api/slots/count?eventId=${eventId}`, {
       method: 'GET',
       headers: this.getHeaders()
@@ -281,7 +248,7 @@ export class APIClient {
     return await response.text();
   }
 
-  async getAirportDetails(icao: string): Promise<any> {
+  async getAirportDetails(icao: string): Promise<{ name: string; city: string; country: string; icao: string }> {
     const response = await fetch(`/api/airport/details?icao=${icao}`, {
       method: 'GET',
       headers: this.getHeaders()

@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    DATABASE_URL: process.env.DATABASE_URL || "file:./dev.db",
+    DATABASE_URL: process.env.DATABASE_URL,
+  },
+  turbopack: {
+    root: "C:\\Users\\Bunny\\Desktop\\BUNNY PROJECTS\\JAL Projects\\jal-booking-event",
   },
 }
 

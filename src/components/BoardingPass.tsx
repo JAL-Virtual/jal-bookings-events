@@ -35,7 +35,6 @@ export function BoardingPass({
   slotDate,
   gate,
   type,
-  eventStartDate,
   actions
 }: BoardingPassProps) {
   return (

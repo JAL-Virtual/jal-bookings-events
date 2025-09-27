@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { isAuthenticated } from './api';
 import { StartupPopup } from '../components';
 
 type Star = { top: number; left: number; size: number; dur: number; delay: number };
@@ -29,7 +28,7 @@ export default function LandingPage() {
     // }
     
     const saved = localStorage.getItem("jal_api_key");
-    if (saved) setApiKey(saved);
+    if (saved !== null) setApiKey(saved as string);
   }, []);
 
   const formattedTime = useMemo(

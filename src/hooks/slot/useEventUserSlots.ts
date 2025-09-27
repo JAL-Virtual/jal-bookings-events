@@ -14,13 +14,14 @@ export function useEventUserSlots(eventId: number, flightNumber?: string | null,
 	const slots = useInfiniteQuery<Pagination<Slot>, AxiosError>({
 		queryKey: ['eventUserSlots', eventId, (flightNumber ?? "")],
 		queryFn: async ({ pageParam = page }) => {
-			return await apiClient.getUserSlots(eventId, { page: pageParam, perPage }, flightNumber);
+			return await apiClient.getUserSlots(eventId, { page: pageParam as number, perPage }, flightNumber || undefined);
 		},
+		initialPageParam: page,
 		staleTime: ONE_DAY,
-		getNextPageParam: (lastPage, _) => {
+		getNextPageParam: (lastPage) => {
 			return (lastPage.page * lastPage.perPage) >= lastPage.total ? undefined : lastPage.page + 1;
 		},
-		getPreviousPageParam: (firstPage, _) => {
+		getPreviousPageParam: (firstPage) => {
 			return firstPage.page === 0 ? undefined : firstPage.page - 1;
 		}
 	});

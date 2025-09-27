@@ -5,15 +5,13 @@ import { ReactNode, useEffect, useState } from 'react';
 interface StartupPopupProps {
   jalId?: string;
   onFinish?: () => void;
-  children?: ReactNode;
 }
 
-export function StartupPopup({ jalId, onFinish, children }: StartupPopupProps) {
+export function StartupPopup({ jalId, onFinish }: StartupPopupProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(0);
   const [currentLine, setCurrentLine] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
 
   const consoleLines = [
     "Japan Airlines Virtual Event Booking Portal",
@@ -65,7 +63,7 @@ export function StartupPopup({ jalId, onFinish, children }: StartupPopupProps) {
         }, 50);
       }, 1000);
     }
-  }, [currentLine, onFinish]);
+  }, [currentLine, onFinish, consoleLines]);
 
   if (!isVisible) return null;
 

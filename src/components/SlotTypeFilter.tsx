@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from 'react';
+import Image from "next/image";
 import { SlotTypeOptions } from '../types/SlotFilter';
 
 interface SlotTypeFilterProps {
@@ -29,9 +29,11 @@ export function SlotTypeFilter({
       <div className="mb-6">
         {eventBanner && (
           <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg mb-4">
-            <img 
+            <Image 
               src={eventBanner} 
               alt={eventName}
+              width={400}
+              height={128}
               className="w-full h-full object-cover rounded-lg"
             />
           </div>
@@ -51,9 +53,9 @@ export function SlotTypeFilter({
         
         {slotsQtdData.departure && slotsQtdData.departure > 0 && (
           <button
-            onClick={() => onSlotTypeChange(SlotTypeOptions.TAKEOFF)}
+            onClick={() => onSlotTypeChange(SlotTypeOptions.DEPARTURE)}
             className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-              selectedSlotType === SlotTypeOptions.TAKEOFF
+              selectedSlotType === SlotTypeOptions.DEPARTURE
                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
             }`}
@@ -77,9 +79,9 @@ export function SlotTypeFilter({
         
         {slotsQtdData.departureLanding && slotsQtdData.departureLanding > 0 && (
           <button
-            onClick={() => onSlotTypeChange(SlotTypeOptions.TAKEOFF_LANDING)}
+            onClick={() => onSlotTypeChange(SlotTypeOptions.DEPARTURE_LANDING)}
             className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-              selectedSlotType === SlotTypeOptions.TAKEOFF_LANDING
+              selectedSlotType === SlotTypeOptions.DEPARTURE_LANDING
                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
                 : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
             }`}

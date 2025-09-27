@@ -1,13 +1,15 @@
+"use client";
+
 import {LinkButton} from "../../../components/buttons/LinkButton";
 import {MutedText} from "../../../components/typography/Typography";
 import {useText} from "../../../hooks/useText";
 import {SlotInformationLayout} from "../../../layouts/SlotInformationLayout";
-import {useEffect, useState} from "react";
-import {useParams, useRouter, useSearchParams} from "next/navigation";
+import {useEffect, useState, Suspense} from "react";
+import {useRouter, useSearchParams} from "next/navigation";
+import Image from "next/image";
 
-export default function SlotConfirmed() {
+function SlotConfirmedContent() {
   const [eventId, setEventId] = useState<number>();
-  const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const {t} = useText();
@@ -41,7 +43,7 @@ export default function SlotConfirmed() {
           {t('notification.booked.subtitle')}
         </MutedText>
       )}
-      image={<img width={183} height={183} src="/img/check-green.svg" alt="Símbolo confirmação agendamento"/>}
+      image={<Image width={183} height={183} src="/img/check-green.svg" alt="Símbolo confirmação agendamento"/>}
       actions={
         <LinkButton
           content={t('generics.back')}
@@ -52,4 +54,12 @@ export default function SlotConfirmed() {
     >
     </SlotInformationLayout>
   )
+}
+
+export default function SlotConfirmed() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SlotConfirmedContent />
+    </Suspense>
+  );
 }

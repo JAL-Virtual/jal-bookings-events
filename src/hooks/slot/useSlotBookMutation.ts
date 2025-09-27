@@ -5,8 +5,7 @@ import { IocContext } from "../../contexts/IocContext";
 import { useContext } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiErrorResponse } from "../../types/ApiBase";
-import { Pagination } from "../../types/ApiBase";
-import { SlotScheduleData, Slot, SlotBookActions } from "../../types/Slot";
+import { SlotScheduleData, SlotBookActions } from "../../types/Slot";
 
 interface SlotBookMutationVariables {
     slotId: number;
@@ -18,7 +17,7 @@ export function useSlotBookMutation(action: SlotBookActions) {
     const { apiClient } = useContext(IocContext);
     const queryClient = useQueryClient();
 
-    const bookingMutation = useMutation<any, AxiosError<ApiErrorResponse>, SlotBookMutationVariables>({
+    const bookingMutation = useMutation<{ success: boolean; message?: string }, AxiosError<ApiErrorResponse>, SlotBookMutationVariables>({
         mutationFn: ({ slotId, slotData }) => {
             switch (action) {
                 case SlotBookActions.BOOK:
@@ -31,7 +30,7 @@ export function useSlotBookMutation(action: SlotBookActions) {
                     return Promise.reject("Invalid slot action: " + String(action));
             }
         },
-        onSuccess: async (_, { eventId, slotId }) => {
+        onSuccess: async (_, { eventId }) => {
             await queryClient.invalidateQueries({ queryKey: ['slots', eventId] });
             await queryClient.invalidateQueries({ queryKey: ['eventUserSlots', eventId] });
         }

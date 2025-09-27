@@ -2,18 +2,21 @@
 
 import { createContext, useContext, ReactNode } from 'react';
 import { APIClient, getStoredApiKey } from '../app/api/client';
+import { Event } from '../types/Event';
+import { Slot } from '../types/Slot';
+import { AirportDetails } from '../types/AirportDetails';
 
 export interface ApiClient {
-  getEvent: (id: number) => Promise<any>;
-  getEvents: (params: { page: number; perPage: number }) => Promise<any>;
-  getEventSlots: (eventId: number, pagination: { page: number; perPage: number }, slotType?: string, filterState?: any) => Promise<any>;
-  getUserSlots: (eventId: number, pagination: { page: number; perPage: number }, flightNumber?: string) => Promise<any>;
-  getSlotCountByType: (eventId: number) => Promise<any>;
-  scheduleSlot: (slotId: number, slotData?: any) => Promise<any>;
-  cancelSchedule: (slotId: number) => Promise<any>;
-  confirmSchedule: (slotId: number) => Promise<any>;
-  getAirlineLogo: (airlineIcao: string) => Promise<any>;
-  getAirportDetails: (icao: string) => Promise<any>;
+  getEvent: (id: number) => Promise<Event>;
+  getEvents: (params: { page: number; perPage: number }) => Promise<{ page: number; perPage: number; total: number; data: Event[] }>;
+  getEventSlots: (eventId: number, pagination: { page: number; perPage: number }, slotType?: string) => Promise<{ page: number; perPage: number; total: number; data: Slot[] }>;
+  getUserSlots: (eventId: number, pagination: { page: number; perPage: number }, flightNumber?: string) => Promise<{ page: number; perPage: number; total: number; data: Slot[] }>;
+  getSlotCountByType: (eventId: number) => Promise<Record<string, number>>;
+  scheduleSlot: (slotId: number, slotData?: Record<string, unknown>) => Promise<{ success: boolean; message?: string }>;
+  cancelSchedule: (slotId: number) => Promise<{ success: boolean; message?: string }>;
+  confirmSchedule: (slotId: number) => Promise<{ success: boolean; message?: string }>;
+  getAirlineLogo: (airlineIcao: string) => Promise<string>;
+  getAirportDetails: (icao: string) => Promise<AirportDetails>;
 }
 
 const mockApiClient: ApiClient = {
@@ -43,7 +46,7 @@ const mockApiClient: ApiClient = {
       data: []
     };
   },
-  getEventSlots: async (eventId, pagination, slotType, filterState) => {
+  getEventSlots: async (eventId, pagination) => {
     return {
       page: pagination.page,
       perPage: pagination.perPage,
@@ -51,7 +54,7 @@ const mockApiClient: ApiClient = {
       data: []
     };
   },
-  getUserSlots: async (eventId, pagination, flightNumber) => {
+  getUserSlots: async (eventId, pagination) => {
     return {
       page: pagination.page,
       perPage: pagination.perPage,
@@ -59,24 +62,24 @@ const mockApiClient: ApiClient = {
       data: []
     };
   },
-  getSlotCountByType: async (eventId) => {
+  getSlotCountByType: async () => {
     return {
       departure: 0,
       landing: 0,
       departureLanding: 0
     };
   },
-  scheduleSlot: async (slotId, slotData) => {
+  scheduleSlot: async () => {
     return { success: true };
   },
-  cancelSchedule: async (slotId) => {
+  cancelSchedule: async () => {
     return { success: true };
   },
-  confirmSchedule: async (slotId) => {
+  confirmSchedule: async () => {
     return { success: true };
   },
-  getAirlineLogo: async (airlineIcao) => {
-    return null;
+  getAirlineLogo: async () => {
+    return '';
   },
   getAirportDetails: async (icao) => {
     return {

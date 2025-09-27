@@ -1,12 +1,10 @@
-import { ReactNode } from 'react';
-
 interface FilterProps {
-  appliedFilters: Record<string, any>;
-  onChange: (filters: Record<string, any>) => void;
+  appliedFilters: Record<string, unknown>;
+  onChange: (filters: Record<string, unknown>) => void;
 }
 
 export function Filter({ appliedFilters, onChange }: FilterProps) {
-  const handleFilterChange = (key: string, value: any) => {
+  const handleFilterChange = (key: string, value: unknown) => {
     const newFilters = { ...appliedFilters, [key]: value };
     onChange(newFilters);
   };
@@ -24,7 +22,7 @@ export function Filter({ appliedFilters, onChange }: FilterProps) {
           </label>
           <input
             type="text"
-            value={appliedFilters.flightNumber || ''}
+            value={(appliedFilters.flightNumber as string) || ''}
             onChange={(e) => handleFilterChange('flightNumber', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             placeholder="Enter flight number"
@@ -37,7 +35,7 @@ export function Filter({ appliedFilters, onChange }: FilterProps) {
           </label>
           <input
             type="text"
-            value={appliedFilters.aircraft || ''}
+            value={(appliedFilters.aircraft as string) || ''}
             onChange={(e) => handleFilterChange('aircraft', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             placeholder="Enter aircraft type"
@@ -50,7 +48,7 @@ export function Filter({ appliedFilters, onChange }: FilterProps) {
           </label>
           <input
             type="text"
-            value={appliedFilters.origin || ''}
+            value={(appliedFilters.origin as string) || ''}
             onChange={(e) => handleFilterChange('origin', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             placeholder="Enter origin ICAO"
@@ -63,7 +61,7 @@ export function Filter({ appliedFilters, onChange }: FilterProps) {
           </label>
           <input
             type="text"
-            value={appliedFilters.destination || ''}
+            value={(appliedFilters.destination as string) || ''}
             onChange={(e) => handleFilterChange('destination', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             placeholder="Enter destination ICAO"

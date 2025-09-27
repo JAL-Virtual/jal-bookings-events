@@ -15,7 +15,7 @@ interface ActionButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement> | undefined;
 }
 
-export const ActionButton: React.FC<ActionButtonProps> = ({
+export const Button: React.FC<ActionButtonProps> = ({
   content, 
   icon, 
   backgroundFilled = true,
@@ -89,7 +89,7 @@ interface LinkButtonProps extends Omit<ActionButtonProps, "onClick"> {
   href: string;
 }
 
-export const LinkButton: React.FC<LinkButtonProps> = ({
+export const LinkButtonComponent: React.FC<LinkButtonProps> = ({
   content, 
   icon, 
   href, 

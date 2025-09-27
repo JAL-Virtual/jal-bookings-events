@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { ChevronUpIcon, ChevronDownIcon, FunnelIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { Pagination } from './Pagination';
+import { PaginationComponent } from './Pagination';
 import { EmptyState } from './EmptyState';
 
 export type SortDirection = 'asc' | 'desc' | null;
@@ -17,7 +17,7 @@ export interface Column<T> {
   className?: string;
 }
 
-export interface Filter {
+export interface DataTableFilter {
   key: string;
   value: string;
   operator?: 'contains' | 'equals' | 'startsWith' | 'endsWith';
@@ -53,7 +53,7 @@ export function DataTable<T extends Record<string, unknown>>({
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState<Filter[]>([]);
+  const [filters, setFilters] = useState<DataTableFilter[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   // Filter and search data
@@ -297,7 +297,7 @@ export function DataTable<T extends Record<string, unknown>>({
       {/* Pagination */}
       {pagination && totalPages > 1 && (
         <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700">
-          <Pagination
+          <PaginationComponent
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}

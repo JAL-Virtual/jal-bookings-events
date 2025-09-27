@@ -14,13 +14,14 @@ export const useEvents = (page = 1, perPage = 6) => {
 	const eventList = useInfiniteQuery<Pagination<Event>, AxiosError>({
 		queryKey: ['events'],
 		queryFn: async ({ pageParam = page }) => {
-			return await apiClient.getEvents({ page: pageParam, perPage });
+			return await apiClient.getEvents({ page: pageParam as number, perPage });
 		},
+		initialPageParam: page,
 		staleTime: ONE_DAY,
-		getNextPageParam: (lastPage, _) => {
+		getNextPageParam: (lastPage) => {
 			return (lastPage.page * lastPage.perPage) >= lastPage.total ? undefined : lastPage.page + 1;
 		},
-		getPreviousPageParam: (firstPage, _) => {
+		getPreviousPageParam: (firstPage) => {
 			return firstPage.page === 0 ? undefined : firstPage.page - 1;
 		}
 	});

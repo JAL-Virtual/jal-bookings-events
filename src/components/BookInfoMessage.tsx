@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-
 interface BookInfoMessageProps {
   header: string;
   description: string;

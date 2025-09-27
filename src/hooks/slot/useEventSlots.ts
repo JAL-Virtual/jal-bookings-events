@@ -22,13 +22,14 @@ export function useEventSlots(
 	const slots = useInfiniteQuery<Pagination<Slot>, AxiosError>({
 		queryKey: ['slots', eventId, (slotType ?? ""), (filterState ?? {})],
 		queryFn: async ({ pageParam = page }) => {
-			return await apiClient.getEventSlots(eventId, { page: pageParam, perPage }, slotType, filterState);
+			return await apiClient.getEventSlots(eventId, { page: pageParam as number, perPage }, slotType || undefined, filterState);
 		},
+		initialPageParam: page,
 		staleTime: ONE_DAY,
-		getNextPageParam: (lastPage, _) => {
+		getNextPageParam: (lastPage) => {
 			return (lastPage.page * lastPage.perPage) >= lastPage.total ? undefined : lastPage.page + 1;
 		},
-		getPreviousPageParam: (firstPage, _) => {
+		getPreviousPageParam: (firstPage) => {
 			return firstPage.page === 0 ? undefined : firstPage.page - 1;
 		}
 	});

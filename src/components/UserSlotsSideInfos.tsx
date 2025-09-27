@@ -1,6 +1,5 @@
 "use client";
 
-import { FunctionComponent } from "react";
 import { VerticalInfoCard } from "./InfoCard";
 import { Header, Subheader } from "./typography/Typography";
 import { FiDownload, FiMap } from "react-icons/fi";

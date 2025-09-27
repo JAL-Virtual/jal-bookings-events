@@ -12,7 +12,7 @@ interface PaginationProps {
   className?: string;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({
+export const PaginationComponent: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
   onPageChange,
@@ -142,7 +142,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
 // Compact pagination for smaller spaces
 export const CompactPagination: React.FC<Omit<PaginationProps, 'showPageNumbers'>> = (props) => (
-  <Pagination {...props} showPageNumbers={false} />
+  <PaginationComponent {...props} showPageNumbers={false} />
 );
 
 // Simple pagination with just prev/next

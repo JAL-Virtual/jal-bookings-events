@@ -1,10 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
 
-export interface Event {
+export interface EventHeaderData {
   id: string;
-  name: string;
-  subtitle: string;
+  eventName: string;
+  subtitle?: string;
   description: string;
   departure: string;
   arrival: string;
@@ -15,7 +15,7 @@ export interface Event {
 }
 
 interface EventHeaderProps {
-  event: Event;
+  event: EventHeaderData;
 }
 
 export const EventHeader: React.FC<EventHeaderProps> = ({ event }) => {
@@ -23,8 +23,8 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ event }) => {
     <div className="mb-4">
       <div className="flex justify-between items-start mb-3">
         <div className="flex-1">
-          <h1 className="text-3xl font-bold text-yellow-400 mb-1">{event.name}</h1>
-          <h2 className="text-xl font-bold text-white mb-2">{event.subtitle}</h2>
+          <h1 className="text-3xl font-bold text-yellow-400 mb-1">{event.eventName}</h1>
+          <h2 className="text-xl font-bold text-white mb-2">{event.subtitle || ''}</h2>
         </div>
         
         {/* Event Details - Right Aligned */}
@@ -40,7 +40,7 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ event }) => {
         <div className="mb-4">
           <Image 
             src={event.picture} 
-            alt={event.name}
+            alt={event.eventName}
             width={800}
             height={192}
             className="w-full max-w-2xl h-48 object-cover rounded-lg"

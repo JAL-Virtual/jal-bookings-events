@@ -1,6 +1,6 @@
 import { ReactNode, ButtonHTMLAttributes } from 'react';
 
-interface ActionButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ActionButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'content'> {
   content: ReactNode;
   icon?: ReactNode;
   backgroundColor?: string;

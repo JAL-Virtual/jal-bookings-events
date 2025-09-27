@@ -54,9 +54,9 @@ const mockTranslations: Translations = {
 export function useText() {
   const [translations] = useState<Translations>(mockTranslations);
 
-  const t = useCallback((key: string, params?: Record<string, any>): string => {
+  const t = useCallback((key: string, params?: Record<string, unknown>): string => {
     const keys = key.split('.');
-    let value: any = translations;
+    let value: unknown = translations;
     
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {

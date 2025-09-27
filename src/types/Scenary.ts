@@ -11,14 +11,14 @@ export interface EventDetailEvent {
   type: string;
 }
 
-export interface Scenary {
+export interface ScenaryDetail {
   id: number;
   name: string;
   description: string;
-  simulators: ScenarySimulators[];
+  simulators: ScenarySimulatorsDetail[];
 }
 
-export interface ScenarySimulators {
+export interface ScenarySimulatorsDetail {
   id: number;
   name: string;
   description: string;

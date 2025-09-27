@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import Image from "next/image";
 
 interface EventCardProps {
   eventId: string;
@@ -21,9 +21,11 @@ export function EventCard({
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden max-w-sm">
       {imageSrc && (
         <div className="h-48 bg-gray-200 dark:bg-gray-700">
-          <img 
+          <Image 
             src={imageSrc} 
             alt={eventName}
+            width={400}
+            height={192}
             className="w-full h-full object-cover"
           />
         </div>

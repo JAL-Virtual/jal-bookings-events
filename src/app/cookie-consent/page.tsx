@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCookieConsent, ConsentAnwsers } from "../../contexts/CookieConsentContext";
 
 export default function CookieConsentPage() {
   const router = useRouter();
   const { cookieConsent, setCookieConsent } = useCookieConsent();
-  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     // If user already has consent (ACCEPTED or DECLINED), redirect to dashboard
@@ -17,18 +16,15 @@ export default function CookieConsentPage() {
     }
     
     // If user hasn't given consent yet, show the consent page
-    setIsVisible(true);
   }, [cookieConsent, router]);
 
   const handleAccept = () => {
     setCookieConsent(ConsentAnwsers.ACCEPTED);
-    setIsVisible(false);
     router.push('/dashboard');
   };
 
   const handleDecline = () => {
     setCookieConsent(ConsentAnwsers.DECLINED);
-    setIsVisible(false);
     router.push('/dashboard');
   };
 

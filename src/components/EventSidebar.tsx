@@ -21,7 +21,7 @@ interface EventSidebarProps {
 
 export const EventSidebar: React.FC<EventSidebarProps> = ({ visible = true }) => {
   const params = useParams();
-  const { theme, setTheme } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
 
   const eventId = params?.eventId;
 
@@ -63,9 +63,9 @@ export const EventSidebar: React.FC<EventSidebarProps> = ({ visible = true }) =>
       <div className="my-auto lg:my-0 mx-auto lg:mx-0 ml-8 lg:ml-0 lg:mt-auto lg:mb-10">
         <div className="flex items-center lg:items-stretch flex-row lg:flex-col lg:my-auto gap-8">
           <SidebarButton
-            icon={theme === 'light' ? <MoonIcon className="w-7 h-7" /> : <SunIcon className="w-7 h-7" />}
+            icon={isDark ? <SunIcon className="w-7 h-7" /> : <MoonIcon className="w-7 h-7" />}
             title="Change Theme"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} />
+            onClick={toggleTheme} />
 
           <SidebarLink
             href={`/logout`}

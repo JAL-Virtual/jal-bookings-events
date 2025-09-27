@@ -9,7 +9,6 @@ export function useAuthData() {
     vid: string;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Mock implementation - replace with actual auth logic
@@ -25,7 +24,6 @@ export function useAuthData() {
 
   return {
     data,
-    isLoading,
-    error
+    isLoading
   };
 }

@@ -1,6 +1,6 @@
 import { ReactNode, AnchorHTMLAttributes } from 'react';
 
-interface LinkButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
+interface LinkButtonProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'content'> {
   content: ReactNode;
   icon?: ReactNode;
   backgroundColor?: string;

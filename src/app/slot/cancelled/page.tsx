@@ -1,13 +1,15 @@
+"use client";
+
 import {LinkButton} from "../../../components/buttons/LinkButton";
 import {MutedText} from "../../../components/typography/Typography";
 import {useText} from "../../../hooks/useText";
 import {SlotInformationLayout} from "../../../layouts/SlotInformationLayout";
-import {useEffect, useState} from "react";
-import {useParams, useRouter, useSearchParams} from "next/navigation";
+import {useEffect, useState, Suspense} from "react";
+import {useRouter, useSearchParams} from "next/navigation";
+import Image from "next/image";
 
-export default function SlotCancelled() {
+function SlotCancelledContent() {
   const [eventId, setEventId] = useState<number>();
-  const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const {t} = useText();
@@ -41,7 +43,7 @@ export default function SlotCancelled() {
           {t('notification.cancelled.subtitle')}
         </MutedText>
       )}
-      image={<img width={183} height={183} src="/img/trash-red.svg" alt="Símbolo cancelamento agendamento"/>}
+      image={<Image width={183} height={183} src="/img/trash-red.svg" alt="Símbolo cancelamento agendamento"/>}
       actions={
         <LinkButton
           content={t('generics.back')}
@@ -52,4 +54,12 @@ export default function SlotCancelled() {
     >
     </SlotInformationLayout>
   )
+}
+
+export default function SlotCancelled() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SlotCancelledContent />
+    </Suspense>
+  );
 }
