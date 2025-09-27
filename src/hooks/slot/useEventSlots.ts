@@ -1,8 +1,12 @@
-import { useContext, useEffect, useState, useCallback } from "react";
+import { AxiosError } from "axios";
+import { useContext } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { ONE_DAY } from "../../constants/appConstants";
+import { IocContext } from "../../contexts/IocContext";
 import { Slot } from "../../types/Slot";
-import { Pagination } from "../../types/Pagination";
+import { Pagination } from "../../types/ApiBase";
 import { SlotTypeOptions } from "../../types/SlotFilter";
-import { FilterState } from "../../components/Filter";
+import { FilterState } from "../../types/Translations";
 
 // Mock API client for now - replace with actual implementation
 const mockApiClient = {
