@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { BookInfoMessage } from './BookInfoMessage';
 import { UTCClock } from './UTCClock';
+import { createFlightCalendarEvent, addToGoogleCalendar } from '../utils/calendarUtils';
 
 interface Slot {
   id: string;
@@ -166,7 +167,29 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
         
         // Refresh slots to update status
         await fetchSlots();
-        handleError('Slot booked successfully!', 'success');
+        
+        // Create Google Calendar event
+        try {
+          const calendarEvent = createFlightCalendarEvent({
+            eventName: selectedEvent.name,
+            flightNumber: confirmationSlot.flightNumber,
+            aircraft: confirmationSlot.aircraft,
+            origin: confirmationSlot.origin || selectedEvent.departure,
+            destination: confirmationSlot.destination || selectedEvent.arrival,
+            departureTime: selectedEvent.time || new Date().toISOString(),
+            arrivalTime: selectedEvent.time || new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours later
+            slotNumber: confirmationSlot.slotNumber,
+            pilotName: pilotName
+          });
+          
+          // Add to Google Calendar
+          addToGoogleCalendar(calendarEvent);
+          
+          handleError('Slot booked successfully! Added to Google Calendar.', 'success');
+        } catch (calendarError) {
+          console.error('Error adding to calendar:', calendarError);
+          handleError('Slot booked successfully! (Calendar integration failed)', 'success');
+        }
       } else {
         handleError(data.error || 'Failed to book slot', 'error');
       }
@@ -503,6 +526,30 @@ export const BookSlot: React.FC<BookSlotProps> = ({ pilotId, pilotName, pilotEma
                   className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
                 >
                   Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirmationSlot && selectedEvent) {
+                      const calendarEvent = createFlightCalendarEvent({
+                        eventName: selectedEvent.name,
+                        flightNumber: confirmationSlot.flightNumber,
+                        aircraft: confirmationSlot.aircraft,
+                        origin: confirmationSlot.origin || selectedEvent.departure,
+                        destination: confirmationSlot.destination || selectedEvent.arrival,
+                        departureTime: selectedEvent.time || new Date().toISOString(),
+                        arrivalTime: selectedEvent.time || new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+                        slotNumber: confirmationSlot.slotNumber,
+                        pilotName: pilotName
+                      });
+                      addToGoogleCalendar(calendarEvent);
+                    }
+                  }}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Add to Calendar
                 </button>
                 <button
                   onClick={confirmSlotBooking}

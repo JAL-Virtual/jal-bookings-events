@@ -5,6 +5,7 @@ export * from './useFlatInfiniteData';
 export * from './useOutsideClickHandler';
 export * from './useAuthData';
 export * from './useUserInfo';
+export * from './useUserBookings';
 export * from './useText';
 export * from './slot/useEventSlots';
 export * from './slot/useEventUserSlots';

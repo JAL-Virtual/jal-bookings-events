@@ -17,6 +17,7 @@ interface SidebarProps {
   onLogout?: () => void;
   isAdmin?: boolean;
   isStaff?: boolean;
+  hasBookings?: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ 
@@ -24,7 +25,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onTabChange, 
   onLogout, 
   isAdmin = false,
-  isStaff = false
+  isStaff = false,
+  hasBookings = false
 }) => {
   const handleTabClick = (tab: string) => {
     if (onTabChange) {

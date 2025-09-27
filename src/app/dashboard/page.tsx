@@ -19,6 +19,7 @@ import { isAuthenticated } from '../api/client';
 import { useEvents } from '../../hooks/event/useEventList';
 import { useAuthData } from '../../hooks/useAuthData';
 import { useUserInfo } from '../../hooks/useUserInfo';
+import { useUserBookings } from '../../hooks/useUserBookings';
 import { useText } from '../../hooks/useText';
 
 
@@ -35,6 +36,7 @@ export default function DashboardPage() {
   const { data: authData, isLoading: authLoading } = useAuthData();
   const { userInfo, isLoading: userInfoLoading } = useUserInfo();
   const { data: eventsData, isLoading: eventsLoading, hasNextPage, fetchNextPage } = useEvents();
+  const { hasBookings, isLoading: bookingsLoading } = useUserBookings(apiKey || undefined);
   const { t } = useText();
 
   useEffect(() => {
@@ -91,20 +93,9 @@ export default function DashboardPage() {
     window.location.href = '/';
   };
 
-  if (isLoading || authLoading || userInfoLoading) {
-    return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-            <div className="w-10 h-10 bg-red-600 rounded-sm flex items-center justify-center">
-              <span className="text-white text-sm font-bold">JL</span>
-            </div>
-          </div>
-          <LoadingIndicator size="lg" />
-          <p className="text-xl mt-4">Loading Dashboard...</p>
-        </div>
-      </div>
-    );
+  // Redirect to login if not authenticated
+  if (isLoading) {
+    return null; // Don't show anything while checking authentication
   }
 
   return (
@@ -115,6 +106,7 @@ export default function DashboardPage() {
         onLogout={handleLogout} 
         isAdmin={isAdmin} 
         isStaff={isStaff}
+        hasBookings={hasBookings}
       />
       
       <div className="flex-1 bg-gray-700 p-6 flex flex-col h-screen">
@@ -140,11 +132,7 @@ export default function DashboardPage() {
           {activeTab === 'home' ? (
             <div className="space-y-6">
               {/* Current Event Section */}
-              {eventLoading ? (
-                <div className="flex items-center justify-center h-64">
-                  <LoadingIndicator size="lg" />
-                </div>
-              ) : currentEvent ? (
+              {currentEvent && (
                 <>
                   <EventHeader event={currentEvent} />
                   
@@ -156,15 +144,11 @@ export default function DashboardPage() {
                     />
                   </div>
                 </>
-              ) : null}
+              )}
 
               {/* All Events Section */}
               <div className="space-y-6">
-                {eventsLoading ? (
-                  <div className="flex items-center justify-center h-64">
-                    <LoadingIndicator size="lg" />
-                  </div>
-                ) : allEvents.length > 0 ? (
+                {allEvents.length > 0 ? (
                   <>
                     <div>
                       <h2 className="text-2xl font-bold text-white mb-4">{t('events.title')}</h2>

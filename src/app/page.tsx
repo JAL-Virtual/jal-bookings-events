@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { StartupPopup } from '../components';
 
 type Star = { top: number; left: number; size: number; dur: number; delay: number };
 
@@ -11,7 +10,6 @@ export default function LandingPage() {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const isDark = true; // Always use dark theme
-  const [showStartup, setShowStartup] = useState(false);
   const [apiKey, setApiKey] = useState<string>('');
 
   useEffect(() => {
@@ -87,7 +85,8 @@ export default function LandingPage() {
       localStorage.setItem("jal_api_key", apiKey.trim());
       setApiKey(apiKey.trim());
       setShowLogin(false);
-      setShowStartup(true);
+      // Redirect directly to dashboard
+      window.location.href = '/dashboard';
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
@@ -119,7 +118,7 @@ export default function LandingPage() {
 
   return (
     <main className="w-full h-full overflow-hidden relative">
-      <div className={`relative w-full h-screen overflow-hidden transition-all duration-500 bg-black text-white ${showStartup ? 'blur-sm brightness-75' : ''}`}>
+      <div className="relative w-full h-screen overflow-hidden transition-all duration-500 bg-black text-white">
       
       {/* Enhanced Background with Multiple Layers */}
       <div className="absolute inset-0 z-0 transition-all duration-500 bg-gradient-to-br from-blue-900/40 via-purple-900/30 to-black/90" />
@@ -529,20 +528,6 @@ Japan Airlines Virtual
       </AnimatePresence>
       </div>
 
-      {/* Dim background overlay while booting */}
-      {showStartup && <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-40" />}
-
-      {/* Boot console popup */}
-      {showStartup && (
-        <StartupPopup
-          jalId={maskedKey}
-          onFinish={() => {
-            setShowStartup(false);
-            // Redirect to dashboard after startup popup completes
-            window.location.href = '/dashboard';
-          }}
-        />
-      )}
 
     </main>
   );

@@ -16,7 +16,9 @@ export {
   FiLogOut,
   FiUsers,
   FiSettings,
-  FiBookOpen
+  FiBookOpen,
+  FiPlus,
+  FiPlusCircle
 } from 'react-icons/fi';
 
 // Export with alternative names for compatibility
@@ -27,5 +29,7 @@ export {
   FiLogOut as ArrowRightOnRectangleIcon,
   FiUsers as UsersIcon,
   FiSettings as CogIcon,
-  FiBookOpen as BookOpenIcon
+  FiBookOpen as BookOpenIcon,
+  FiPlus as PlusIcon,
+  FiPlusCircle as PlusCircleIcon
 } from 'react-icons/fi';
