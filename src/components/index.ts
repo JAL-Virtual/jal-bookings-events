@@ -39,7 +39,6 @@ export * from './EventSidebar';
 export * from './FilterCard';
 export * from './ImageUpload';
 export * from './InlineLink';
-export * from './LinkButton';
 export * from './Pagination';
 export * from './PilotBriefingCard';
 export * from './Progress';
@@ -52,9 +51,7 @@ export * from './SlotManagement';
 export * from './StaffManagement';
 export * from './StatusBadge';
 export * from './Toast';
-export * from './Typography';
 
 // Export layouts
 export * from './layouts/EventListLayout';
-export * from './layouts/InformationalLayout';
 export * from './layouts/SlotInformationLayout';

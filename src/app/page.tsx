@@ -22,6 +22,14 @@ export default function LandingPage() {
     setCurrentTime(new Date());
     const id = setInterval(() => setCurrentTime(new Date()), 60_000);
     return () => clearInterval(id);
+    
+    // Removed automatic redirect to /events - users should stay on login page
+    // if (isAuthenticated()) {
+    //   window.location.href = '/events';
+    // }
+    
+    const saved = localStorage.getItem("jal_api_key");
+    if (saved) setApiKey(saved);
   }, []);
 
   const formattedTime = useMemo(
@@ -42,16 +50,6 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [showKey, setShowKey] = useState(false);
-
-  useEffect(() => {
-    // Check if user is already authenticated
-    if (isAuthenticated()) {
-      window.location.href = '/events';
-    }
-    
-    const saved = localStorage.getItem("jal_api_key");
-    if (saved) setApiKey(saved);
-  }, []);
 
   const stars: Star[] = useMemo(
     () =>
@@ -541,7 +539,8 @@ Japan Airlines Virtual
           jalId={maskedKey}
           onFinish={() => {
             setShowStartup(false);
-            window.location.href = '/events';
+            // Redirect to cookie consent page after startup popup completes
+            window.location.href = '/cookie-consent';
           }}
         />
       )}

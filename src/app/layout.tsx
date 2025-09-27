@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { IocProvider } from "@/contexts/IocContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { QueryProvider } from "@/contexts/QueryProvider";
+import { CookieConsentProvider } from "@/contexts/CookieConsentContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -53,13 +54,15 @@ export default function RootLayout({
         className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} ${orbitron.variable} ${comicNeue.variable} antialiased`}
       >
         <QueryProvider>
-          <ThemeProvider>
-            <IocProvider>
-              <AuthProvider>
-                {children}
-              </AuthProvider>
-            </IocProvider>
-          </ThemeProvider>
+          <CookieConsentProvider>
+            <ThemeProvider>
+              <IocProvider>
+                <AuthProvider>
+                  {children}
+                </AuthProvider>
+              </IocProvider>
+            </ThemeProvider>
+          </CookieConsentProvider>
         </QueryProvider>
       </body>
     </html>
