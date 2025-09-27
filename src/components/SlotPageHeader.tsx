@@ -5,10 +5,10 @@ import { ActionButton } from './buttons/ActionButton';
 import { Filter } from './Filter';
 import { InputField } from './InputField';
 import { UTCClock } from './UTCClock';
-import { useOutsideClickHandler } from '../../hooks/useOutsideClickHandler';
-import { useText } from '../../hooks/useText';
+import { useOutsideClickHandler } from '../hooks/useOutsideClickHandler';
+import { useText } from '../hooks/useText';
 import { FiFilter, FiSearch, FiTrash } from 'react-icons/fi';
-import { FilterState } from '../../types/Translations';
+import { FilterState } from '../types/Translations';
 
 interface SlotPageHeaderProps {
   showFilter?: boolean;

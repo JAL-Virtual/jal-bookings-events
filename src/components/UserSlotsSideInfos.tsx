@@ -5,7 +5,7 @@ import { VerticalInfoCard } from "./InfoCard";
 import { Header, Subheader } from "./typography/Typography";
 import { FiDownload, FiMap } from "react-icons/fi";
 import { LinkButton } from "./buttons/LinkButton";
-import { useText } from "../../hooks/useText";
+import { useText } from "../hooks/useText";
 
 interface UserSlotsSideInfosProps {
   pilotBriefing: string;
