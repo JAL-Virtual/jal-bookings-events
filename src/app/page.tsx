@@ -34,14 +34,7 @@ export default function LandingPage() {
     [currentTime]
   );
 
-  // Mask API key for UI display
-  const maskedKey = useMemo(() => {
-    if (!apiKey) return '';
-    const trimmed = apiKey.trim();
-    if (trimmed.length <= 8) return '••••';
-    // show first 4 and last 4
-    return `${trimmed.slice(0, 4)}••••${trimmed.slice(-4)}`;
-  }, [apiKey]);
+  // Mask API key for UI display - removed unused maskedKey
 
   const [showLogin, setShowLogin] = useState(false);
   const [loading, setLoading] = useState(false);

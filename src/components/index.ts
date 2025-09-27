@@ -55,3 +55,9 @@ export * from './Toast';
 // Export layouts
 export * from './layouts/EventListLayout';
 export * from './layouts/SlotInformationLayout';
+
+// Export Error Boundary
+export * from './ErrorBoundary';
+
+// Export Optimized Image
+export * from './OptimizedImage';

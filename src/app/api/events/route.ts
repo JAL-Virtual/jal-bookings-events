@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getEventsCollection, getBookingsCollection } from "../../../lib/mongodb";
-import { ObjectId, Document } from "mongodb";
+import { ObjectId } from "mongodb";
 
 interface Event {
   _id?: ObjectId;
@@ -38,27 +38,52 @@ export async function GET() {
     const eventsCollection = await getEventsCollection();
     const bookingsCollection = await getBookingsCollection();
 
-    const events = await eventsCollection.find({}).sort({ createdAt: -1 }).toArray();
+    // Optimize query with projection to only fetch needed fields
+    const events = await eventsCollection
+      .find({}, { 
+        projection: { 
+          name: 1, 
+          description: 1, 
+          departure: 1, 
+          arrival: 1, 
+          date: 1, 
+          time: 1, 
+          picture: 1, 
+          route: 1, 
+          airline: 1, 
+          flightNumber: 1, 
+          aircraft: 1, 
+          origin: 1, 
+          destination: 1, 
+          eobtEta: 1, 
+          stand: 1, 
+          maxPilots: 1, 
+          status: 1, 
+          createdAt: 1, 
+          updatedAt: 1 
+        } 
+      })
+      .sort({ createdAt: -1 })
+      .toArray();
 
-    // Get bookings for each event
+    // Get bookings count for each event in a single aggregation
     const eventsWithBookings = await Promise.all(
       events.map(async (event) => {
-        const bookings = await bookingsCollection.find({ eventId: event._id.toString() }).toArray();
+        const bookingCount = await bookingsCollection.countDocuments({ eventId: event._id.toString() });
         return {
           ...event,
           id: event._id.toString(),
-          bookings
+          currentBookings: bookingCount
         };
       })
     );
 
     console.log('API: Found events:', eventsWithBookings.length);
-    console.log('API: Events data:', eventsWithBookings);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       events: eventsWithBookings.map(event => {
-        const eventData = event as unknown as Event & { id: string; bookings: Document[] };
+        const eventData = event as unknown as Event & { id: string };
         return {
           id: eventData.id,
           name: eventData.name,
@@ -80,11 +105,15 @@ export async function GET() {
           currentBookings: eventData.currentBookings,
           status: eventData.status,
           createdAt: eventData.createdAt,
-          updatedAt: eventData.updatedAt,
-          bookings: eventData.bookings
+          updatedAt: eventData.updatedAt
         };
       })
     });
+
+    // Add caching headers
+    response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    
+    return response;
 
   } catch (error: unknown) {
     console.error('Error fetching events:', error);

@@ -6,7 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint . --ext .ts,.tsx --fix",
+    "lint:check": "eslint . --ext .ts,.tsx",
+    "analyze": "ANALYZE=true npm run build",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .next out node_modules/.cache"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

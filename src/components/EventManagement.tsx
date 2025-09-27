@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import { ImageUpload } from './ImageUpload';
-import { SlotManagement } from './SlotManagement';
 
 interface Event {
   id: string;
@@ -44,11 +43,12 @@ interface EventManagementProps {
   adminApiKey: string;
 }
 
-export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey }) => {
+export const EventManagement: React.FC<EventManagementProps> = React.memo(({ adminApiKey }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAddEventModal, setShowAddEventModal] = useState(false);
+  const [showAddSlotModal, setShowAddSlotModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [showViewBookings, setShowViewBookings] = useState(false);
@@ -67,17 +67,34 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
     airline: '',
     maxPilots: 10
   });
+  const [addSlotData, setAddSlotData] = useState({
+    eventId: '',
+    slotNumber: '',
+    type: 'DEPARTURE' as 'DEPARTURE' | 'ARRIVAL',
+    airline: '',
+    flightNumber: '',
+    aircraft: '',
+    origin: '',
+    destination: '',
+    eobtEta: '',
+    stand: ''
+  });
   const [addEventLoading, setAddEventLoading] = useState(false);
-  const [currentView, setCurrentView] = useState<'events' | 'slots'>('events');
+  const [addSlotLoading, setAddSlotLoading] = useState(false);
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Memoize expensive computations
+  const eventsCount = useMemo(() => events.length, [events.length]);
+  const hasEvents = useMemo(() => eventsCount > 0, [eventsCount]);
 
   // Fetch bookings for an event
   const fetchBookings = useCallback(async (eventId: string) => {
     try {
       setBookingsLoading(true);
       setError(null);
-      const response = await fetch(`/api/bookings?eventId=${eventId}&adminApiKey=${adminApiKey}&t=${Date.now()}`, {
-        cache: 'no-store'
+      const response = await fetch(`/api/bookings?eventId=${eventId}&adminApiKey=${adminApiKey}`, {
+        cache: 'force-cache',
+        next: { revalidate: 30 }
       });
 
       if (!response.ok) {
@@ -107,8 +124,9 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
       setLoading(true);
       setError(null);
       console.log('Fetching events with adminApiKey:', adminApiKey);
-      const response = await fetch(`/api/events?adminApiKey=${adminApiKey}&t=${Date.now()}`, {
-        cache: 'no-store' // Force fresh fetch
+      const response = await fetch(`/api/events?adminApiKey=${adminApiKey}`, {
+        cache: 'force-cache',
+        next: { revalidate: 60 }
       });
       
       if (!response.ok) {
@@ -136,10 +154,10 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
   useEffect(() => {
     fetchEvents();
     
-    // Set up auto-refresh every 30 seconds
+    // Set up auto-refresh every 2 minutes (reduced from 30 seconds)
     const interval = setInterval(() => {
       fetchEvents();
-    }, 30000);
+    }, 120000);
     refreshIntervalRef.current = interval;
     
     // Cleanup interval on unmount
@@ -149,6 +167,55 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
       }
     };
   }, [fetchEvents]);
+
+  // Handle add slot
+  const handleAddSlot = async () => {
+    try {
+      setAddSlotLoading(true);
+      setError(null);
+      
+      const response = await fetch('/api/slots', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...addSlotData,
+          adminApiKey,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        await fetchEvents(); // Refresh the list
+        setShowAddSlotModal(false);
+        setAddSlotData({
+          eventId: '',
+          slotNumber: '',
+          type: 'DEPARTURE',
+          airline: '',
+          flightNumber: '',
+          aircraft: '',
+          origin: '',
+          destination: '',
+          eobtEta: '',
+          stand: ''
+        });
+      } else {
+        setError(data.error || 'Failed to add slot');
+      }
+    } catch (err: unknown) {
+      console.error('Error adding slot:', err);
+      setError(err instanceof Error ? err.message : 'Network error occurred');
+    } finally {
+      setAddSlotLoading(false);
+    }
+  };
 
   // Handle add event
   const handleAddEvent = async () => {
@@ -293,9 +360,66 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
   };
 
 
-  const formatDate = (dateString: string) => {
+  // Memoized table row component
+  const EventRow = React.memo(({ event }: { event: Event }) => (
+    <tr key={event.id} className="hover:bg-gray-700/50">
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="flex items-center space-x-3">
+          {event.picture && (
+            <Image
+              src={event.picture}
+              alt={event.name}
+              width={48}
+              height={48}
+              className="w-12 h-12 object-cover rounded-lg border border-gray-600"
+              loading="lazy"
+            />
+          )}
+          <div>
+            <div className="text-sm font-medium text-white">{event.name}</div>
+            {event.description && (
+              <div className="text-sm text-gray-400 truncate max-w-xs">{event.description}</div>
+            )}
+          </div>
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm text-white">{formatDate(event.date)}</div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm text-white">{event.time}Z</div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm text-white">
+          <span className="text-green-400">{event.currentBookings}</span>
+          <span className="text-gray-400">/{event.maxPilots}</span>
+        </div>
+        <div className="text-xs text-gray-400">pilots</div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+        <div className="flex space-x-2">
+          <button
+            onClick={() => setEditingEvent(event)}
+            className="text-blue-400 hover:text-blue-300"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => setShowDeleteConfirm(event.id)}
+            className="text-red-400 hover:text-red-300"
+          >
+            Delete
+          </button>
+        </div>
+      </td>
+    </tr>
+  ));
+
+  EventRow.displayName = 'EventRow';
+
+  const formatDate = useCallback((dateString: string) => {
     return new Date(dateString).toLocaleDateString();
-  };
+  }, []);
 
   if (loading) {
     return (
@@ -311,50 +435,34 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-white">Event Management</h2>
-          <p className="text-gray-400">Create and manage events and slots for the platform</p>
-        </div>
-        <div className="flex items-center space-x-4">
-          {/* View Toggle */}
-          <div className="flex bg-gray-700 rounded-lg p-1">
+      <div className="bg-gray-800 rounded-lg p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-white">Event Management</h2>
+            <p className="text-gray-400">Create and manage events and slots for the platform</p>
+          </div>
+          <div className="flex gap-3">
             <button
-              onClick={() => setCurrentView('events')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                currentView === 'events'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-300 hover:text-white'
-              }`}
+              onClick={() => setShowAddEventModal(true)}
+              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
             >
-              Events
+              <span>+</span>
+              Add Event
             </button>
             <button
-              onClick={() => setCurrentView('slots')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                currentView === 'slots'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-300 hover:text-white'
-              }`}
+              onClick={() => setShowAddSlotModal(true)}
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-2"
             >
-              Slots
+              <span>+</span>
+              Add Slot
+            </button>
+            <button
+              onClick={fetchEvents}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              Refresh
             </button>
           </div>
-        </div>
-        <div className="flex gap-3">
-          <button
-            onClick={() => setShowAddEventModal(true)}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
-          >
-            <span>+</span>
-            Add Event
-          </button>
-          <button
-            onClick={fetchEvents}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-          >
-            Refresh
-          </button>
         </div>
       </div>
 
@@ -365,10 +473,7 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
         </div>
       )}
 
-      {/* Conditional Content */}
-      {currentView === 'events' ? (
-        <>
-          {/* Events Table */}
+      {/* Events Table */}
       <div className="bg-gray-800 rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -382,65 +487,14 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
-              {events.length === 0 ? (
+              {!hasEvents ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
                     No events available right now. Stay tuned for new events!
                   </td>
                 </tr>
               ) : (
-                events.map((event) => (
-                  <tr key={event.id} className="hover:bg-gray-700/50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center space-x-3">
-                          {event.picture && (
-                            <Image
-                              src={event.picture}
-                              alt={event.name}
-                              width={48}
-                              height={48}
-                              className="w-12 h-12 object-cover rounded-lg border border-gray-600"
-                            />
-                          )}
-                          <div>
-                            <div className="text-sm font-medium text-white">{event.name}</div>
-                            {event.description && (
-                              <div className="text-sm text-gray-400 truncate max-w-xs">{event.description}</div>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-white">{formatDate(event.date)}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-white">{event.time}Z</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-white">
-                        <span className="text-green-400">{event.currentBookings}</span>
-                        <span className="text-gray-400">/{event.maxPilots}</span>
-                      </div>
-                      <div className="text-xs text-gray-400">pilots</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => setEditingEvent(event)}
-                          className="text-blue-400 hover:text-blue-300"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => setShowDeleteConfirm(event.id)}
-                          className="text-red-400 hover:text-red-300"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                events.map((event) => <EventRow key={event.id} event={event} />)
               )}
             </tbody>
           </table>
@@ -912,11 +966,166 @@ export const EventManagement: React.FC<EventManagementProps> = ({ adminApiKey })
           </div>
         </div>
       )}
-        </>
-      ) : (
-        <SlotManagement adminApiKey={adminApiKey} />
+
+      {/* Add Slot Modal */}
+      {showAddSlotModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-bold text-white mb-4">Add New Slot</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Event *</label>
+                <select
+                  value={addSlotData.eventId}
+                  onChange={(e) => setAddSlotData({...addSlotData, eventId: e.target.value})}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="">Select Event</option>
+                  {events.map((event) => (
+                    <option key={event.id} value={event.id}>
+                      {event.name} - {event.departure} → {event.arrival}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Slot Number *</label>
+                <input
+                  type="text"
+                  value={addSlotData.slotNumber}
+                  onChange={(e) => setAddSlotData({...addSlotData, slotNumber: e.target.value})}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  placeholder="e.g., 342326"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Type *</label>
+                <select
+                  value={addSlotData.type}
+                  onChange={(e) => setAddSlotData({...addSlotData, type: e.target.value as 'DEPARTURE' | 'ARRIVAL'})}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                >
+                  <option value="DEPARTURE">Departure</option>
+                  <option value="ARRIVAL">Arrival</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Airline</label>
+                <input
+                  type="text"
+                  value={addSlotData.airline}
+                  onChange={(e) => setAddSlotData({...addSlotData, airline: e.target.value})}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  placeholder="e.g., JAL"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Flight Number</label>
+                <input
+                  type="text"
+                  value={addSlotData.flightNumber}
+                  onChange={(e) => setAddSlotData({...addSlotData, flightNumber: e.target.value})}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  placeholder="e.g., JL123"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Aircraft</label>
+                <input
+                  type="text"
+                  value={addSlotData.aircraft}
+                  onChange={(e) => setAddSlotData({...addSlotData, aircraft: e.target.value})}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  placeholder="e.g., B777"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Origin</label>
+                <input
+                  type="text"
+                  value={addSlotData.origin}
+                  onChange={(e) => setAddSlotData({...addSlotData, origin: e.target.value})}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  placeholder="e.g., RJAA"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Destination</label>
+                <input
+                  type="text"
+                  value={addSlotData.destination}
+                  onChange={(e) => setAddSlotData({...addSlotData, destination: e.target.value})}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  placeholder="e.g., KLAX"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">EOBT/ETA</label>
+                <input
+                  type="time"
+                  value={addSlotData.eobtEta}
+                  onChange={(e) => setAddSlotData({...addSlotData, eobtEta: e.target.value})}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Stand/Gate</label>
+                <input
+                  type="text"
+                  value={addSlotData.stand}
+                  onChange={(e) => setAddSlotData({...addSlotData, stand: e.target.value})}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  placeholder="e.g., Gate 12"
+                />
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={() => {
+                  setShowAddSlotModal(false);
+                  setAddSlotData({
+                    eventId: '',
+                    slotNumber: '',
+                    type: 'DEPARTURE',
+                    airline: '',
+                    flightNumber: '',
+                    aircraft: '',
+                    origin: '',
+                    destination: '',
+                    eobtEta: '',
+                    stand: ''
+                  });
+                }}
+                className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
+                disabled={addSlotLoading}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddSlot}
+                disabled={addSlotLoading || !addSlotData.eventId || !addSlotData.slotNumber}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50"
+              >
+                {addSlotLoading ? 'Adding...' : 'Add Slot'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
     </div>
   );
-};
+});
+
+EventManagement.displayName = 'EventManagement';

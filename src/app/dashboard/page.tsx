@@ -1,26 +1,40 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { 
   Sidebar, 
   EventHeader, 
   PilotBriefingCard, 
   Footer,
-  StaffManagement,
-  EventManagement,
-  BookSlot,
   LoadingIndicator,
   EventCard,
   ActionButton,
   UTCClock
 } from '../../components';
+
 import { Event } from '../../types/Event';
 import { isAuthenticated } from '../api/client';
 import { useEvents } from '../../hooks/event/useEventList';
 import { useAuthData } from '../../hooks/useAuthData';
 import { useUserInfo } from '../../hooks/useUserInfo';
-import { useUserBookings } from '../../hooks/useUserBookings';
 import { useText } from '../../hooks/useText';
+
+// Dynamically import heavy components
+const EventManagement = dynamic(() => import('../../components/EventManagement').then(mod => ({ default: mod.EventManagement })), {
+  loading: () => <LoadingIndicator size="lg" />,
+  ssr: false
+});
+
+const StaffManagement = dynamic(() => import('../../components/StaffManagement').then(mod => ({ default: mod.StaffManagement })), {
+  loading: () => <LoadingIndicator size="lg" />,
+  ssr: false
+});
+
+const BookSlot = dynamic(() => import('../../components/BookSlot').then(mod => ({ default: mod.BookSlot })), {
+  loading: () => <LoadingIndicator size="lg" />,
+  ssr: false
+});
 
 
 export default function DashboardPage() {
@@ -33,11 +47,19 @@ export default function DashboardPage() {
   const [eventLoading, setEventLoading] = useState(true);
   
   // Use the new hooks
-  const { data: authData, isLoading: authLoading } = useAuthData();
-  const { userInfo, isLoading: userInfoLoading } = useUserInfo();
+  const { data: authData } = useAuthData();
+  const { userInfo } = useUserInfo();
   const { data: eventsData, isLoading: eventsLoading, hasNextPage, fetchNextPage } = useEvents();
-  const { hasBookings, isLoading: bookingsLoading } = useUserBookings(apiKey || undefined);
   const { t } = useText();
+
+  // Memoize expensive computations
+  const allEvents = useMemo(() => {
+    return eventsData?.pages?.flatMap(page => page.data) || [];
+  }, [eventsData]);
+
+  const currentEventData = useMemo(() => {
+    return allEvents.find(event => event.status === 'ACTIVE') || allEvents[0] || null;
+  }, [allEvents]);
 
   useEffect(() => {
     // Check if user is authenticated
@@ -62,19 +84,16 @@ export default function DashboardPage() {
 
   // Update current event when events data changes
   useEffect(() => {
-    if (eventsData?.pages?.[0]?.data && eventsData.pages[0].data.length > 0) {
-      const event = eventsData.pages[0].data[0];
-      setCurrentEvent(event);
+    if (currentEventData) {
+      setCurrentEvent(currentEventData);
       setEventLoading(false);
     } else if (!eventsLoading) {
       setCurrentEvent(null);
       setEventLoading(false);
     }
-  }, [eventsData, eventsLoading]);
+  }, [currentEventData, eventsLoading]);
 
 
-  // Get all events for the events list
-  const allEvents = eventsData?.pages?.flatMap(page => page.data) || [];
 
   const handleBriefingClick = () => {
     if (currentEvent && currentEvent.pilotBriefingUrl) {
@@ -106,7 +125,6 @@ export default function DashboardPage() {
         onLogout={handleLogout} 
         isAdmin={isAdmin} 
         isStaff={isStaff}
-        hasBookings={hasBookings}
       />
       
       <div className="flex-1 bg-gray-700 p-6 flex flex-col h-screen">
