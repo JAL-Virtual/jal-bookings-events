@@ -8,7 +8,9 @@ import {
   ClipboardListIcon,
   ArrowRightOnRectangleIcon,
   UsersIcon,
-  CogIcon
+  CogIcon,
+  PlusIcon,
+  PlusCircleIcon
 } from './Icons';
 
 interface SidebarProps {
@@ -136,6 +138,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
             {activeTab === 'events' && (
               <div className="absolute left-0 top-0 w-1 h-full bg-white rounded-r"></div>
+            )}
+            
+            {/* Sub-buttons for Manage Events */}
+            {(activeTab === 'events' || activeTab === 'add-event' || activeTab === 'add-slot') && (
+              <div className="ml-4 mt-1 space-y-1">
+                <button 
+                  onClick={() => handleTabClick('add-event')}
+                  className={`w-full flex items-center px-6 py-2 text-left hover:bg-gray-700 transition-colors rounded-md ${
+                    activeTab === 'add-event' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <PlusIcon className="w-4 h-4 mr-3" />
+                  <span className="text-xs font-medium">Add Event</span>
+                </button>
+                <button 
+                  onClick={() => handleTabClick('add-slot')}
+                  className={`w-full flex items-center px-6 py-2 text-left hover:bg-gray-700 transition-colors rounded-md ${
+                    activeTab === 'add-slot' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <PlusCircleIcon className="w-4 h-4 mr-3" />
+                  <span className="text-xs font-medium">Add Slot</span>
+                </button>
+              </div>
             )}
           </div>
         )}
