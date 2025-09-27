@@ -1,3 +1,5 @@
+"use client";
+
 import { useContext } from 'react';
 import { AxiosError } from 'axios';
 import { useInfiniteQuery } from '@tanstack/react-query';
