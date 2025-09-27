@@ -3,23 +3,8 @@ import { useContext, useMemo } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { Slot } from "../../types/Slot";
 
-// Mock API client for now - replace with actual implementation
-const mockApiClient = {
-  getAirportDetails: async (icao: string): Promise<AirportDetails> => {
-    // Mock implementation - replace with actual API call
-    return {
-      icao,
-      name: `${icao} Airport`,
-      city: "Unknown City",
-      country: "Unknown Country"
-    };
-  }
-};
-
 export function useAirportInfoFromSlots(slots: Slot[]) {
-    const [airportDetailsMap, setAirportDetailsMap] = useState<Record<string, AirportDetails>>({});
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const { apiClient } = useContext(IocContext);
 
     const uniqueAirportIcaoList = useMemo(() => {
         const airportMap: Record<string, boolean> = {};
@@ -41,42 +26,15 @@ export function useAirportInfoFromSlots(slots: Slot[]) {
         return Object.keys(airportMap);
     }, [slots]);
 
-    useEffect(() => {
-        const fetchAirportDetails = async () => {
-            if (uniqueAirportIcaoList.length === 0) return;
-
-            setLoading(true);
-            setError(null);
-
-            try {
-                const detailsMap: Record<string, AirportDetails> = {};
-                
-                await Promise.all(
-                    uniqueAirportIcaoList.map(async (icao) => {
-                        try {
-                            const details = await mockApiClient.getAirportDetails(icao);
-                            detailsMap[icao] = details;
-                        } catch (err) {
-                            console.warn(`Failed to fetch airport details for ${icao}:`, err);
-                        }
-                    })
-                );
-
-                setAirportDetailsMap(detailsMap);
-            } catch (err) {
-                setError('Failed to fetch airport details');
-                console.error('Error fetching airport details:', err);
-            } finally {
-                setLoading(false);
+    const airportDetails = useQueries({
+        queries: uniqueAirportIcaoList.map(icao => {
+            return {
+                queryKey: ["airport", icao],
+                queryFn: () => apiClient.getAirportDetails(icao),
+                useErrorBoundary: false
             }
-        };
+        }),
+    });
 
-        fetchAirportDetails();
-    }, [uniqueAirportIcaoList]);
-
-    return {
-        airportDetailsMap,
-        loading,
-        error
-    };
+    return airportDetails;
 }
