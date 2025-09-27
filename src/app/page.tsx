@@ -14,7 +14,6 @@ export default function LandingPage() {
   const isDark = true; // Always use dark theme
   const [showStartup, setShowStartup] = useState(false);
   const [apiKey, setApiKey] = useState<string>('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     // Mark component as mounted to prevent hydration issues
@@ -540,12 +539,12 @@ Japan Airlines Virtual
           jalId={maskedKey}
           onFinish={() => {
             setShowStartup(false);
-            setIsLoggedIn(true);
-            // Stay on the same page - no redirect
-            // The user can now access the dashboard or other features
+            // Redirect to dashboard after startup popup completes
+            window.location.href = '/dashboard';
           }}
         />
       )}
+
     </main>
   );
 }
