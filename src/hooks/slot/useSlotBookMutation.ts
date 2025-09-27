@@ -1,3 +1,5 @@
+"use client";
+
 import { AxiosError } from "axios";
 import { IocContext } from "../../contexts/IocContext";
 import { useContext } from "react";
