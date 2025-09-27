@@ -1,6 +1,10 @@
-import { useContext, useState, useCallback } from "react";
-import { SlotScheduleData, Slot, SlotBookActions } from "../../types/Slot";
+import { AxiosError } from "axios";
+import { IocContext } from "../../contexts/IocContext";
+import { useContext } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiErrorResponse } from "../../types/ApiBase";
+import { Pagination } from "../../types/ApiBase";
+import { SlotScheduleData, Slot, SlotBookActions } from "../../types/Slot";
 
 interface SlotBookMutationVariables {
     slotId: number;
@@ -8,59 +12,28 @@ interface SlotBookMutationVariables {
     slotData?: SlotScheduleData;
 }
 
-// Mock API client for now - replace with actual implementation
-const mockApiClient = {
-  scheduleSlot: async (slotId: number, slotData?: SlotScheduleData): Promise<any> => {
-    // Mock implementation - replace with actual API call
-    return { success: true, slotId };
-  },
-  cancelSchedule: async (slotId: number): Promise<any> => {
-    // Mock implementation - replace with actual API call
-    return { success: true, slotId };
-  },
-  confirmSchedule: async (slotId: number): Promise<any> => {
-    // Mock implementation - replace with actual API call
-    return { success: true, slotId };
-  }
-};
-
 export function useSlotBookMutation(action: SlotBookActions) {
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const { apiClient } = useContext(IocContext);
+    const queryClient = useQueryClient();
 
-    const mutate = useCallback(async ({ slotId, slotData }: SlotBookMutationVariables) => {
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            let result;
+    const bookingMutation = useMutation<any, AxiosError<ApiErrorResponse>, SlotBookMutationVariables>({
+        mutationFn: ({ slotId, slotData }) => {
             switch (action) {
                 case SlotBookActions.BOOK:
-                    result = await mockApiClient.scheduleSlot(slotId, slotData);
-                    break;
+                    return apiClient.scheduleSlot(slotId, slotData);
                 case SlotBookActions.CANCEL:
-                    result = await mockApiClient.cancelSchedule(slotId);
-                    break;
+                    return apiClient.cancelSchedule(slotId);
                 case SlotBookActions.CONFIRM:
-                    result = await mockApiClient.confirmSchedule(slotId);
-                    break;
+                    return apiClient.confirmSchedule(slotId);
                 default:
-                    throw new Error("Invalid slot action: " + String(action));
+                    return Promise.reject("Invalid slot action: " + String(action));
             }
-            return result;
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-            setError(errorMessage);
-            throw err;
-        } finally {
-            setIsLoading(false);
+        },
+        onSuccess: async (_, { eventId, slotId }) => {
+            await queryClient.invalidateQueries({ queryKey: ['slots', eventId] });
+            await queryClient.invalidateQueries({ queryKey: ['eventUserSlots', eventId] });
         }
-    }, [action]);
+    });
 
-    return {
-        mutate,
-        isLoading,
-        error,
-        reset: () => setError(null)
-    };
+    return bookingMutation;
 }
