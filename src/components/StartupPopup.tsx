@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 interface StartupPopupProps {
   jalId?: string;
@@ -13,7 +13,7 @@ export function StartupPopup({ jalId, onFinish }: StartupPopupProps) {
   const [currentLine, setCurrentLine] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
 
-  const consoleLines = [
+  const consoleLines = useMemo(() => [
     "Japan Airlines Virtual Event Booking Portal",
     "Initializing system...",
     "Loading authentication modules...",
@@ -21,7 +21,7 @@ export function StartupPopup({ jalId, onFinish }: StartupPopupProps) {
     "Verifying pilot credentials...",
     "Loading event data...",
     "System ready!",
-  ];
+  ], []);
 
   useEffect(() => {
     // Typing effect for current line
