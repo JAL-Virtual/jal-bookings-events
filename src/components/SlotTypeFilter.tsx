@@ -1,5 +1,7 @@
+"use client";
+
 import { ReactNode } from 'react';
-import { SlotTypeOptions } from '../../types/SlotFilter';
+import { SlotTypeOptions } from '../types/SlotFilter';
 
 interface SlotTypeFilterProps {
   eventName: string;
