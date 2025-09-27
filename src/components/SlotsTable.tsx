@@ -1,6 +1,8 @@
+"use client";
+
 import { ReactNode } from 'react';
-import { Slot } from '../../types/Slot';
-import { AirportDetails } from '../../types/AirportDetails';
+import { Slot } from '../types/Slot';
+import { AirportDetails } from '../types/AirportDetails';
 import { SlotBookButton } from './SlotBookButton';
 
 interface SlotsTableProps {
