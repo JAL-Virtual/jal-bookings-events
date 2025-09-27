@@ -107,7 +107,7 @@ export default function LandingPage() {
         <div className="text-center">
           <div className="flex items-center justify-center mx-auto mb-4">
             <Image 
-              src="/img/jal-logo.png"
+              src="/img/jal-logo-dark.png?v=2"
               alt="Japan Airlines Logo"
               width={96}
               height={96}
@@ -198,8 +198,8 @@ export default function LandingPage() {
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center h-full py-8 px-6 text-center min-h-screen">
-        {/* Enhanced Header with time and theme toggle */}
-        <div className="w-full max-w-6xl flex justify-between items-start mb-8">
+        {/* Enhanced Header with time */}
+        <div className="w-full max-w-6xl flex justify-start items-start mb-8">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -213,11 +213,10 @@ export default function LandingPage() {
               Local Time
             </div>
           </motion.div>
-          
-              </div>
+        </div>
 
         {/* Enhanced Main Content */}
-        <div className="flex flex-col items-center justify-center flex-1 w-full max-w-4xl">
+        <div className="flex flex-col items-center justify-center flex-1 w-full max-w-6xl">
           {/* Enhanced JAL Logo with Glow Effect */}
           <motion.div
             initial={{ opacity: 0, y: -50, scale: 0.5 }}
@@ -237,9 +236,9 @@ export default function LandingPage() {
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
               <motion.img 
-                src="/img/jal-logo-dark.png"
+                src="/img/jal-logo-dark.png?v=2"
                 alt="Japan Airlines Logo"
-                className="w-40 h-40 md:w-48 md:h-48 object-contain"
+                className="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-contain"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ duration: 0.3 }}
               />
@@ -328,7 +327,7 @@ Event Booking Portal
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 1.5 }}
-            className="w-full max-w-4xl mt-8"
+            className="w-full max-w-6xl mt-8"
           >
             <EventDisplay />
           </motion.div>
