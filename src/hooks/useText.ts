@@ -30,6 +30,16 @@ interface Translations {
       clear: string;
       apply: string;
     };
+    error: {
+      unableToBook: {
+        title: string;
+        subtitle: string;
+      };
+      noFlightsFound: {
+        title: string;
+        subtitle: string;
+      };
+    };
   };
   myFlights: {
     title: string;
@@ -40,12 +50,45 @@ interface Translations {
       title: string;
       description: string;
     };
+    atcBriefing: {
+      title: string;
+      description: string;
+    };
+    sceneries: {
+      title: string;
+      description: string;
+      sims: {
+        msfs: {
+          description: string;
+        };
+        xplane: {
+          description: string;
+        };
+        p3d: {
+          description: string;
+        };
+        fsx: {
+          description: string;
+        };
+      };
+    };
   };
   generics: {
     see: string;
+    backToBeginning: string;
   };
   events: {
     found: string;
+  };
+  errors: {
+    notFound: {
+      title: string;
+      subtitle: string;
+    };
+    generic: {
+      title: string;
+      subtitle: string;
+    };
   };
 }
 
@@ -76,6 +119,16 @@ const translations: Translations = {
       reset: 'Reset',
       clear: 'Clear',
       apply: 'Apply'
+    },
+    error: {
+      unableToBook: {
+        title: 'Unable to Book Flight',
+        subtitle: 'There was an error booking your flight. Please try again.'
+      },
+      noFlightsFound: {
+        title: 'No Flights Found',
+        subtitle: 'No flights match your current filters. Try adjusting your search criteria.'
+      }
     }
   },
   myFlights: {
@@ -86,13 +139,50 @@ const translations: Translations = {
     pilotBriefing: {
       title: 'Pilot Briefing',
       description: 'Download the pilot briefing document for this flight'
+    },
+    atcBriefing: {
+      title: 'ATC Briefing',
+      description: 'Download the ATC briefing document for this flight'
+    },
+    sceneries: {
+      title: 'Sceneries',
+      description: 'Required sceneries for this event',
+      sims: {
+        msfs: {
+          description: 'Microsoft Flight Simulator 2020'
+        },
+        xplane: {
+          description: 'X-Plane 11/12'
+        },
+        p3d: {
+          description: 'Prepar3D'
+        },
+        fsx: {
+          description: 'Microsoft Flight Simulator X'
+        }
+      }
     }
   },
   generics: {
-    see: 'View'
+    see: 'View',
+    backToBeginning: 'Back to Beginning'
   },
   events: {
     found: 'Found {count} events'
+  },
+  errors: {
+    notFound: {
+      title: 'Page Not Found',
+      subtitle: 'The page you are looking for does not exist or has been moved.'
+    },
+    generic: {
+      title: 'Something went wrong',
+      subtitle: 'An unexpected error occurred. Please try again later.'
+    },
+    'slot_already_booked': 'This slot is already booked by another pilot.',
+    'invalid_slot': 'The selected slot is not valid.',
+    'event_not_active': 'This event is not currently active.',
+    'pilot_not_authorized': 'You are not authorized to book this slot.'
   }
 };
 

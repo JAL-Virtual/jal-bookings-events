@@ -12,6 +12,12 @@ export enum SlotType {
   TAKEOFF_LANDING = 'takeoff_landing'
 }
 
+export enum BookingStatus {
+  BOOKED = "booked",
+  CONFIRMED = "confirmed", 
+  CANCELLED = "cancelled"
+}
+
 export interface Slot {
   id: number;
   flightNumber?: string;
@@ -26,6 +32,7 @@ export interface Slot {
   };
   isFixedOrigin: boolean;
   isFixedDestination: boolean;
+  bookingStatus?: BookingStatus;
 }
 
 export interface SlotScheduleData {
