@@ -1,3 +1,5 @@
+"use client";
+
 import { IocContext } from "../../contexts/IocContext";
 import { useContext, useMemo } from "react";
 import { useQueries } from "@tanstack/react-query";
