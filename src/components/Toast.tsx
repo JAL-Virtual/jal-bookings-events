@@ -27,7 +27,7 @@ export const Toast: React.FC<ToastProps> = ({ id, type, message, duration = 3000
       clearTimeout(timer);
       clearTimeout(closeTimer);
     };
-  }, [duration]);
+  }, [duration, handleClose]);
 
   const handleClose = useCallback(() => {
     setIsLeaving(true);
