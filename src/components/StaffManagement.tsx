@@ -20,7 +20,7 @@ export const StaffManagement: React.FC<StaffManagementProps> = ({ onStaffKeyChan
       setStaffKey(storedStaffKey);
       validateStaffKey(storedStaffKey);
     }
-  }, []);
+  }, [validateStaffKey]);
 
   const validateStaffKey = useCallback(async (key: string): Promise<boolean> => {
     const validStaffKey = 'AJE(@UE*@DA@ES!$@#W';
