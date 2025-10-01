@@ -13,15 +13,6 @@ export const StaffManagement: React.FC<StaffManagementProps> = ({ onStaffKeyChan
   const [isStaff, setIsStaff] = useState(false);
   const { showSuccess, showError } = useToast();
 
-  useEffect(() => {
-    // Load stored staff key and validate against MongoDB
-    const storedStaffKey = localStorage.getItem('jal_staff_key');
-    if (storedStaffKey) {
-      setStaffKey(storedStaffKey);
-      validateStaffKey(storedStaffKey);
-    }
-  }, [validateStaffKey]);
-
   const validateStaffKey = useCallback(async (key: string): Promise<boolean> => {
     const validStaffKey = 'AJE(@UE*@DA@ES!$@#W';
     const isValid = key === validStaffKey;
@@ -31,6 +22,15 @@ export const StaffManagement: React.FC<StaffManagementProps> = ({ onStaffKeyChan
     }
     return isValid;
   }, [onStaffKeyChange]);
+
+  useEffect(() => {
+    // Load stored staff key and validate against MongoDB
+    const storedStaffKey = localStorage.getItem('jal_staff_key');
+    if (storedStaffKey) {
+      setStaffKey(storedStaffKey);
+      validateStaffKey(storedStaffKey);
+    }
+  }, [validateStaffKey]);
 
   const handleStaffKeySave = async () => {
     if (staffKey.trim()) {

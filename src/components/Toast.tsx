@@ -14,6 +14,13 @@ export const Toast: React.FC<ToastProps> = ({ id, type, message, duration = 3000
   const [isVisible, setIsVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
 
+  const handleClose = useCallback(() => {
+    setIsLeaving(true);
+    setTimeout(() => {
+      onClose(id);
+    }, 300);
+  }, [onClose, id]);
+
   useEffect(() => {
     // Trigger entrance animation
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -28,13 +35,6 @@ export const Toast: React.FC<ToastProps> = ({ id, type, message, duration = 3000
       clearTimeout(closeTimer);
     };
   }, [duration, handleClose]);
-
-  const handleClose = useCallback(() => {
-    setIsLeaving(true);
-    setTimeout(() => {
-      onClose(id);
-    }, 300);
-  }, [onClose, id]);
 
   const getToastStyles = () => {
     const baseStyles = "flex items-center p-4 rounded-lg shadow-lg transition-all duration-300 transform";

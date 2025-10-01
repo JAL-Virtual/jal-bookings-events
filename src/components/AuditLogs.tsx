@@ -23,10 +23,6 @@ export const AuditLogs: React.FC<AuditLogsProps> = ({ adminApiKey }) => {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'created' | 'updated' | 'deleted'>('all');
 
-  useEffect(() => {
-    fetchAuditLogs();
-  }, [adminApiKey, fetchAuditLogs]);
-
   const fetchAuditLogs = useCallback(async () => {
     try {
       setLoading(true);
@@ -46,6 +42,10 @@ export const AuditLogs: React.FC<AuditLogsProps> = ({ adminApiKey }) => {
       setLoading(false);
     }
   }, [adminApiKey]);
+
+  useEffect(() => {
+    fetchAuditLogs();
+  }, [adminApiKey, fetchAuditLogs]);
 
   const filteredLogs = auditLogs.filter(log => {
     if (filter === 'all') return true;
