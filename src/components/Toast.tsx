@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 export interface ToastProps {
   id: string;
@@ -29,12 +29,12 @@ export const Toast: React.FC<ToastProps> = ({ id, type, message, duration = 3000
     };
   }, [duration]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsLeaving(true);
     setTimeout(() => {
       onClose(id);
     }, 300);
-  };
+  }, [onClose, id]);
 
   const getToastStyles = () => {
     const baseStyles = "flex items-center p-4 rounded-lg shadow-lg transition-all duration-300 transform";
