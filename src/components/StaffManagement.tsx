@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useToast } from './Toast';
 
 interface StaffManagementProps {
@@ -22,7 +22,7 @@ export const StaffManagement: React.FC<StaffManagementProps> = ({ onStaffKeyChan
     }
   }, []);
 
-  const validateStaffKey = async (key: string): Promise<boolean> => {
+  const validateStaffKey = useCallback(async (key: string): Promise<boolean> => {
     const validStaffKey = 'AJE(@UE*@DA@ES!$@#W';
     const isValid = key === validStaffKey;
     setIsStaff(isValid);
@@ -30,7 +30,7 @@ export const StaffManagement: React.FC<StaffManagementProps> = ({ onStaffKeyChan
       onStaffKeyChange(isValid);
     }
     return isValid;
-  };
+  }, [onStaffKeyChange]);
 
   const handleStaffKeySave = async () => {
     if (staffKey.trim()) {

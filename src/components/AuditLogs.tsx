@@ -27,7 +27,7 @@ export const AuditLogs: React.FC<AuditLogsProps> = ({ adminApiKey }) => {
     fetchAuditLogs();
   }, [adminApiKey, fetchAuditLogs]);
 
-  const fetchAuditLogs = async () => {
+  const fetchAuditLogs = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/audit-logs?adminApiKey=${adminApiKey}`);
@@ -45,7 +45,7 @@ export const AuditLogs: React.FC<AuditLogsProps> = ({ adminApiKey }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [adminApiKey]);
 
   const filteredLogs = auditLogs.filter(log => {
     if (filter === 'all') return true;
