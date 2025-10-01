@@ -29,7 +29,7 @@ const pageVariants = {
 
 const pageTransition = {
   type: 'tween' as const,
-  ease: 'anticipate',
+  ease: 'anticipate' as const,
   duration: 0.4,
 };
 
@@ -54,7 +54,7 @@ const slideVariants = {
 
 const slideTransition = {
   type: 'tween' as const,
-  ease: 'easeInOut',
+  ease: 'easeInOut' as const,
   duration: 0.3,
 };
 
@@ -73,7 +73,7 @@ const fadeVariants = {
 
 const fadeTransition = {
   type: 'tween' as const,
-  ease: 'easeInOut',
+  ease: 'easeInOut' as const,
   duration: 0.2,
 };
 
