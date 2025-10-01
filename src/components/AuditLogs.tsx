@@ -231,8 +231,11 @@ export const AuditLogs: React.FC<AuditLogsProps> = ({ adminApiKey }) => {
                       {log.eventData.pilotBriefingUrl && (
                         <p><span className="text-gray-400">Briefing URL:</span> {log.eventData.pilotBriefingUrl}</p>
                       )}
-                      {log.eventData.imageUrl && (
-                        <p><span className="text-gray-400">Image URL:</span> {log.eventData.imageUrl}</p>
+                      {log.eventData.banner && (
+                        <p><span className="text-gray-400">Banner URL:</span> {log.eventData.banner}</p>
+                      )}
+                      {log.eventData.picture && (
+                        <p><span className="text-gray-400">Picture URL:</span> {log.eventData.picture}</p>
                       )}
                     </div>
                   </div>
