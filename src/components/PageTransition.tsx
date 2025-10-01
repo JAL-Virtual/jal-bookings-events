@@ -28,7 +28,7 @@ const pageVariants = {
 };
 
 const pageTransition = {
-  type: 'tween',
+  type: 'tween' as const,
   ease: 'anticipate',
   duration: 0.4,
 };
@@ -53,7 +53,7 @@ const slideVariants = {
 };
 
 const slideTransition = {
-  type: 'tween',
+  type: 'tween' as const,
   ease: 'easeInOut',
   duration: 0.3,
 };
@@ -72,7 +72,7 @@ const fadeVariants = {
 };
 
 const fadeTransition = {
-  type: 'tween',
+  type: 'tween' as const,
   ease: 'easeInOut',
   duration: 0.2,
 };
@@ -94,7 +94,7 @@ const scaleVariants = {
 };
 
 const scaleTransition = {
-  type: 'tween',
+  type: 'tween' as const,
   ease: 'backOut',
   duration: 0.4,
 };
