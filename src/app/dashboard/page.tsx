@@ -61,6 +61,7 @@ const Settings = dynamic(() => import('../../components/Settings').then(mod => (
 });
 
 
+
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('home');
   const [isLoading, setIsLoading] = useState(true);
@@ -157,7 +158,7 @@ export default function DashboardPage() {
     const formatted = value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
     if (formatted.length <= 7) {
       if (formatted.length > 3) {
-        setVaId(formatted.slice(0, 3) + ' ' + formatted.slice(3));
+        setVaId(formatted.slice(0, 3) + ' ' + formatted.slice (3));
       } else {
         setVaId(formatted);
       }

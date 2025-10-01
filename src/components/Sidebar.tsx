@@ -44,13 +44,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             width={220}
             height={220}
             className="object-contain"
+            style={{ width: '220px', height: '220px', objectFit: 'contain' }}
             priority
             unoptimized
-            style={{
-              width: '220px',
-              height: '220px',
-              objectFit: 'contain'
-            }}
           />
         </div>
       </div>

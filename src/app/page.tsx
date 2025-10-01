@@ -59,6 +59,7 @@ export default function LandingPage() {
               width={96}
               height={96}
               className="w-24 h-24 object-contain"
+              style={{ width: '96px', height: '96px', objectFit: 'contain' }}
             />
           </div>
           <p className="text-xl">Loading...</p>

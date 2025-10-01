@@ -16,7 +16,9 @@ export function useUserInfo() {
         
         const apiKey = getStoredApiKey();
         if (!apiKey) {
-          setError('No API key found');
+          // No API key found - this is normal for users who haven't logged in yet
+          setUserInfo(null);
+          setError(null);
           return;
         }
 
@@ -25,7 +27,13 @@ export function useUserInfo() {
         setUserInfo(userData);
       } catch (err) {
         console.error('Error fetching user info:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch user info');
+        // Don't set error for 401 - this just means user needs to log in
+        if (err instanceof Error && err.message.includes('401')) {
+          setError(null);
+          setUserInfo(null);
+        } else {
+          setError(err instanceof Error ? err.message : 'Failed to fetch user info');
+        }
       } finally {
         setIsLoading(false);
       }
