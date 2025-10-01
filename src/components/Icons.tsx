@@ -13,12 +13,11 @@ export {
   FiHeadphones,
   FiCalendar,
   FiClipboard,
-  FiLogOut,
-  FiUsers,
   FiSettings,
   FiBookOpen,
   FiPlus,
-  FiPlusCircle
+  FiPlusCircle,
+  FiSliders
 } from 'react-icons/fi';
 
 // Export with alternative names for compatibility
@@ -26,10 +25,9 @@ export {
   FiHome as HomeIcon,
   FiCalendar as CalendarIcon,
   FiClipboard as ClipboardListIcon,
-  FiLogOut as ArrowRightOnRectangleIcon,
-  FiUsers as UsersIcon,
   FiSettings as CogIcon,
   FiBookOpen as BookOpenIcon,
   FiPlus as PlusIcon,
-  FiPlusCircle as PlusCircleIcon
+  FiPlusCircle as PlusCircleIcon,
+  FiSliders as AdjustmentsHorizontalIcon
 } from 'react-icons/fi';

@@ -6,7 +6,6 @@ import {
   ClipboardDocumentIcon, 
   HomeIcon, 
   InformationCircleIcon, 
-  ArrowRightOnRectangleIcon,
   MoonIcon,
   SunIcon
 } from '@heroicons/react/24/outline';
@@ -66,11 +65,6 @@ export const EventSidebar: React.FC<EventSidebarProps> = ({ visible = true }) =>
             icon={isDark ? <SunIcon className="w-7 h-7" /> : <MoonIcon className="w-7 h-7" />}
             title="Change Theme"
             onClick={toggleTheme} />
-
-          <SidebarLink
-            href={`/logout`}
-            icon={<ArrowRightOnRectangleIcon className="w-7 h-7" />}
-            title="Logout" />
         </div>
       </div>
     </nav>

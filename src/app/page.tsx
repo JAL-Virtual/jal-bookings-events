@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 type Star = { top: number; left: number; size: number; dur: number; delay: number };
@@ -10,7 +10,6 @@ export default function LandingPage() {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const isDark = true; // Always use dark theme
-  const [apiKey, setApiKey] = useState<string>('');
 
   useEffect(() => {
     // Mark component as mounted to prevent hydration issues
@@ -19,27 +18,12 @@ export default function LandingPage() {
     setCurrentTime(new Date());
     const id = setInterval(() => setCurrentTime(new Date()), 60_000);
     return () => clearInterval(id);
-    
-    // Removed automatic redirect to /events - users should stay on login page
-    // if (isAuthenticated()) {
-    //   window.location.href = '/events';
-    // }
-    
-    const saved = localStorage.getItem("jal_api_key");
-    if (saved !== null) setApiKey(saved as string);
   }, []);
 
   const formattedTime = useMemo(
     () => (currentTime ? currentTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "--:--"),
     [currentTime]
   );
-
-  // Mask API key for UI display - removed unused maskedKey
-
-  const [showLogin, setShowLogin] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>("");
-  const [showKey, setShowKey] = useState(false);
 
   const stars: Star[] = useMemo(
     () =>
@@ -58,36 +42,10 @@ export default function LandingPage() {
     []
   );
 
-  const handleVerifyKey = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      if (!apiKey || apiKey.trim().length < 8) {
-        throw new Error("Please enter a valid Japan Airlines Virtual pilot API key.");
-      }
-
-      const res = await fetch("/api/auth/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ apiKey: apiKey.trim() }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error ?? "Verification failed");
-
-      localStorage.setItem("jal_api_key", apiKey.trim());
-      setApiKey(apiKey.trim());
-      setShowLogin(false);
-      // Redirect directly to dashboard
-      window.location.href = '/dashboard';
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
+  const handleGetStarted = () => {
+    // Redirect directly to dashboard
+    window.location.href = '/dashboard';
   };
-
-  // Generate API key function
 
   // Prevent hydration mismatch by showing loading state until mounted
   if (!isMounted) {
@@ -96,7 +54,7 @@ export default function LandingPage() {
         <div className="text-center">
           <div className="flex items-center justify-center mx-auto mb-4">
             <Image 
-              src="/img/jal-logo-dark.png?v=2"
+              src="/img/jal-logo-dark.png"
               alt="Japan Airlines Logo"
               width={96}
               height={96}
@@ -225,7 +183,7 @@ export default function LandingPage() {
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
               <motion.img 
-                src="/img/jal-logo-dark.png?v=2"
+                src="/img/jal-logo-dark.png"
                 alt="Japan Airlines Logo"
                 className="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 object-contain"
                 whileHover={{ scale: 1.1, rotate: 5 }}
@@ -313,7 +271,7 @@ Japan Airlines Virtual
 
           <motion.button
             type="button"
-            onClick={() => setShowLogin(true)}
+            onClick={handleGetStarted}
             initial={{ opacity: 0, y: 50 }}
             animate={{ 
               opacity: 1, 
@@ -342,7 +300,7 @@ Japan Airlines Virtual
             >
               ✈️
             </motion.span>
-            <span className="font-comic">Explore Flights!</span>
+            <span className="font-comic">Get Started!</span>
             <motion.span 
               className="text-lg"
               animate={{ x: [0, 5, 0] }}
@@ -399,126 +357,6 @@ Japan Airlines Virtual
         </motion.div>
       </div>
 
-      {/* Login Modal */}
-      <AnimatePresence>
-        {showLogin && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
-              onClick={() => setShowLogin(false)}
-            />
-            
-            {/* Modal */}
-            <motion.div
-              role="dialog"
-              aria-modal
-              aria-labelledby="apiKeyTitle"
-              initial={{ opacity: 0, scale: 0.9, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: -20 }}
-              className={`fixed top-1/2 left-1/2 z-50 w-[90%] max-w-lg -translate-x-1/2 -translate-y-1/2 backdrop-blur-xl border shadow-2xl rounded-3xl overflow-hidden ${
-                isDark 
-                  ? "bg-white/5 border-white/10" 
-                  : "bg-white/60 border-white/20"
-              }`}
-            >
-              <div className="p-8">
-                <h3 id="apiKeyTitle" className={`text-2xl font-bold mb-8 flex items-center gap-3 ${
-                  isDark ? "text-white" : "text-gray-900"
-                }`}>
-                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${
-                    isDark ? "bg-blue-500/20" : "bg-blue-100/80"
-                  }`}>
-                    <span className="text-lg">🔑</span>
-                  </div>
-                  <span className="font-display">Japan Airlines Virtual Login</span>
-                </h3>
-
-                <div className="relative mb-6">
-                  <input
-                    type={showKey ? "text" : "password"}
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    placeholder="Enter your Japan Airlines Virtual Pilot API key"
-                    autoFocus
-                    onKeyDown={(e) => e.key === "Enter" && handleVerifyKey()}
-                    className={`w-full px-4 py-3 rounded-2xl border transition-all duration-200 focus:outline-none focus:ring-2 tracking-widest pr-12 font-mono ${
-                      isDark 
-                        ? "bg-white/10 border-white/20 focus:ring-blue-500/50 text-white placeholder-gray-400" 
-                        : "bg-white/80 border-white/40 focus:ring-blue-500/50 text-gray-900 placeholder-gray-500"
-                    } backdrop-blur-sm`}
-                    aria-describedby="apiKeyHelp"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowKey((s) => !s)}
-                    className={`absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium transition-colors ${
-                      isDark 
-                        ? "text-gray-300 hover:text-white" 
-                        : "text-gray-500 hover:text-gray-700"
-                    }`}
-                    aria-label={showKey ? "Hide API key" : "Show API key"}
-                  >
-                    {showKey ? "Hide" : "Show"}
-                  </button>
-        </div>
-
-                <p id="apiKeyHelp" className={`text-base mb-6 ${
-                  isDark ? "text-gray-300" : "text-gray-600"
-                }`}>
-                  Your pilot API key is validated via Japan Airlines Virtual system using <code className={`px-2 py-1 rounded ${
-                    isDark ? "bg-white/10 text-blue-300" : "bg-white/60 text-blue-600"
-                  }`}>X-API-Key</code> authentication for event booking access.
-                </p>
-
-                {error && (
-                  <div className={`mb-6 p-4 rounded-2xl border ${
-                    isDark 
-                      ? "bg-red-500/10 border-red-500/20 text-red-300" 
-                      : "bg-red-100/80 border-red-200/60 text-red-600"
-                  }`} role="alert">
-                    <p className="text-sm font-medium">{error}</p>
-                  </div>
-                )}
-
-                <div className="flex justify-end gap-4">
-                  <button
-                    onClick={() => setShowLogin(false)}
-                    className={`px-8 py-4 rounded-2xl font-medium transition-all duration-200 hover:scale-105 font-serif ${
-                      isDark 
-                        ? "bg-white/10 border border-white/20 hover:bg-white/20 text-white" 
-                        : "bg-white/60 border border-white/40 hover:bg-white/80 text-gray-900"
-                    } backdrop-blur-sm`}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleVerifyKey}
-                    disabled={loading}
-                    className={`px-8 py-4 rounded-2xl font-medium transition-all duration-200 hover:scale-105 disabled:opacity-50 flex items-center gap-2 font-display ${
-                      isDark 
-                        ? "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white shadow-lg shadow-red-500/25" 
-                        : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white shadow-lg shadow-red-500/25"
-                    } backdrop-blur-sm`}
-                  >
-                    {loading && (
-                      <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden>
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a 8 8 0 0 1 8-8v2a6 6 0 0 0-6 6H4z" />
-                      </svg>
-                    )}
-                    {loading ? "Authenticating..." : "Login"}
-                  </button>
-          </div>
-        </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
       </div>
 
 

@@ -7,6 +7,7 @@ export * from './useAuthData';
 export * from './useUserInfo';
 export * from './useUserBookings';
 export * from './useText';
+export * from './useStaffKeys';
 export * from './slot/useEventSlots';
 export * from './slot/useEventUserSlots';
 export * from './slot/useSlotBookMutation';

@@ -59,3 +59,8 @@ export const getStaffCollection = async () => {
   const db = await getDb();
   return db.collection('staff_members');
 };
+
+export const getAuditLogsCollection = async () => {
+  const db = await getDb();
+  return db.collection('audit_logs');
+};

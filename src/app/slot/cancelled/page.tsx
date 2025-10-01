@@ -4,6 +4,7 @@ import {LinkButton} from "../../../components/buttons/LinkButton";
 import {MutedText} from "../../../components/typography/Typography";
 import {useText} from "../../../hooks/useText";
 import {SlotInformationLayout} from "../../../layouts/SlotInformationLayout";
+import {PageTransition} from "../../../components";
 import {useEffect, useState, Suspense} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 import Image from "next/image";
@@ -58,8 +59,10 @@ function SlotCancelledContent() {
 
 export default function SlotCancelled() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <SlotCancelledContent />
-    </Suspense>
+    <PageTransition type="scale">
+      <Suspense fallback={<div>Loading...</div>}>
+        <SlotCancelledContent />
+      </Suspense>
+    </PageTransition>
   );
 }

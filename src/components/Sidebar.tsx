@@ -6,15 +6,13 @@ import {
   HomeIcon, 
   CalendarIcon,
   ClipboardListIcon,
-  ArrowRightOnRectangleIcon,
-  UsersIcon,
-  CogIcon
+  CogIcon,
+  AdjustmentsHorizontalIcon
 } from './Icons';
 
 interface SidebarProps {
   activeTab?: string;
   onTabChange?: (tab: string) => void;
-  onLogout?: () => void;
   isAdmin?: boolean;
   isStaff?: boolean;
 }
@@ -22,9 +20,8 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ 
   activeTab = 'home', 
   onTabChange, 
-  onLogout, 
-  isAdmin = false,
-  isStaff = false
+  isAdmin = false, 
+  isStaff = false 
 }) => {
   const handleTabClick = (tab: string) => {
     if (onTabChange) {
@@ -33,126 +30,133 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className="w-64 bg-gray-800 flex flex-col pt-2 pb-6 space-y-2 transition-all duration-200">
+    <div className="w-64 bg-gray-800 flex flex-col h-full transition-all duration-200">
       {/* Logo */}
-      <div className="px-6 flex justify-center -mt-40">
-        <Image 
-          src={`/img/jal-logo-dark-large.png?v=${Date.now()}`}
-          alt="Japan Airlines Logo"
-          width={400}
-          height={400}
-          className="object-contain"
-          priority
-          unoptimized
-          style={{
-            width: '400px',
-            height: '400px',
-            objectFit: 'contain'
-          }}
-        />
+      <div className="px-6 pt-2 pb-1 -mt-12 flex justify-center">
+        <div 
+          className="cursor-pointer hover:opacity-80 transition-all duration-300 hover:scale-105"
+          onClick={() => handleTabClick('home')}
+          title="Click to return to home page"
+        >
+          <Image 
+            src="/img/jal-logo-dark-large.png"
+            alt="Japan Airlines Logo"
+            width={220}
+            height={220}
+            className="object-contain"
+            priority
+            unoptimized
+            style={{
+              width: '220px',
+              height: '220px',
+              objectFit: 'contain'
+            }}
+          />
+        </div>
       </div>
 
       {/* Navigation Items */}
-      <div className="flex flex-col space-y-1 -mt-42">
-        {/* 1. Home Page */}
+      <div className="flex flex-col space-y-1 px-2 pt-1 flex-1">
+        {/* 1. Home Page - Visible to everyone */}
         <div className="relative">
           <button 
             onClick={() => handleTabClick('home')}
-            className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors ${
-              activeTab === 'home' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+            className={`w-full flex items-center px-4 py-3 text-left rounded-lg mx-2 hover:bg-gray-700 transition-all duration-200 ${
+              activeTab === 'home' ? 'bg-gray-700 text-white shadow-lg' : 'text-gray-400 hover:text-white'
             }`}
           >
-            <HomeIcon className="w-5 h-5 mr-3" />
+            <HomeIcon className="w-5 h-5 mr-3 flex-shrink-0" />
             <span className="text-sm font-medium">Home</span>
           </button>
           {activeTab === 'home' && (
-            <div className="absolute left-0 top-0 w-1 h-full bg-white rounded-r"></div>
+            <div className="absolute left-0 top-1 bottom-1 w-1 bg-blue-500 rounded-r"></div>
           )}
         </div>
 
-        {/* 2. Booking */}
+        {/* 2. Booking - Visible to everyone */}
         <div className="relative">
           <button 
             onClick={() => handleTabClick('booking')}
-            className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors ${
-              activeTab === 'booking' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+            className={`w-full flex items-center px-4 py-3 text-left rounded-lg mx-2 hover:bg-gray-700 transition-all duration-200 ${
+              activeTab === 'booking' ? 'bg-gray-700 text-white shadow-lg' : 'text-gray-400 hover:text-white'
             }`}
           >
-            <CalendarIcon className="w-5 h-5 mr-3" />
+            <CalendarIcon className="w-5 h-5 mr-3 flex-shrink-0" />
             <span className="text-sm font-medium">Booking</span>
           </button>
           {activeTab === 'booking' && (
-            <div className="absolute left-0 top-0 w-1 h-full bg-white rounded-r"></div>
+            <div className="absolute left-0 top-1 bottom-1 w-1 bg-blue-500 rounded-r"></div>
           )}
         </div>
 
-        {/* 3. My Bookings */}
+        {/* 3. My Bookings - Visible to everyone */}
         <div className="relative">
           <button 
             onClick={() => handleTabClick('my-bookings')}
-            className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors ${
-              activeTab === 'my-bookings' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+            className={`w-full flex items-center px-4 py-3 text-left rounded-lg mx-2 hover:bg-gray-700 transition-all duration-200 ${
+              activeTab === 'my-bookings' ? 'bg-gray-700 text-white shadow-lg' : 'text-gray-400 hover:text-white'
             }`}
           >
-            <ClipboardListIcon className="w-5 h-5 mr-3" />
+            <ClipboardListIcon className="w-5 h-5 mr-3 flex-shrink-0" />
             <span className="text-sm font-medium">My Bookings</span>
           </button>
           {activeTab === 'my-bookings' && (
-            <div className="absolute left-0 top-0 w-1 h-full bg-white rounded-r"></div>
+            <div className="absolute left-0 top-1 bottom-1 w-1 bg-blue-500 rounded-r"></div>
           )}
         </div>
 
-        {/* 4. Manage Staff - Only visible to administrators */}
-        {isAdmin && (
-          <div className="relative">
-            <button 
-              onClick={() => handleTabClick('staff')}
-              className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors ${
-                activeTab === 'staff' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              <UsersIcon className="w-5 h-5 mr-3" />
-              <span className="text-sm font-medium">Manage Staff</span>
-            </button>
-            {activeTab === 'staff' && (
-              <div className="absolute left-0 top-0 w-1 h-full bg-white rounded-r"></div>
-            )}
-          </div>
-        )}
-
-        {/* 5. Manage Event - Visible to both administrators and staff members */}
-        {(isAdmin || isStaff) && (
+        {/* 4. Manage Events - Visible to staff and administrators only */}
+        {(isStaff || isAdmin) && (
           <div className="relative">
             <button 
               onClick={() => handleTabClick('events')}
-              className={`w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors ${
-                activeTab === 'events' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+              className={`w-full flex items-center px-4 py-3 text-left rounded-lg mx-2 hover:bg-gray-700 transition-all duration-200 ${
+                activeTab === 'events' ? 'bg-gray-700 text-white shadow-lg' : 'text-gray-400 hover:text-white'
               }`}
             >
-              <CogIcon className="w-5 h-5 mr-3" />
+              <CogIcon className="w-5 h-5 mr-3 flex-shrink-0" />
               <span className="text-sm font-medium">Manage Events</span>
             </button>
             {activeTab === 'events' && (
-              <div className="absolute left-0 top-0 w-1 h-full bg-white rounded-r"></div>
+              <div className="absolute left-0 top-1 bottom-1 w-1 bg-blue-500 rounded-r"></div>
             )}
           </div>
         )}
 
-      </div>
-
-      {/* Bottom Section */}
-      <div className="mt-auto">
-        {/* Logout */}
+        {/* 5. Settings - Visible to everyone */}
         <div className="relative">
           <button 
-            className="w-full flex items-center px-6 py-3 text-left hover:bg-gray-700 transition-colors text-gray-400 hover:text-white"
-            onClick={onLogout} 
-            title="Logout"
+            onClick={() => handleTabClick('settings')}
+            className={`w-full flex items-center px-4 py-3 text-left rounded-lg mx-2 hover:bg-gray-700 transition-all duration-200 ${
+              activeTab === 'settings' ? 'bg-gray-700 text-white shadow-lg' : 'text-gray-400 hover:text-white'
+            }`}
           >
-            <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3" />
-            <span className="text-sm font-medium">Logout</span>
+            <AdjustmentsHorizontalIcon className="w-5 h-5 mr-3 flex-shrink-0" />
+            <span className="text-sm font-medium">Settings</span>
           </button>
+          {activeTab === 'settings' && (
+            <div className="absolute left-0 top-1 bottom-1 w-1 bg-blue-500 rounded-r"></div>
+          )}
         </div>
+
+        {/* 6. Audit Logs - Only visible to administrators */}
+        {isAdmin && (
+          <div className="relative">
+            <button 
+              onClick={() => handleTabClick('audit-logs')}
+              className={`w-full flex items-center px-4 py-3 text-left rounded-lg mx-2 hover:bg-gray-700 transition-all duration-200 ${
+                activeTab === 'audit-logs' ? 'bg-gray-700 text-white shadow-lg' : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <ClipboardListIcon className="w-5 h-5 mr-3 flex-shrink-0" />
+              <span className="text-sm font-medium">Audit Logs</span>
+            </button>
+            {activeTab === 'audit-logs' && (
+              <div className="absolute left-0 top-1 bottom-1 w-1 bg-blue-500 rounded-r"></div>
+            )}
+          </div>
+        )}
+
       </div>
     </div>
   );

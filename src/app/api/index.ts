@@ -5,6 +5,5 @@ export * from './client';
 export { APIClient } from './client';
 export { 
   getStoredApiKey, 
-  clearStoredApiKey, 
-  isAuthenticated 
+  clearStoredApiKey
 } from './client';

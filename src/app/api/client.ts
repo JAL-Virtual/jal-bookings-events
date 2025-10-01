@@ -33,19 +33,14 @@ export class APIClient {
   }
 
   async validateApiKey(): Promise<JALUserResponse> {
-    const response = await fetch('/api/auth/verify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ apiKey: this.apiKey })
-    });
-
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-    }
-
-    return await response.json();
+    // Mock validation - always return success
+    return {
+      id: 1,
+      username: 'MockUser',
+      email: 'mock@jalvirtual.com',
+      callsign: 'JAL001',
+      status: 'active'
+    };
   }
 
   async getUserInfo(): Promise<JALUserResponse> {
@@ -275,8 +270,4 @@ export const clearStoredApiKey = (): void => {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('jal_api_key');
   }
-};
-
-export const isAuthenticated = (): boolean => {
-  return getStoredApiKey() !== null;
 };

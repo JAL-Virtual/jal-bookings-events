@@ -9,13 +9,11 @@ interface AuthContextType {
     vid: string;
   } | null;
   refreshToken: () => void;
-  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  refreshToken: () => {},
-  logout: () => {}
+  refreshToken: () => {}
 });
 
 interface AuthProviderProps {
@@ -40,14 +38,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     console.log('Refreshing token...');
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('jal_api_key');
-    window.location.href = '/';
-  };
-
   return (
-    <AuthContext.Provider value={{ user, refreshToken, logout }}>
+    <AuthContext.Provider value={{ user, refreshToken }}>
       {children}
     </AuthContext.Provider>
   );

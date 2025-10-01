@@ -70,7 +70,7 @@ export const useStaffKeys = () => {
       const data = await response.json();
       
       if (data.success) {
-        // Refresh the staff keys list
+        // Refresh the staff keys list immediately
         await fetchStaffKeys();
         return { success: true };
       } else {

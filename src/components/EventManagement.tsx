@@ -598,120 +598,9 @@ export const EventManagement: React.FC<EventManagementProps> = React.memo(({ adm
       </div>
       {showAddEventModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-bold text-white mb-4">Add New Event</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Event Name *</label>
-                <input
-                  type="text"
-                  value={addEventData.name}
-                  onChange={(e) => setAddEventData({...addEventData, name: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                  placeholder=""
-                />
-              </div>
-              
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                <textarea
-                  value={addEventData.description}
-                  onChange={(e) => setAddEventData({...addEventData, description: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                  rows={3}
-                  placeholder=""
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Departure *</label>
-                <input
-                  type="text"
-                  value={addEventData.departure}
-                  onChange={(e) => setAddEventData({...addEventData, departure: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                  placeholder=""
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Arrival *</label>
-                <input
-                  type="text"
-                  value={addEventData.arrival}
-                  onChange={(e) => setAddEventData({...addEventData, arrival: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                  placeholder=""
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Date *</label>
-                <input
-                  type="date"
-                  value={addEventData.date}
-                  onChange={(e) => setAddEventData({...addEventData, date: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Time (Zulu) *</label>
-                <input
-                  type="time"
-                  value={addEventData.time}
-                  onChange={(e) => setAddEventData({...addEventData, time: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                />
-              </div>
-              
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Event Image</label>
-                <ImageUpload
-                  value={addEventData.picture}
-                  onChange={(url) => setAddEventData({...addEventData, picture: url})}
-                  adminApiKey={adminApiKey}
-                  disabled={addEventLoading}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Route</label>
-                <input
-                  type="text"
-                  value={addEventData.route}
-                  onChange={(e) => setAddEventData({...addEventData, route: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                  placeholder=""
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Airline</label>
-                <input
-                  type="text"
-                  value={addEventData.airline}
-                  onChange={(e) => setAddEventData({...addEventData, airline: e.target.value})}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                  placeholder=""
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Max Pilot Slots *</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={addEventData.maxPilots}
-                  onChange={(e) => setAddEventData({...addEventData, maxPilots: parseInt(e.target.value) || 10})}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-                />
-              </div>
-            </div>
-            
-            <div className="flex justify-end space-x-3 mt-6">
+          <div className="bg-gray-800 rounded-lg p-8 w-full max-w-4xl mx-4 max-h-[95vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-bold text-white">Create New Event</h3>
               <button
                 onClick={() => {
                   setShowAddEventModal(false);
@@ -728,7 +617,189 @@ export const EventManagement: React.FC<EventManagementProps> = React.memo(({ adm
                     maxPilots: 10
                   });
                 }}
-                className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Left Column - Basic Information */}
+              <div className="space-y-6">
+                <div className="bg-gray-700 rounded-lg p-6">
+                  <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs">1</span>
+                    Basic Information
+                  </h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Event Name *</label>
+                      <input
+                        type="text"
+                        value={addEventData.name}
+                        onChange={(e) => setAddEventData({...addEventData, name: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                        placeholder="Enter event name"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                      <textarea
+                        value={addEventData.description}
+                        onChange={(e) => setAddEventData({...addEventData, description: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                        rows={4}
+                        placeholder="Describe the event..."
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-700 rounded-lg p-6">
+                  <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-xs">2</span>
+                    Flight Details
+                  </h4>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Departure *</label>
+                      <input
+                        type="text"
+                        value={addEventData.departure}
+                        onChange={(e) => setAddEventData({...addEventData, departure: e.target.value.toUpperCase()})}
+                        className="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                        placeholder="RJAA"
+                        maxLength={4}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Arrival *</label>
+                      <input
+                        type="text"
+                        value={addEventData.arrival}
+                        onChange={(e) => setAddEventData({...addEventData, arrival: e.target.value.toUpperCase()})}
+                        className="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                        placeholder="KLAX"
+                        maxLength={4}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Schedule & Settings */}
+              <div className="space-y-6">
+                <div className="bg-gray-700 rounded-lg p-6">
+                  <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-xs">3</span>
+                    Schedule
+                  </h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Date *</label>
+                      <input
+                        type="date"
+                        value={addEventData.date}
+                        onChange={(e) => setAddEventData({...addEventData, date: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Time (Zulu) *</label>
+                      <input
+                        type="time"
+                        value={addEventData.time}
+                        onChange={(e) => setAddEventData({...addEventData, time: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-700 rounded-lg p-6">
+                  <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center text-xs">4</span>
+                    Additional Details
+                  </h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Route</label>
+                      <input
+                        type="text"
+                        value={addEventData.route}
+                        onChange={(e) => setAddEventData({...addEventData, route: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                        placeholder="ODAXA1D ODAXA UH899 IBALU UR7"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Airline</label>
+                      <input
+                        type="text"
+                        value={addEventData.airline}
+                        onChange={(e) => setAddEventData({...addEventData, airline: e.target.value})}
+                        className="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                        placeholder="Japan Airlines"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Max Pilot Slots *</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={addEventData.maxPilots}
+                        onChange={(e) => setAddEventData({...addEventData, maxPilots: parseInt(e.target.value) || 10})}
+                        className="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gray-700 rounded-lg p-6">
+                  <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs">5</span>
+                    Event Image
+                  </h4>
+                  
+                  <ImageUpload
+                    value={addEventData.picture}
+                    onChange={(url) => setAddEventData({...addEventData, picture: url})}
+                    adminApiKey={adminApiKey}
+                    disabled={addEventLoading}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-600">
+              <button
+                onClick={() => {
+                  setShowAddEventModal(false);
+                  setAddEventData({
+                    name: '',
+                    description: '',
+                    departure: '',
+                    arrival: '',
+                    date: '',
+                    time: '',
+                    picture: '',
+                    route: '',
+                    airline: '',
+                    maxPilots: 10
+                  });
+                }}
+                className="px-6 py-3 text-gray-400 hover:text-white transition-colors font-medium"
                 disabled={addEventLoading}
               >
                 Cancel
@@ -736,9 +807,19 @@ export const EventManagement: React.FC<EventManagementProps> = React.memo(({ adm
               <button
                 onClick={handleAddEvent}
                 disabled={addEventLoading || !addEventData.name || !addEventData.departure || !addEventData.arrival || !addEventData.date || !addEventData.time}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center gap-2"
               >
-                {addEventLoading ? 'Adding...' : 'Add Event'}
+                {addEventLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Creating Event...
+                  </>
+                ) : (
+                  <>
+                    <span>✓</span>
+                    Create Event
+                  </>
+                )}
               </button>
             </div>
           </div>

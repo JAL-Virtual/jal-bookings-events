@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getEventsCollection } from "../../../../lib/mongodb";
+import { getEventsCollection, getAuditLogsCollection } from "../../../../lib/mongodb";
 
 const ADMIN_API_KEY = "29e2bb1d4ae031ed47b6";
 
@@ -46,6 +46,17 @@ export async function POST(req: Request) {
 
     const result = await eventsCollection.insertOne(eventData);
     const newEvent = await eventsCollection.findOne({ _id: result.insertedId });
+
+    // Log audit event for creation
+    const auditLogsCollection = await getAuditLogsCollection();
+    await auditLogsCollection.insertOne({
+      eventId: result.insertedId.toString(),
+      eventName: name,
+      eventData: newEvent,
+      action: 'created',
+      timestamp: new Date().toISOString(),
+      adminId: '29e2bb1d4ae031ed47b6'
+    });
 
     return NextResponse.json({
       success: true,

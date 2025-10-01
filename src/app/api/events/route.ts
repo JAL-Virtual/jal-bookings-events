@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getEventsCollection, getBookingsCollection } from "../../../lib/mongodb";
+import { getEventsCollection, getBookingsCollection, getAuditLogsCollection } from "../../../lib/mongodb";
 import { ObjectId } from "mongodb";
 
 interface Event {
@@ -200,6 +200,17 @@ export async function PUT(req: Request) {
 
     const updatedEvent = await eventsCollection.findOne({ _id: new ObjectId(id) });
 
+    // Log audit event for update
+    const auditLogsCollection = await getAuditLogsCollection();
+    await auditLogsCollection.insertOne({
+      eventId: id,
+      eventName: updatedEvent?.name || 'Unknown',
+      eventData: updatedEvent,
+      action: 'updated',
+      timestamp: new Date().toISOString(),
+      adminId: '29e2bb1d4ae031ed47b6'
+    });
+
     return NextResponse.json({
       success: true,
       event: updatedEvent
@@ -250,6 +261,17 @@ export async function DELETE(req: Request) {
 
     // Delete related bookings first
     await bookingsCollection.deleteMany({ eventId: id });
+
+    // Log audit event before deletion
+    const auditLogsCollection = await getAuditLogsCollection();
+    await auditLogsCollection.insertOne({
+      eventId: id,
+      eventName: existingEvent.name,
+      eventData: existingEvent,
+      action: 'deleted',
+      timestamp: new Date().toISOString(),
+      adminId: '29e2bb1d4ae031ed47b6'
+    });
 
     // Delete event
     const result = await eventsCollection.deleteOne({ _id: new ObjectId(id) });
