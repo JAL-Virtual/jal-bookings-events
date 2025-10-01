@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Event } from '../types/Event';
 
 interface AuditLog {
@@ -25,7 +25,7 @@ export const AuditLogs: React.FC<AuditLogsProps> = ({ adminApiKey }) => {
 
   useEffect(() => {
     fetchAuditLogs();
-  }, [adminApiKey]);
+  }, [adminApiKey, fetchAuditLogs]);
 
   const fetchAuditLogs = async () => {
     try {

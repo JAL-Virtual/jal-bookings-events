@@ -95,7 +95,7 @@ const scaleVariants = {
 
 const scaleTransition = {
   type: 'tween' as const,
-  ease: 'backOut',
+  ease: 'backOut' as const,
   duration: 0.4,
 };
 
