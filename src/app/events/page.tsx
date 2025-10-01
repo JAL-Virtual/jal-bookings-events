@@ -1,6 +1,5 @@
 "use client";
 
-import { Fragment } from "react";
 import { EventListLayout } from "../../components/layouts/EventListLayout";
 import { useEvents } from "../../hooks/event/useEventList";
 import { ActionButton } from "../../components/buttons/ActionButton";

@@ -79,7 +79,7 @@ export default function DashboardPage() {
   // Use the new hooks
   const { data: authData } = useAuthData();
   const { userInfo } = useUserInfo();
-  const { data: eventsData, isLoading: eventsLoading, hasNextPage, fetchNextPage } = useEvents();
+  const { data: eventsData, isLoading: eventsLoading } = useEvents();
   const { t } = useText();
 
   // Memoize expensive computations
@@ -164,13 +164,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleAdminKeyChange = (isAdminUser: boolean) => {
-    setIsAdmin(isAdminUser);
-  };
-
-  const handleStaffKeyChange = (isStaffUser: boolean) => {
-    setIsStaff(isStaffUser);
-  };
 
   // Validate staff key against hardcoded key
   const handleLogin = async (key: string, type: 'admin' | 'staff') => {
