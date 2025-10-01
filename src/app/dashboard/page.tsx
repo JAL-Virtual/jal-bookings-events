@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { 
-  Sidebar, 
+  ResponsiveSidebar, 
   EventHeader, 
   PilotBriefingCard, 
   Footer,
@@ -212,7 +212,7 @@ export default function DashboardPage() {
 
   return (
     <PageTransition type="fade" className="min-h-screen bg-gray-900 text-white flex">
-      <Sidebar 
+      <ResponsiveSidebar 
         key={`sidebar-${isAdmin}-${isStaff}`}
         activeTab={activeTab} 
         onTabChange={handleTabChange} 

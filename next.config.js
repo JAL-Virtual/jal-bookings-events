@@ -16,6 +16,8 @@ const nextConfig = {
   },
   // Compression
   compress: true,
+  // Fix multiple lockfiles warning
+  outputFileTracingRoot: "C:\\Users\\Bunny\\Desktop\\BUNNY PROJECTS\\JAL Projects\\jal-booking-event",
   // Bundle analyzer (uncomment for analysis)
   // bundleAnalyzer: {
   //   enabled: process.env.ANALYZE === 'true',
@@ -43,9 +45,10 @@ const nextConfig = {
       },
     ];
   },
-  turbopack: {
-    root: "C:\\Users\\Bunny\\Desktop\\BUNNY PROJECTS\\JAL Projects\\jal-booking-event",
-  },
+  // Remove problematic turbopack configuration
+  // turbopack: {
+  //   root: "C:\\Users\\Bunny\\Desktop\\BUNNY PROJECTS\\JAL Projects\\jal-booking-event",
+  // },
 }
 
 module.exports = nextConfig

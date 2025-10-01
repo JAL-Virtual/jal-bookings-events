@@ -17,7 +17,21 @@ export {
   FiBookOpen,
   FiPlus,
   FiPlusCircle,
-  FiSliders
+  FiSliders,
+  FiShield,
+  FiChevronLeft,
+  FiChevronRight,
+  FiMenu,
+  FiX,
+  FiUser,
+  FiBell,
+  FiEye,
+  FiEyeOff,
+  FiSave,
+  FiRefreshCw,
+  FiGlobe,
+  FiLock,
+  FiUnlock
 } from 'react-icons/fi';
 
 // Export with alternative names for compatibility
@@ -29,5 +43,22 @@ export {
   FiBookOpen as BookOpenIcon,
   FiPlus as PlusIcon,
   FiPlusCircle as PlusCircleIcon,
-  FiSliders as AdjustmentsHorizontalIcon
+  FiSliders as AdjustmentsHorizontalIcon,
+  FiShield as ShieldCheckIcon,
+  FiChevronLeft as ChevronLeftIcon,
+  FiChevronRight as ChevronRightIcon,
+  FiMenu as Bars3Icon,
+  FiX as XMarkIcon,
+  FiUser as UserIcon,
+  FiBell as BellIcon,
+  FiEye as EyeIcon,
+  FiEyeOff as EyeSlashIcon,
+  FiSliders as PaintBrushIcon,
+  FiSun as SunIcon,
+  FiMoon as MoonIcon,
+  FiSave as SaveIcon,
+  FiRefreshCw as RefreshCwIcon,
+  FiGlobe as GlobeIcon,
+  FiLock as LockIcon,
+  FiUnlock as UnlockIcon
 } from 'react-icons/fi';

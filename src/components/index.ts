@@ -21,6 +21,10 @@ export * from './Icons';
 export * from './EventCard';
 export * from './StartupPopup';
 
+// Export Sidebar components
+export * from './Sidebar';
+export * from './ResponsiveSidebar';
+
 // Export existing components
 export * from './ActiveEventGuard';
 export * from './Alert';

@@ -222,3 +222,144 @@ html {
 .loading-glow {
   animation: pulse-glow 2s ease-in-out infinite;
 }
+
+/* Tab Bar Styles */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tab indicator animation */
+@keyframes tab-indicator-slide {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+.tab-indicator {
+  animation: tab-indicator-slide 0.3s ease-out;
+}
+
+/* Tab hover effects */
+@keyframes tab-hover-glow {
+  0% {
+    box-shadow: 0 0 0 rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+  }
+}
+
+.tab-hover-glow:hover {
+  animation: tab-hover-glow 0.3s ease-out forwards;
+}
+
+/* Smooth tab transitions */
+.tab-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Badge pulse animation */
+@keyframes badge-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.badge-pulse {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+/* Sidebar specific animations */
+@keyframes sidebar-item-slide {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.sidebar-item-animate {
+  animation: sidebar-item-slide 0.3s ease-out forwards;
+}
+
+/* Sidebar collapse animation */
+@keyframes sidebar-collapse {
+  from {
+    width: 16rem;
+  }
+  to {
+    width: 4rem;
+  }
+}
+
+@keyframes sidebar-expand {
+  from {
+    width: 4rem;
+  }
+  to {
+    width: 16rem;
+  }
+}
+
+.sidebar-collapsing {
+  animation: sidebar-collapse 0.3s ease-in-out forwards;
+}
+
+.sidebar-expanding {
+  animation: sidebar-expand 0.3s ease-in-out forwards;
+}
+
+/* Enhanced hover effects for sidebar */
+@keyframes sidebar-hover-glow {
+  0% {
+    box-shadow: 0 0 0 rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+  }
+}
+
+.sidebar-item-hover:hover {
+  animation: sidebar-hover-glow 0.3s ease-out forwards;
+}
+
+/* Sidebar backdrop blur enhancement */
+.sidebar-backdrop {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Smooth scrollbar for sidebar */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: rgba(55, 65, 81, 0.3);
+  border-radius: 2px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+  border-radius: 2px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}
