@@ -16,8 +16,6 @@ const nextConfig = {
   },
   // Compression
   compress: true,
-  // Fix multiple lockfiles warning
-  outputFileTracingRoot: "C:\\Users\\Bunny\\Desktop\\BUNNY PROJECTS\\JAL Projects\\jal-booking-event",
   // Bundle analyzer (uncomment for analysis)
   // bundleAnalyzer: {
   //   enabled: process.env.ANALYZE === 'true',
