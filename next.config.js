@@ -43,10 +43,8 @@ const nextConfig = {
       },
     ];
   },
-  // Remove problematic turbopack configuration
-  // turbopack: {
-  //   root: "C:\\Users\\Bunny\\Desktop\\BUNNY PROJECTS\\JAL Projects\\jal-booking-event",
-  // },
+  // Ensure proper serverless function handling
+  output: 'standalone',
 }
 
 module.exports = nextConfig
