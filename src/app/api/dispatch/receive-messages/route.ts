@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 
 export async function POST() {
   try {
+    // Add CORS headers for better compatibility
+    const headers = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    };
+
     // Get environment variables
     const hoppieLogonCode = process.env.HOPPIE_LOGON_CODE;
     const dispatchCallsign = process.env.DISPATCH_CALLSIGN;
@@ -9,7 +16,7 @@ export async function POST() {
     if (!hoppieLogonCode || !dispatchCallsign) {
       return NextResponse.json(
         { success: false, error: 'Hoppie configuration not found' },
-        { status: 500 }
+        { status: 500, headers }
       );
     }
 
@@ -42,11 +49,11 @@ export async function POST() {
         messages: messages,
         rawResponse: responseText,
         timestamp: new Date().toISOString(),
-      });
+      }, { headers });
     } else {
       return NextResponse.json(
         { success: false, error: 'Failed to poll messages from Hoppie' },
-        { status: 500 }
+        { status: 500, headers }
       );
     }
 
@@ -54,9 +61,25 @@ export async function POST() {
     console.error('Error polling Hoppie messages:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
-      { status: 500 }
+      { status: 500, headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      }}
     );
   }
+}
+
+// Add OPTIONS handler for CORS
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
 }
 
 // Parse Hoppie's response format into our message structure
