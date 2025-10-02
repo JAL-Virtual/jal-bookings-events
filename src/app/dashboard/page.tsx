@@ -14,7 +14,8 @@ import {
   useToast,
   AuditLogs,
   PageTransition,
-  StaggeredTransition
+  StaggeredTransition,
+  DispatchControl
 } from '../../components';
 
 import { Event } from '../../types/Event';
@@ -107,15 +108,23 @@ export default function DashboardPage() {
     const storedStaffKey = localStorage.getItem('jal_staff_key');
     setApiKey(storedApiKey);
     
+    console.log('Stored API Key:', storedApiKey);
+    console.log('Expected Admin Key:', '29e2bb1d4ae031ed47b6');
+    console.log('Keys match:', storedApiKey === '29e2bb1d4ae031ed47b6');
+    
     // Check user roles based on API keys
     if (storedApiKey === '29e2bb1d4ae031ed47b6') {
+      console.log('Setting isAdmin to true');
       setIsAdmin(true);
     }
     
     // Validate staff key against hardcoded key
     if (storedStaffKey === 'AJE(@UE*@DA@ES!$@#W') {
+      console.log('Setting isStaff to true');
       setIsStaff(true);
     }
+    
+    console.log('Admin state:', storedApiKey === '29e2bb1d4ae031ed47b6', 'Staff state:', storedStaffKey === 'AJE(@UE*@DA@ES!$@#W');
     
     setIsLoading(false);
   }, []);
@@ -210,6 +219,8 @@ export default function DashboardPage() {
     return null; // Don't show anything while checking authentication
   }
 
+  console.log('Dashboard render - isAdmin:', isAdmin, 'isStaff:', isStaff);
+  
   return (
     <PageTransition type="fade" className="min-h-screen bg-gray-900 text-white flex">
       <ResponsiveSidebar 
@@ -322,6 +333,8 @@ export default function DashboardPage() {
             <AuditLogs adminApiKey="29e2bb1d4ae031ed47b6" />
           ) : activeTab === 'events' && (isAdmin || isStaff) ? (
             <EventManagement adminApiKey="29e2bb1d4ae031ed47b6" />
+          ) : activeTab === 'dispatch' && (isAdmin || isStaff) ? (
+            <DispatchControl />
           ) : (
             <>
               {eventLoading ? (

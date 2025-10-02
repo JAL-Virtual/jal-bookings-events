@@ -10,7 +10,8 @@ import {
   AdjustmentsHorizontalIcon,
   FiShield as ShieldCheckIcon,
   FiChevronLeft as ChevronLeftIcon,
-  FiChevronRight as ChevronRightIcon
+  FiChevronRight as ChevronRightIcon,
+  FiHeadphones as DispatchIcon
 } from './Icons';
 
 interface SidebarItem {
@@ -134,6 +135,13 @@ export const Sidebar = memo<SidebarProps>(({
       label: 'Manage Events',
       description: 'Admin Panel',
       icon: CogIcon,
+      staffOnly: true,
+    },
+    {
+      id: 'dispatch',
+      label: 'Dispatch',
+      description: 'Control Center',
+      icon: DispatchIcon,
       staffOnly: true,
     },
     {

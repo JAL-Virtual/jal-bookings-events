@@ -56,6 +56,7 @@ export * from './StaffManagement';
 export * from './LoginPopup';
 export * from './Toast';
 export * from './StatusBadge';
+export * from './DispatchControl';
 
 // Export layouts
 export * from './layouts/EventListLayout';

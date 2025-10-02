@@ -12,7 +12,8 @@ import {
   FiChevronLeft as ChevronLeftIcon,
   FiChevronRight as ChevronRightIcon,
   FiMenu as Bars3Icon,
-  FiX as XMarkIcon
+  FiX as XMarkIcon,
+  FiHeadphones as DispatchIcon
 } from './Icons';
 
 interface SidebarItem {
@@ -163,6 +164,13 @@ export const ResponsiveSidebar = memo<ResponsiveSidebarProps>(({
       staffOnly: true,
     },
     {
+      id: 'dispatch',
+      label: 'Dispatch',
+      description: 'Control Center',
+      icon: DispatchIcon,
+      staffOnly: true,
+    },
+    {
       id: 'settings',
       label: 'Settings',
       description: 'Preferences',
@@ -179,6 +187,7 @@ export const ResponsiveSidebar = memo<ResponsiveSidebarProps>(({
 
   // Filter items based on permissions
   const visibleItems = useMemo(() => {
+    console.log('ResponsiveSidebar - isAdmin:', isAdmin, 'isStaff:', isStaff);
     return sidebarItems.filter(item => {
       if (item.adminOnly && !isAdmin) return false;
       if (item.staffOnly && !isStaff && !isAdmin) return false;
